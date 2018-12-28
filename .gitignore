@@ -1,2 +1,3 @@
 /obj/Debug/src/*.o
 /bin/Debug/*.exe
+/*.layout

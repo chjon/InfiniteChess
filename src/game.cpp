@@ -41,11 +41,11 @@ void Game::run() {
  * Check for events and input
  */
 void Game::tick() {
+    // Only process events if the window is focused
+    if (!window->hasFocus()) return;
+
 	sf::Event event;
 	while (window->pollEvent(event)) {
-	    // Only process events if the window is focused
-        if (!window->hasFocus()) continue;
-
         switch (event.type) {
 
         // Check whether the window needs to be closed
@@ -68,12 +68,46 @@ void Game::tick() {
             renderer->draw();
             break;
 
+        // Check whether a key was pressed
+        case sf::Event::KeyPressed:
+            onKeyPress(event.key);
+            break;
+
+        // Check whether the mouse was moved
+        case sf::Event::MouseMoved:
+            onMouseMove(event.mouseMove);
+            break;
+
         default:
             break;
         }
 	}
 
 	checkKeyboard();
+
+	renderer->draw();
+}
+
+void Game::onKeyPress(sf::Event::KeyEvent keyEvent) {
+    switch (keyEvent.code) {
+
+    // Toggle the debug display
+    case sf::Keyboard::Key::F3:
+        renderer->toggleDisplayDebugData();
+        break;
+
+    // Close the window
+    case sf::Keyboard::Key::Escape:
+        window->close();
+        break;
+
+    default:
+        break;
+    }
+}
+
+void Game::onMouseMove(sf::Event::MouseMoveEvent moveEvent) {
+    renderer->needsRedraw = true;
 }
 
 /**
