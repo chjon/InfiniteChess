@@ -11,7 +11,6 @@ private:
 	void tick();
 	void checkKeyboard();
 	void onKeyPress(sf::Event::KeyEvent keyEvent);
-	void onMouseMove(sf::Event::MouseMoveEvent moveEvent);
 
 public:
 	Game();

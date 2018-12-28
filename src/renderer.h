@@ -23,6 +23,8 @@ private:
 	sf::Vector2f cameraShift;
 	sf::Vector2f cameraPos;
 
+	void drawDebugText(const std::string& s, const unsigned int row);
+
 public:
     bool needsRedraw = false;
 
@@ -32,16 +34,17 @@ public:
 	void onStartup();
 	void onResize();
 	void onCameraMove();
-	void onZoom(float delta);
+	void onZoom(const float delta);
 
 	void setCameraPos(sf::Vector2f pos);
 	void moveCamera(sf::Vector2f translationVec);
     void toggleDisplayDebugData();
 
 	void draw();
+	void draw(const int x, const int y, const sf::Color c);
 	void drawDebug();
 
-	sf::Vector2f getMousePosition();
+	sf::Vector2f getMousePosition() const;
 };
 
 #endif // CHESS_RENDERER_H
