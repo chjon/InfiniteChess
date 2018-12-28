@@ -11,6 +11,10 @@ private:
 	Renderer* renderer;
 	InputHandler* inputHandler;
 
+	// Friends
+	friend Renderer;
+	friend InputHandler;
+
 public:
 	// Constructors
 	Game();

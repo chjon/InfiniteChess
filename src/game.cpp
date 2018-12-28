@@ -15,8 +15,8 @@ Game::Game() {
 		sf::Style::Fullscreen
 	);
 
-	renderer     = new Renderer(window);
-	inputHandler = new InputHandler(window, renderer);
+	renderer     = new Renderer(this, window);
+	inputHandler = new InputHandler(this, window, renderer);
 }
 
 /**

@@ -4,6 +4,13 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 
+// Forward declarations
+class Game;
+class InputHandler;
+
+
+// Class definition
+
 class Renderer {
 private:
 	// Configuration constants
@@ -23,6 +30,7 @@ private:
 	bool displayDebugData = true;
 
 	// Members
+	Game* game;
 	sf::RenderWindow* window;
 
 	unsigned int parity;
@@ -43,7 +51,7 @@ public:
     bool needsRedraw = false;
 
     // Constructors
-    Renderer(sf::RenderWindow* w);
+    Renderer(Game* g, sf::RenderWindow* w);
 	~Renderer();
 
 	// Event handlers

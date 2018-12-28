@@ -46,9 +46,13 @@
 		</Compiler>
 		<Unit filename="src/game.cpp" />
 		<Unit filename="src/game.h" />
+		<Unit filename="src/gamePiece.cpp" />
+		<Unit filename="src/gamePiece.h" />
 		<Unit filename="src/inputHandler.cpp" />
 		<Unit filename="src/inputHandler.h" />
 		<Unit filename="src/main.cpp" />
+		<Unit filename="src/pieceMove.cpp" />
+		<Unit filename="src/pieceMove.h" />
 		<Unit filename="src/renderer.cpp" />
 		<Unit filename="src/renderer.h" />
 		<Extensions>

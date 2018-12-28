@@ -64,7 +64,8 @@ void Renderer::drawDebug() {
  *
  * @param w The window for the renderer
  */
-Renderer::Renderer(sf::RenderWindow* w) :
+Renderer::Renderer(Game* g, sf::RenderWindow* w) :
+	game{g},
 	window{w}
 {
 	window->setFramerateLimit(MAX_FRAMERATE);
@@ -74,6 +75,7 @@ Renderer::Renderer(sf::RenderWindow* w) :
  * Destructor
  */
 Renderer::~Renderer() {
+	game   = nullptr;
 	window = nullptr;
 }
 

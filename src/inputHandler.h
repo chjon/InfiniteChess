@@ -4,6 +4,14 @@
 #include <SFML/Graphics.hpp>
 #include "renderer.h"
 
+// Forward declarations
+
+class Game;
+
+
+
+// Class definition
+
 class InputHandler {
 private:
 	// Configuration constants
@@ -20,6 +28,7 @@ private:
 	const sf::Keyboard::Key KEY_EXIT  = sf::Keyboard::Key::Escape;
 
 	// Members
+	Game* game;
 	sf::RenderWindow* window;
 	Renderer* renderer;
 
@@ -30,7 +39,7 @@ private:
 
 public:
 	// Constructors
-	InputHandler(sf::RenderWindow* w, Renderer* r);
+	InputHandler(Game* g, sf::RenderWindow* w, Renderer* r);
 	~InputHandler();
 
 	// Methods

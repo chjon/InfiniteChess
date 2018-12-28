@@ -84,7 +84,8 @@ void InputHandler::onKeyPress(sf::Event::KeyEvent keyEvent) {
  * @param w the window
  * @param r the renderer for the window
  */
-InputHandler::InputHandler(sf::RenderWindow* w, Renderer* r) :
+InputHandler::InputHandler(Game* g, sf::RenderWindow* w, Renderer* r) :
+	game{g},
 	window{w},
 	renderer{r}
 {
@@ -94,6 +95,7 @@ InputHandler::InputHandler(sf::RenderWindow* w, Renderer* r) :
  * Destructor
  */
 InputHandler::~InputHandler() {
+	game     = nullptr;
 	window   = nullptr;
 	renderer = nullptr;
 }
