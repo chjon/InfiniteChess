@@ -4,11 +4,17 @@ Game::Game() {
 	const unsigned int WIDTH  = sf::VideoMode::getDesktopMode().width;
     const unsigned int HEIGHT = sf::VideoMode::getDesktopMode().height;
 
-	renderer = new Renderer(WIDTH, HEIGHT, "Infinite Chess", sf::Style::None);
+    window = new sf::RenderWindow(sf::VideoMode(WIDTH, HEIGHT), "Infinite Chess", sf::Style::Fullscreen);
+	window->setFramerateLimit(60);
+
+	renderer = new Renderer(window);
 }
 
 Game::~Game() {
 	delete renderer;
+
+	window   = nullptr;
+	renderer = nullptr;
 }
 
 /**
@@ -22,11 +28,79 @@ void Game::run() {
 	sf::Clock timer;
 	sf::Time delay = sf::seconds(0.01f);
 
-	// Run
-	while (renderer->windowIsOpen()) {
+	// Run the main game loop
+	while (window->isOpen()) {
         if (timer.getElapsedTime() < delay) continue;
         timer.restart();
 
-		renderer->tick();
+		tick();
 	}
+}
+
+/**
+ * Check for events and input
+ */
+void Game::tick() {
+	sf::Event event;
+	while (window->pollEvent(event)) {
+	    // Only process events if the window is focused
+        if (!window->hasFocus()) continue;
+
+        switch (event.type) {
+
+        // Check whether the window needs to be closed
+        case sf::Event::Closed:
+            window->close();
+            break;
+
+        // Check whether the dimensions need to be updated
+        case sf::Event::Resized:
+            renderer->onResize();
+            break;
+
+        // Check whether the tile size needs to be updated
+        case sf::Event::MouseWheelScrolled:
+            renderer->onZoom(event.mouseWheelScroll.delta);
+            break;
+
+        // Check whether the window just gained focus
+        case sf::Event::GainedFocus:
+            renderer->draw();
+            break;
+
+        default:
+            break;
+        }
+	}
+
+	checkKeyboard();
+}
+
+/**
+ * Handle keyboard input
+ */
+void Game::checkKeyboard() {
+    const float MOVE_AMOUNT = 0.1f;
+    sf::Vector2f translationVec;
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
+        translationVec.y -= MOVE_AMOUNT;
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
+        translationVec.y += MOVE_AMOUNT;
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
+        translationVec.x -= MOVE_AMOUNT;
+    }
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+        translationVec.x += MOVE_AMOUNT;
+    }
+
+    // Only move the camera if there is a non-zero movement
+    if (translationVec.x != 0 || translationVec.y != 0) {
+        renderer->moveCamera(translationVec);
+    }
 }

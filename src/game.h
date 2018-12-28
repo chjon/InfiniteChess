@@ -5,7 +5,11 @@
 
 class Game {
 private:
+    sf::RenderWindow* window;
 	Renderer* renderer;
+
+	void tick();
+	void checkKeyboard();
 
 public:
 	Game();
