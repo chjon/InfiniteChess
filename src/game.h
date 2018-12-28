@@ -2,19 +2,21 @@
 #define CHESS_GAME_H
 
 #include "renderer.h"
+#include "inputHandler.h"
 
 class Game {
 private:
+	// Members
     sf::RenderWindow* window;
 	Renderer* renderer;
-
-	void tick();
-	void checkKeyboard();
-	void onKeyPress(sf::Event::KeyEvent keyEvent);
+	InputHandler* inputHandler;
 
 public:
+	// Constructors
 	Game();
 	~Game();
+
+	// Methods
 	void run();
 };
 

@@ -46,6 +46,8 @@
 		</Compiler>
 		<Unit filename="src/game.cpp" />
 		<Unit filename="src/game.h" />
+		<Unit filename="src/inputHandler.cpp" />
+		<Unit filename="src/inputHandler.h" />
 		<Unit filename="src/main.cpp" />
 		<Unit filename="src/renderer.cpp" />
 		<Unit filename="src/renderer.h" />
