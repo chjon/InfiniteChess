@@ -26,12 +26,20 @@ void InputHandler::checkKeyboard() {
 void InputHandler::checkEvents() {
 	sf::Event event;
 	while (window->pollEvent(event)) {
+        // Only process events if the window is focused or the event is critical
+        if (!window->hasFocus() && !isCritical(event.type)) continue;
+
 		switch (event.type) {
 
 		// Check whether the window needs to be closed
 		case sf::Event::Closed:
 			window->close();
 			break;
+
+        // Check whether the window gained focus
+        case sf::Event::GainedFocus:
+            renderer->draw();
+            break;
 
 		// Check whether the dimensions need to be updated
 		case sf::Event::Resized:
@@ -41,11 +49,6 @@ void InputHandler::checkEvents() {
 		// Check whether the tile size needs to be updated
 		case sf::Event::MouseWheelScrolled:
 			renderer->onZoom(event.mouseWheelScroll.delta);
-			break;
-
-		// Check whether the window just gained focus
-		case sf::Event::GainedFocus:
-			renderer->draw();
 			break;
 
 		// Check whether a key was pressed
@@ -74,6 +77,19 @@ void InputHandler::onKeyPress(sf::Event::KeyEvent keyEvent) {
 	else if (keyEvent.code == KEY_EXIT ) window->close();
 }
 
+/**
+ * Check whether an event is critical
+ */
+bool InputHandler::isCritical(sf::Event::EventType eventType) {
+    switch (eventType) {
+    // Check whether the event is critical
+    case sf::Event::GainedFocus:
+    case sf::Event::Closed:
+        return true;
+    default:
+        return false;
+    }
+}
 
 
 // Public constructors
@@ -105,9 +121,10 @@ InputHandler::~InputHandler() {
 // Public methods
 
 void InputHandler::tick() {
-	// Only process input if the window is focused
-	if (!window->hasFocus()) return;
+	// Only process keyboard input if the window is focused
+	if (window->hasFocus()) {
+        checkKeyboard();
+	}
 
-	checkKeyboard();
 	checkEvents();
 }

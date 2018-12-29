@@ -53,6 +53,7 @@
 		<Unit filename="src/main.cpp" />
 		<Unit filename="src/pieceMove.cpp" />
 		<Unit filename="src/pieceMove.h" />
+		<Unit filename="src/pieceTracker.h" />
 		<Unit filename="src/renderer.cpp" />
 		<Unit filename="src/renderer.h" />
 		<Extensions>

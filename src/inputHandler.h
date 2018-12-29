@@ -36,6 +36,7 @@ private:
 	void checkKeyboard();
 	void checkEvents();
 	void onKeyPress(sf::Event::KeyEvent keyEvent);
+	bool isCritical(sf::Event::EventType eventType);
 
 public:
 	// Constructors
