@@ -56,7 +56,7 @@ public:
 
 	// Event handlers
 	void onStartup();
-	void onResize();
+	void onResize(const unsigned int width, const unsigned int height);
 	void onCameraMove();
 	void onZoom(const float delta);
 

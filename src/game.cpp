@@ -6,13 +6,13 @@
  * Constructor
  */
 Game::Game() {
-	const unsigned int WIDTH  = sf::VideoMode::getDesktopMode().width;
-	const unsigned int HEIGHT = sf::VideoMode::getDesktopMode().height;
+	const unsigned int WIDTH  = sf::VideoMode::getDesktopMode().width  * 2. / 3.;
+	const unsigned int HEIGHT = sf::VideoMode::getDesktopMode().height * 2. / 3.;
 
 	window = new sf::RenderWindow(
 		sf::VideoMode(WIDTH, HEIGHT),
 		"Infinite Chess",
-		sf::Style::Fullscreen
+		sf::Style::Default
 	);
 
 	renderer     = new Renderer(this, window);

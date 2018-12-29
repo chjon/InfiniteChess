@@ -1,5 +1,4 @@
 #include "renderer.h"
-#include <iostream>
 #include <string>
 
 // Private utility methods
@@ -90,24 +89,24 @@ void Renderer::onStartup() {
 	// Load resources
 	debugFont.loadFromFile(FONT_DIRECTORY + DEBUG_FONT_FILENAME);
 
-	onResize();
+	onResize(window->getSize().x, window->getSize().y);
 }
 
 /**
  * Handle window resizing
  */
-void Renderer::onResize() {
-	sf::Vector2u windowSize = window->getSize();
+void Renderer::onResize(const unsigned int width, const unsigned int height) {
+    window->setView(sf::View(sf::FloatRect(0, 0, width, height)));
 
 	// Find the dimensions of the window in tiles, padded on each edge
-	dimensionsInTiles.x = 2 * (TILE_PADDING + std::floor(windowSize.x / tileSize / 2.f));
-	dimensionsInTiles.y = 2 * (TILE_PADDING + std::floor(windowSize.y / tileSize / 2.f));
+	dimensionsInTiles.x = 2 * (TILE_PADDING + std::floor(width / tileSize / 2.f));
+	dimensionsInTiles.y = 2 * (TILE_PADDING + std::floor(height / tileSize / 2.f));
 
 	parity = ((dimensionsInTiles.x + dimensionsInTiles.y) / 2) % 2;
 
 	// Find the start position for drawing tiles
-	tileStartPos.x = (windowSize.x / 2.f) - tileSize * (dimensionsInTiles.x / 2.f);
-	tileStartPos.y = (windowSize.y / 2.f) - tileSize * (dimensionsInTiles.y / 2.f);
+	tileStartPos.x = (width / 2.f) - tileSize * (dimensionsInTiles.x / 2.f);
+	tileStartPos.y = (height / 2.f) - tileSize * (dimensionsInTiles.y / 2.f);
 
 	// Shift the tile start position to centre on the camera
 	onCameraMove();
@@ -135,7 +134,7 @@ void Renderer::onZoom(const float delta) {
 		tileSize = std::max(tileSize, MIN_TILE_SIZE);
 	}
 
-	onResize();
+	onResize(window->getSize().x, window->getSize().y);
 }
 
 
@@ -146,7 +145,7 @@ void Renderer::onZoom(const float delta) {
  * Get the cursor's tile coordinates
  */
 sf::Vector2f Renderer::getMousePosition() const {
-	sf::Vector2i screenPos = sf::Mouse::getPosition();
+	sf::Vector2i screenPos = sf::Mouse::getPosition(*window);
 
 	return sf::Vector2f(
 		(screenPos.x - tileStartPos.x) / tileSize + cameraPos.x - dimensionsInTiles.x / 2,

@@ -35,7 +35,7 @@ void InputHandler::checkEvents() {
 
 		// Check whether the dimensions need to be updated
 		case sf::Event::Resized:
-			renderer->onResize();
+			renderer->onResize(event.size.width, event.size.height);
 			break;
 
 		// Check whether the tile size needs to be updated
