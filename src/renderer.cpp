@@ -1,5 +1,5 @@
-#include "renderer.h"
 #include <string>
+#include "renderer.h"
 
 // Private utility methods
 
@@ -18,21 +18,40 @@ void Renderer::drawDebugText(const std::string& s, const unsigned int row) {
 }
 
 /**
+ * Draw a game piece
+ *
+ * @param x the x position to draw to
+ * @param y the y position to draw to
+ * @param c the color to fill with
+ */
+void Renderer::drawPiece(GamePiece* p) {
+    sf::CircleShape s(tileSize / 2);
+    s.setFillColor(p->team);
+
+	s.setPosition(
+		tileStartPos.x + tileSize * (p->pos.x - cameraPos.x + dimensionsInTiles.x / 2),
+		tileStartPos.y + tileSize * (p->pos.y - cameraPos.y + dimensionsInTiles.y / 2)
+	);
+
+	window->draw(s);
+}
+
+/**
  * Draw the tile at (x,y)
  *
  * @param x the x position to draw to
  * @param y the y position to draw to
  * @param c the color to fill with
  */
-void Renderer::draw(const int x, const int y, const sf::Color c) {
-	sf::RectangleShape tile(sf::Vector2f(tileSize, tileSize));
-	tile.setFillColor(c);
-	tile.setPosition(
+void Renderer::drawTile(const int x, const int y, const sf::Color c) {
+    sf::RectangleShape s(sf::Vector2f(tileSize, tileSize));
+    s.setFillColor(c);
+	s.setPosition(
 		tileStartPos.x + tileSize * (x - cameraPos.x + dimensionsInTiles.x / 2),
 		tileStartPos.y + tileSize * (y - cameraPos.y + dimensionsInTiles.y / 2)
 	);
 
-	window->draw(tile);
+	window->draw(s);
 }
 
 /**
@@ -40,8 +59,8 @@ void Renderer::draw(const int x, const int y, const sf::Color c) {
  */
 void Renderer::drawDebug() {
 	sf::Vector2f mousePos = getMousePosition();
-	draw(0, 0, sf::Color::White);
-	draw(std::floor(mousePos.x), std::floor(mousePos.y), sf::Color(255, 255, 0, 150));
+	drawTile(0, 0, sf::Color::White);
+	drawTile(std::floor(mousePos.x), std::floor(mousePos.y), sf::Color(255, 255, 0, 150));
 
 	std::string s;
 	int row = 0;
@@ -212,6 +231,13 @@ void Renderer::draw() {
 			window->draw(tile);
 		}
 	}
+
+	std::map<sf::Vector2i, GamePiece*, PieceTracker::cmpVectorLexicographically>* pieces = &(game->pieceTracker->pieces);
+
+	// Draw the pieces
+    for (std::map<sf::Vector2i, GamePiece*, PieceTracker::cmpVectorLexicographically>::iterator it = pieces->begin(); it != pieces->end(); it++) {
+        drawPiece(it->second);
+    }
 
 	// Draw debug data
 	if (displayDebugData) {

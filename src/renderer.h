@@ -3,14 +3,16 @@
 
 #include <SFML/Graphics.hpp>
 #include <string>
+#include "game.h"
 
 // Forward declarations
 class Game;
 class InputHandler;
+class GamePiece;
 
 
-// Class definition
 
+// Class declaration
 class Renderer {
 private:
 	// Configuration constants
@@ -43,7 +45,8 @@ private:
 
 	// Utility methods
 	void drawDebugText(const std::string& s, const unsigned int row);
-	void draw(const int x, const int y, const sf::Color c);
+	void drawPiece(GamePiece* p);
+	void drawTile(const int x, const int y, const sf::Color c);
 	void drawDebug();
 
 public:

@@ -15,7 +15,7 @@ GamePiece::GamePiece() {
  */
 GamePiece::GamePiece(
 	std::string name_,
-	std::string team_,
+	sf::Color team_,
 	sf::Vector2i pos_,
 	unsigned int moveCount_
 ) :

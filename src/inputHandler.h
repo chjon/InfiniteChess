@@ -5,13 +5,12 @@
 #include "renderer.h"
 
 // Forward declarations
-
 class Game;
+class Renderer;
 
 
 
-// Class definition
-
+// Class declaration
 class InputHandler {
 private:
 	// Configuration constants

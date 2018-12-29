@@ -5,17 +5,34 @@
 #include <map>
 #include "gamePiece.h"
 
-// Class definition
+// Forward declarations
+class Renderer;
 
+
+
+// Class declaration
 class PieceTracker {
 private:
+    // Comparator
+    struct cmpVectorLexicographically {
+        bool operator()(const sf::Vector2i a, const sf::Vector2i b) const {
+            return (a.x == b.x) ? (a.y < b.y) : (a.x < b.x);
+        }
+    };
+
     // Members
-    std::map<sf::Vector2i, GamePiece*, std::map::key_compare> pieces;
+    std::map<sf::Vector2i, GamePiece*, cmpVectorLexicographically> pieces;
+
+    // Friends
+    friend Renderer;
 
 public:
     // Constructors
     PieceTracker();
     ~PieceTracker();
+
+    // Event handlers
+    void onStartup();
 
     // Methods
     bool addPiece(GamePiece* piece);

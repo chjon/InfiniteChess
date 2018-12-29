@@ -17,16 +17,19 @@ Game::Game() {
 
 	renderer     = new Renderer(this, window);
 	inputHandler = new InputHandler(this, window, renderer);
+	pieceTracker = new PieceTracker();
 }
 
 /**
  * Destructor
  */
 Game::~Game() {
+    delete pieceTracker;
 	delete inputHandler;
 	delete renderer;
 	delete window;
 
+	pieceTracker = nullptr;
 	inputHandler = nullptr;
 	renderer     = nullptr;
 	window       = nullptr;
@@ -41,6 +44,7 @@ Game::~Game() {
  */
 void Game::run() {
 	// Initialize everything
+	pieceTracker->onStartup();
 	renderer->onStartup();
 	sf::Vector2f pos;
 

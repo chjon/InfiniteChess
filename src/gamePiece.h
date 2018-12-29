@@ -6,23 +6,32 @@
 #include <vector>
 #include "pieceMove.h"
 
+// Forward declarations
+class Renderer;
+class PieceTracker;
+
+
+
+// Class declaration
 class GamePiece {
 private:
 	// Members
-    std::vector<PieceMove> moveSet;
-
-public:
-	// Members
 	std::string name = "GamePiece";
-	std::string team = "Team";
+	sf::Color team   = sf::Color::White;
     sf::Vector2i pos;
     unsigned int moveCount;
+    std::vector<PieceMove> moveSet;
 
+    // Friends
+    friend Renderer;
+    friend PieceTracker;
+
+public:
 	// Constructors
 	GamePiece();
 	GamePiece(
 		std::string name_,
-		std::string team_,
+		sf::Color team_,
 		sf::Vector2i pos,
 		unsigned int moveCount_
 	);
