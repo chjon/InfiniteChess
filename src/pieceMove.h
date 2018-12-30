@@ -2,15 +2,14 @@
 #define CHESS_PIECE_MOVE_H
 
 #include <SFML/Graphics.hpp>
+#include "gamePiece.h"
 
 // Forward declarations
-
 class GamePiece;
 
 
 
-// Class definition
-
+// Class declaration
 class PieceMove {
 private:
 	// Flags
@@ -23,6 +22,9 @@ private:
 
     // Members
 	sf::Vector2i baseVector;
+
+	// Friends
+	friend GamePiece;
 
 public:
 	// Constructors

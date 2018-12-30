@@ -36,7 +36,7 @@ GamePiece::~GamePiece() {
 
 // Public mutators
 
-void GamePiece::addMove(PieceMove newMove) {
+void GamePiece::addMove(PieceMove* newMove) {
     moveSet.push_back(newMove);
 }
 
@@ -50,8 +50,8 @@ void GamePiece::addMove(PieceMove newMove) {
  * @param newPos the desired position
  */
 bool GamePiece::canMove(const sf::Vector2i newPos) {
-	for (PieceMove move : moveSet) {
-		if (move.canMove(this, newPos)) {
+	for (PieceMove* move : moveSet) {
+		if (move->canMove(this, newPos)) {
 			return true;
 		}
 	}

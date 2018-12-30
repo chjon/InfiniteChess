@@ -1,5 +1,6 @@
 #include <map>
 #include "pieceTracker.h"
+#include "pieceMove.h"
 
 // Public constructors
 
@@ -22,9 +23,16 @@ PieceTracker::~PieceTracker() {
 // Public event handlers
 
 void PieceTracker::onStartup() {
+	PieceMove* newMove = new PieceMove(sf::Vector2i(0, 1));
+
     for (int i = 0; i < 8; i++) {
-        addPiece(new GamePiece("Pawn", sf::Color::White, sf::Vector2i(i, 1), 0));
-        addPiece(new GamePiece("Pawn", sf::Color::Green, sf::Vector2i(i, 6), 0));
+		GamePiece* piece = new GamePiece("Pawn", sf::Color::White, sf::Vector2i(i, 1), 0);
+		piece->addMove(newMove);
+        addPiece(piece);
+
+        piece = new GamePiece("Pawn", sf::Color::Green, sf::Vector2i(i, 6), 0);
+		piece->addMove(newMove);
+        addPiece(piece);
     }
 }
 

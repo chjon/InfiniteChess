@@ -51,15 +51,21 @@ void Renderer::drawOverlays() const {
     }
 
     // Draw mouse overlay
-    if (selectedPiece == nullptr) {
-		// Check if the hovered position contains a piece
+
+    // Check if debug data should be drawn
+    if (displayDebugData) {
+		drawTile(mousePos.x, mousePos.y, MOUSE_DEBUG_COLOR);
+
+	// If no piece is selected, only pieces should be selectable
+    } else if (selectedPiece == nullptr) {
 		if (game->pieceTracker->getPiece(mousePos) == nullptr) {
 			drawTile(mousePos.x, mousePos.y, MOUSE_INVALID_COLOR);
 		} else {
 			drawTile(mousePos.x, mousePos.y, MOUSE_VALID_COLOR);
 		}
+
+	// If a piece is selected, only valid move positions should be selectable
     } else {
-		// Check if the hovered position is a valid move spot
 		if (selectedPiece->canMove(mousePos)) {
 			drawTile(mousePos.x, mousePos.y, MOUSE_VALID_COLOR);
 		} else {
@@ -124,9 +130,6 @@ void Renderer::drawTile(const int x, const int y, const sf::Color c) const {
  */
 void Renderer::drawDebug() const {
 	sf::Vector2f mousePos = getMousePosition();
-
-	// Draw mouse position
-	drawTile(std::floor(mousePos.x), std::floor(mousePos.y), MOUSE_DEBUG_COLOR);
 
 	std::string s;
 	int row = 0;

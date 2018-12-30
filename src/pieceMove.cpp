@@ -21,5 +21,5 @@ PieceMove::~PieceMove() {
 // Public methods
 
 bool PieceMove::canMove(GamePiece* piece, const sf::Vector2i newPos) {
-	return false;
+	return newPos == (piece->pos + baseVector);
 }

@@ -4,12 +4,12 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <vector>
-#include "pieceMove.h"
 
 // Forward declarations
 class Renderer;
 class PieceTracker;
 class Controller;
+class PieceMove;
 
 
 
@@ -21,12 +21,13 @@ private:
 	sf::Color team   = sf::Color::White;
     sf::Vector2i pos;
     unsigned int moveCount;
-    std::vector<PieceMove> moveSet;
+    std::vector<PieceMove*> moveSet;
 
     // Friends
     friend Renderer;
     friend PieceTracker;
     friend Controller;
+    friend PieceMove;
 
 public:
 	// Constructors
@@ -41,7 +42,7 @@ public:
 	~GamePiece();
 
 	// Mutators
-	void addMove(PieceMove newMove);
+	void addMove(PieceMove* newMove);
 
 	// Methods
 	bool canMove (const sf::Vector2i newPos);
