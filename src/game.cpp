@@ -18,17 +18,20 @@ Game::Game() {
 	renderer     = new Renderer(this, window);
 	inputHandler = new InputHandler(this, window, renderer);
 	pieceTracker = new PieceTracker();
+	controller   = new Controller(this, pieceTracker);
 }
 
 /**
  * Destructor
  */
 Game::~Game() {
+	delete controller;
     delete pieceTracker;
 	delete inputHandler;
 	delete renderer;
 	delete window;
 
+	controller   = nullptr;
 	pieceTracker = nullptr;
 	inputHandler = nullptr;
 	renderer     = nullptr;

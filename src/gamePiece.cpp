@@ -49,7 +49,7 @@ void GamePiece::addMove(PieceMove newMove) {
  *
  * @param newPos the desired position
  */
-bool GamePiece::canMove(sf::Vector2i newPos) {
+bool GamePiece::canMove(const sf::Vector2i newPos) {
 	for (PieceMove move : moveSet) {
 		if (move.canMove(this, newPos)) {
 			return true;
@@ -62,6 +62,6 @@ bool GamePiece::canMove(sf::Vector2i newPos) {
 /**
  * Move the piece
  */
-void GamePiece::move(sf::Vector2i newPos) {
+void GamePiece::move(const sf::Vector2i newPos) {
 	pos = newPos;
 }

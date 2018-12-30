@@ -61,6 +61,11 @@ void InputHandler::checkEvents() {
 			renderer->needsRedraw = true;
 			break;
 
+		// Check whether the mouse was clicked
+		case sf::Event::MouseButtonPressed:
+            game->controller->onMousePress(renderer->getMousePosition());
+            break;
+
 		default:
 			break;
 		}
@@ -85,6 +90,7 @@ bool InputHandler::isCritical(sf::Event::EventType eventType) {
     // Check whether the event is critical
     case sf::Event::GainedFocus:
     case sf::Event::Closed:
+	case sf::Event::Resized:
         return true;
     default:
         return false;

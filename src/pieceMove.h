@@ -30,7 +30,7 @@ public:
 	~PieceMove();
 
 	// Methods
-	bool canMove (GamePiece* piece, sf::Vector2i newPos);
+	bool canMove (GamePiece* piece, const sf::Vector2i newPos);
 };
 
 #endif // CHESS_PIECE_MOVE_H

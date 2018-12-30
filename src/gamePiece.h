@@ -9,6 +9,7 @@
 // Forward declarations
 class Renderer;
 class PieceTracker;
+class Controller;
 
 
 
@@ -25,6 +26,7 @@ private:
     // Friends
     friend Renderer;
     friend PieceTracker;
+    friend Controller;
 
 public:
 	// Constructors
@@ -42,8 +44,8 @@ public:
 	void addMove(PieceMove newMove);
 
 	// Methods
-	bool canMove (sf::Vector2i newPos);
-	void move (sf::Vector2i newPos);
+	bool canMove (const sf::Vector2i newPos);
+	void move (const sf::Vector2i newPos);
 };
 
 #endif // CHESS_GAME_PIECE_H

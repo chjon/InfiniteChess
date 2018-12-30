@@ -5,11 +5,13 @@
 #include "renderer.h"
 #include "inputHandler.h"
 #include "pieceTracker.h"
+#include "controller.h"
 
 // Forward declarations
 class Renderer;
 class InputHandler;
 class PieceTracker;
+class Controller;
 
 
 
@@ -18,13 +20,15 @@ class Game {
 private:
 	// Members
     sf::RenderWindow* window;
-	Renderer* renderer;
-	InputHandler* inputHandler;
-	PieceTracker* pieceTracker;
+	Renderer*         renderer;
+	InputHandler*     inputHandler;
+	PieceTracker*     pieceTracker;
+	Controller*       controller;
 
 	// Friends
 	friend Renderer;
 	friend InputHandler;
+	friend Controller;
 
 public:
 	// Constructors

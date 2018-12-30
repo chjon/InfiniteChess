@@ -20,13 +20,18 @@ private:
 	const unsigned int MAX_FRAMERATE = 60;
 	const float MIN_TILE_SIZE =   5.f;
 	const float MAX_TILE_SIZE = 300.f;
-	const sf::Color BACKGROUND_COLOR = sf::Color( 0,  0,  0, 255);
-	const sf::Color FOREGROUND_COLOR = sf::Color(50, 50, 50, 255);
 
 	// Resources
 	const std::string FONT_DIRECTORY      = "res/font/";
 	const std::string DEBUG_FONT_FILENAME = "OpenSans-Regular.ttf";
 	sf::Font debugFont;
+
+	const sf::Color BACKGROUND_COLOR     = sf::Color(  0,   0,   0, 255);
+	const sf::Color FOREGROUND_COLOR     = sf::Color( 50,  50,  50, 255);
+	const sf::Color MOUSE_DEBUG_COLOR    = sf::Color(255, 255, 255, 100);
+	const sf::Color MOUSE_VALID_COLOR    = sf::Color(  0, 255,   0, 100);
+	const sf::Color MOUSE_INVALID_COLOR  = sf::Color(255,   0,   0, 100);
+	const sf::Color PIECE_SELECTED_COLOR = sf::Color(255, 255,   0, 100);
 
 	// Flags
 	bool displayDebugData = true;
@@ -44,10 +49,14 @@ private:
 	sf::Vector2f cameraPos;
 
 	// Utility methods
-	void drawDebugText(const std::string& s, const unsigned int row);
-	void drawPiece(GamePiece* p);
-	void drawTile(const int x, const int y, const sf::Color c);
-	void drawDebug();
+	void drawBoard() const;
+	void drawPieces() const;
+	void drawOverlays() const;
+
+	void drawDebugText(const std::string& s, const unsigned int row) const;
+	void drawPiece(GamePiece* p) const;
+	void drawTile(const int x, const int y, const sf::Color c) const;
+	void drawDebug() const;
 
 public:
 	// Flags
@@ -65,6 +74,7 @@ public:
 
 	// Accessors
 	sf::Vector2f getMousePosition() const;
+	sf::Vector2i getMouseTilePosition() const;
 
 	// Mutators
 	void setCameraPos(const sf::Vector2f pos);

@@ -44,6 +44,8 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="src/controller.cpp" />
+		<Unit filename="src/controller.h" />
 		<Unit filename="src/game.cpp" />
 		<Unit filename="src/game.h" />
 		<Unit filename="src/gamePiece.cpp" />
@@ -53,6 +55,7 @@
 		<Unit filename="src/main.cpp" />
 		<Unit filename="src/pieceMove.cpp" />
 		<Unit filename="src/pieceMove.h" />
+		<Unit filename="src/pieceTracker.cpp" />
 		<Unit filename="src/pieceTracker.h" />
 		<Unit filename="src/renderer.cpp" />
 		<Unit filename="src/renderer.h" />

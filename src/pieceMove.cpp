@@ -20,6 +20,6 @@ PieceMove::~PieceMove() {
 
 // Public methods
 
-bool PieceMove::canMove(GamePiece* piece, sf::Vector2i newPos) {
-	return true;
+bool PieceMove::canMove(GamePiece* piece, const sf::Vector2i newPos) {
+	return false;
 }
