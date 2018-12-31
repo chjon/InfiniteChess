@@ -5,9 +5,7 @@
 /**
  * Select/deselect a square
  */
-void Controller::onMousePress(sf::Vector2f posF) {
-	sf::Vector2i pos(std::floor(posF.x), std::floor(posF.y));
-
+void Controller::onMousePress(sf::Vector2i pos) {
 	// Select piece
     if (selectedPiece == nullptr) {
 		selectedPiece = game->pieceTracker->getPiece(pos);
@@ -18,11 +16,30 @@ void Controller::onMousePress(sf::Vector2f posF) {
 
 	// Move piece
 	} else if (selectedPiece->canMove(pos)) {
-		selectedPiece->move(pos);
-    }
+		movePiece(pos);
+	}
 
-    game->renderer->needsRedraw = true;
+	game->renderer->needsRedraw = true;
 }
+
+
+
+// Private methods
+
+/**
+ * Move the selected piece to a new position
+ */
+void Controller::movePiece(sf::Vector2i pos) {
+	// Move the piece at the position
+	game->pieceTracker->movePiece(selectedPiece->pos, pos);
+
+	// Move the piece
+	selectedPiece->move(pos);
+
+	// Deselect the piece
+	selectedPiece = nullptr;
+}
+
 
 
 // Public constructors

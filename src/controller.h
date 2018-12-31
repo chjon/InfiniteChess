@@ -22,7 +22,10 @@ private:
 	GamePiece* selectedPiece;
 
 	// Event handlers
-	void onMousePress (sf::Vector2f pos);
+	void onMousePress (sf::Vector2i pos);
+
+	// Methods
+	void movePiece (sf::Vector2i pos);
 
 	// Friends
 	friend InputHandler;

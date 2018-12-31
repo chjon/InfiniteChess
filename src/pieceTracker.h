@@ -38,6 +38,7 @@ public:
     bool addPiece(GamePiece* piece);
     bool removePiece(sf::Vector2i pos);
     GamePiece* getPiece(sf::Vector2i pos);
+    bool movePiece(sf::Vector2i pos1, sf::Vector2i pos2);
 };
 
 #endif // CHESS_PIECE_TRACKER_H

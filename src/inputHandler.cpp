@@ -63,7 +63,7 @@ void InputHandler::checkEvents() {
 
 		// Check whether the mouse was clicked
 		case sf::Event::MouseButtonPressed:
-            game->controller->onMousePress(renderer->getMousePosition());
+            game->controller->onMousePress(renderer->getMouseTilePosition());
             break;
 
 		default:
