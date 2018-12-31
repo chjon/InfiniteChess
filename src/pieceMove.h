@@ -6,6 +6,7 @@
 
 // Forward declarations
 class GamePiece;
+class PieceTracker;
 
 
 
@@ -25,6 +26,7 @@ private:
 
 	// Friends
 	friend GamePiece;
+	friend PieceTracker;
 
 public:
 	// Constructors

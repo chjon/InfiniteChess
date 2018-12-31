@@ -18,6 +18,12 @@ PieceTracker::~PieceTracker() {
     for (std::map<sf::Vector2i, GamePiece*>::iterator it = pieces.begin(); it != pieces.end(); it++) {
         delete it->second;
     }
+
+    // Delete all the definitions
+    for (std::map<std::string, GamePiece*>::iterator it = pieceDefs.begin(); it != pieceDefs.end(); it++) {
+		it->second->definitionDelete();
+		delete it->second;
+    }
 }
 
 // Public event handlers
@@ -26,16 +32,23 @@ PieceTracker::~PieceTracker() {
  * Handle the initial loading of pieces
  */
 void PieceTracker::onStartup() {
-	PieceMove* newMove = new PieceMove(sf::Vector2i(0, 1));
+	// Create move set for pawns
+	std::vector<PieceMove*>* pawnMoveSet = new std::vector<PieceMove*>();
 
+	// Create pawn step
+	PieceMove* pawnStep = new PieceMove(sf::Vector2i(0, 1));
+	pawnStep->isAttack = false;
+	pawnMoveSet->push_back(pawnStep);
+	pawnStep = nullptr;
+
+	// Create template pawn
+	pieceDefs.insert(std::make_pair("Pawn", new GamePiece("Pawn", pawnMoveSet)));
+	pawnMoveSet = nullptr;
+
+	// Create pawns
     for (int i = 0; i < 8; i++) {
-		GamePiece* piece = new GamePiece("Pawn", sf::Color::White, sf::Vector2i(i, 1), 0);
-		piece->addMove(newMove);
-        addPiece(piece);
-
-        piece = new GamePiece("Pawn", sf::Color::Green, sf::Vector2i(i, 6), 0);
-		piece->addMove(newMove);
-        addPiece(piece);
+		addPiece("Pawn", sf::Color::White, sf::Vector2i(i, 1));
+		addPiece("Pawn", sf::Color::Green, sf::Vector2i(i, 6));
     }
 }
 
@@ -44,10 +57,33 @@ void PieceTracker::onStartup() {
 // Public methods
 
 /**
+ * Create a template piece
+ */
+bool PieceTracker::definePiece(const std::string name, const std::vector<PieceMove*>* moveSet) {
+	// Check whether a piece with the desired name exists
+    std::map<std::string, GamePiece*>::iterator it = pieceDefs.find(name);
+    if (it == pieceDefs.end()) return false;
+
+    // Add the piece to the definitions
+    pieceDefs.insert(std::make_pair(name, new GamePiece(name, moveSet)));
+    return true;
+}
+
+/**
  * Add a piece to the piece tracker
  */
-bool PieceTracker::addPiece(GamePiece* piece) {
-    return pieces.insert(std::make_pair(piece->pos, piece)).second;
+bool PieceTracker::addPiece(std::string pieceName, sf::Color team, sf::Vector2i pos) {
+	// Check whether a piece is already at the desired location
+	if (pieces.find(pos) != pieces.end()) return false;
+
+	// Check whether a piece with the desired name exists
+	std::map<std::string, GamePiece*>::iterator it = pieceDefs.find(pieceName);
+	if (it == pieceDefs.end()) return false;
+
+	// Create a copy from the definition
+	pieces.insert(std::make_pair(pos, new GamePiece(it->second, team, pos)));
+
+	return true;
 }
 
 /**

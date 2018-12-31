@@ -17,11 +17,15 @@ class PieceMove;
 class GamePiece {
 private:
 	// Members
-	std::string name = "GamePiece";
-	sf::Color team   = sf::Color::White;
+	const std::string name;
+	const std::vector<PieceMove*>* moveSet;
+	const sf::Color team;
+
     sf::Vector2i pos;
     unsigned int moveCount;
-    std::vector<PieceMove*> moveSet;
+
+    // Utility methods
+    void definitionDelete();
 
     // Friends
     friend Renderer;
@@ -31,18 +35,9 @@ private:
 
 public:
 	// Constructors
-	GamePiece();
-	GamePiece(
-		std::string name_,
-		sf::Color team_,
-		sf::Vector2i pos,
-		unsigned int moveCount_
-	);
-
+	GamePiece(const std::string n, const std::vector<PieceMove*>* m);
+	GamePiece(const GamePiece* piece, const sf::Color team_, sf::Vector2i pos_);
 	~GamePiece();
-
-	// Mutators
-	void addMove(PieceMove* newMove);
 
 	// Methods
 	bool canMove (const sf::Vector2i newPos);

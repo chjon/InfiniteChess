@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <map>
 #include "gamePiece.h"
+#include "vectorUtils.h"
 
 // Forward declarations
 class Renderer;
@@ -13,15 +14,10 @@ class Renderer;
 // Class declaration
 class PieceTracker {
 private:
-    // Comparator
-    struct cmpVectorLexicographically {
-        bool operator()(const sf::Vector2i a, const sf::Vector2i b) const {
-            return (a.x == b.x) ? (a.y < b.y) : (a.x < b.x);
-        }
-    };
-
     // Members
-    std::map<sf::Vector2i, GamePiece*, cmpVectorLexicographically> pieces;
+
+    std::map<std::string, GamePiece*> pieceDefs;
+    std::map<sf::Vector2i, GamePiece*, VectorUtils::cmpVectorLexicographically> pieces;
 
     // Friends
     friend Renderer;
@@ -35,7 +31,8 @@ public:
     void onStartup();
 
     // Methods
-    bool addPiece(GamePiece* piece);
+    bool definePiece(const std::string name, const std::vector<PieceMove*>* moveSet);
+    bool addPiece(std::string name, sf::Color team, sf::Vector2i pos);
     bool removePiece(sf::Vector2i pos);
     GamePiece* getPiece(sf::Vector2i pos);
     bool movePiece(sf::Vector2i pos1, sf::Vector2i pos2);

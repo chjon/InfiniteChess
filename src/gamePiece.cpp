@@ -1,28 +1,41 @@
 #include "gamePiece.h"
 #include "pieceMove.h"
 
+// Private utility methods
+
+/**
+ * Do a full delete for the definition
+ */
+void GamePiece::definitionDelete() {
+    // Delete each of the moves in the move set
+    for (std::vector<PieceMove*>::const_iterator it = moveSet->begin(); it != moveSet->end(); it++) {
+        delete *it;
+    }
+
+    delete moveSet;
+    moveSet = nullptr;
+}
+
+
 // Public constructors
 
 /**
- * Empty constructor
+ * Constructor for creating template pieces
  */
-GamePiece::GamePiece() {
-
+GamePiece::GamePiece(const std::string n, const std::vector<PieceMove*>* m) :
+	name{n},
+	moveSet{m}
+{
 }
 
 /**
- * Constructor
+ * "Copy" constructor for copying from the definition
  */
-GamePiece::GamePiece(
-	std::string name_,
-	sf::Color team_,
-	sf::Vector2i pos_,
-	unsigned int moveCount_
-) :
-	name{name_},
+GamePiece::GamePiece(const GamePiece* piece, const sf::Color team_, sf::Vector2i pos_) :
+	name{piece->name},
+	moveSet{piece->moveSet},
 	team{team_},
-	pos{pos_},
-	moveCount{moveCount_}
+	pos{pos_}
 {
 }
 
@@ -30,14 +43,7 @@ GamePiece::GamePiece(
  * Destructor
  */
 GamePiece::~GamePiece() {
-}
-
-
-
-// Public mutators
-
-void GamePiece::addMove(PieceMove* newMove) {
-    moveSet.push_back(newMove);
+	moveSet = nullptr;
 }
 
 
@@ -50,7 +56,7 @@ void GamePiece::addMove(PieceMove* newMove) {
  * @param newPos the desired position
  */
 bool GamePiece::canMove(const sf::Vector2i newPos) {
-	for (PieceMove* move : moveSet) {
+	for (PieceMove* move : *moveSet) {
 		if (move->canMove(this, newPos)) {
 			return true;
 		}

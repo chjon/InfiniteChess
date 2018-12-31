@@ -1,5 +1,6 @@
 #include <string>
 #include "renderer.h"
+#include "vectorUtils.h"
 
 // Private utility methods
 
@@ -30,10 +31,10 @@ void Renderer::drawBoard() const {
  * Draw the pieces
  */
 void Renderer::drawPieces() const {
-	std::map<sf::Vector2i, GamePiece*, PieceTracker::cmpVectorLexicographically>* pieces = &(game->pieceTracker->pieces);
+	std::map<sf::Vector2i, GamePiece*, VectorUtils::cmpVectorLexicographically>* pieces = &(game->pieceTracker->pieces);
 
 	// Draw the pieces
-    for (std::map<sf::Vector2i, GamePiece*, PieceTracker::cmpVectorLexicographically>::iterator it = pieces->begin(); it != pieces->end(); it++) {
+    for (std::map<sf::Vector2i, GamePiece*, VectorUtils::cmpVectorLexicographically>::iterator it = pieces->begin(); it != pieces->end(); it++) {
         drawPiece(it->second);
     }
 }
