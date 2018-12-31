@@ -32,7 +32,7 @@ public:
 
     // Methods
     bool definePiece(const std::string name, const std::vector<PieceMove*>* moveSet);
-    bool addPiece(std::string name, sf::Color team, sf::Vector2i pos);
+    bool addPiece(std::string name, sf::Color team, sf::Vector2i pos, GamePiece::Direction);
     bool removePiece(sf::Vector2i pos);
     GamePiece* getPiece(sf::Vector2i pos);
     bool movePiece(sf::Vector2i pos1, sf::Vector2i pos2);

@@ -15,6 +15,11 @@ class PieceMove;
 
 // Class declaration
 class GamePiece {
+public:
+	enum Direction {
+		UP, DOWN, LEFT, RIGHT
+	};
+
 private:
 	// Members
 	const std::string name;
@@ -22,6 +27,7 @@ private:
 	const sf::Color team;
 
     sf::Vector2i pos;
+    Direction dir;
     unsigned int moveCount;
 
     // Utility methods
@@ -36,7 +42,7 @@ private:
 public:
 	// Constructors
 	GamePiece(const std::string n, const std::vector<PieceMove*>* m);
-	GamePiece(const GamePiece* piece, const sf::Color team_, sf::Vector2i pos_);
+	GamePiece(const GamePiece* piece, const sf::Color team_, sf::Vector2i pos_, Direction dir_);
 	~GamePiece();
 
 	// Methods

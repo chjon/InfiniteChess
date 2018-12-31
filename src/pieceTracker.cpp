@@ -45,11 +45,39 @@ void PieceTracker::onStartup() {
 	pieceDefs.insert(std::make_pair("Pawn", new GamePiece("Pawn", pawnMoveSet)));
 	pawnMoveSet = nullptr;
 
+	// Create move set for kings
+	std::vector<PieceMove*>* kingMoveSet = new std::vector<PieceMove*>();
+
+	// Create king step
+	PieceMove* kingStep = new PieceMove(sf::Vector2i(0, 1));
+	kingStep->isAttack = true;
+	kingStep->isXSymmetric = true;
+	kingStep->isYSymmetric = true;
+	kingStep->isXYSymmetric = true;
+	kingMoveSet->push_back(kingStep);
+
+	kingStep = new PieceMove(sf::Vector2i(1, 1));
+	kingStep->isAttack = true;
+	kingStep->isXSymmetric = true;
+	kingStep->isYSymmetric = true;
+	kingStep->isXYSymmetric = true;
+	kingMoveSet->push_back(kingStep);
+
+	kingStep = nullptr;
+
+	// Create template king
+	pieceDefs.insert(std::make_pair("King", new GamePiece("King", kingMoveSet)));
+	kingMoveSet = nullptr;
+
 	// Create pawns
     for (int i = 0; i < 8; i++) {
-		addPiece("Pawn", sf::Color::White, sf::Vector2i(i, 1));
-		addPiece("Pawn", sf::Color::Green, sf::Vector2i(i, 6));
+		addPiece("Pawn", sf::Color::White, sf::Vector2i(i, 1), GamePiece::Direction::DOWN);
+		addPiece("Pawn", sf::Color::Green, sf::Vector2i(i, 6), GamePiece::Direction::UP);
     }
+
+    // Create kings
+    addPiece("King", sf::Color::White, sf::Vector2i(4,0), GamePiece::Direction::DOWN);
+    addPiece("King", sf::Color::Green, sf::Vector2i(4,7), GamePiece::Direction::UP);
 }
 
 
@@ -72,7 +100,7 @@ bool PieceTracker::definePiece(const std::string name, const std::vector<PieceMo
 /**
  * Add a piece to the piece tracker
  */
-bool PieceTracker::addPiece(std::string pieceName, sf::Color team, sf::Vector2i pos) {
+bool PieceTracker::addPiece(std::string pieceName, sf::Color team, sf::Vector2i pos, GamePiece::Direction dir) {
 	// Check whether a piece is already at the desired location
 	if (pieces.find(pos) != pieces.end()) return false;
 
@@ -81,7 +109,7 @@ bool PieceTracker::addPiece(std::string pieceName, sf::Color team, sf::Vector2i 
 	if (it == pieceDefs.end()) return false;
 
 	// Create a copy from the definition
-	pieces.insert(std::make_pair(pos, new GamePiece(it->second, team, pos)));
+	pieces.insert(std::make_pair(pos, new GamePiece(it->second, team, pos, dir)));
 
 	return true;
 }

@@ -31,11 +31,12 @@ GamePiece::GamePiece(const std::string n, const std::vector<PieceMove*>* m) :
 /**
  * "Copy" constructor for copying from the definition
  */
-GamePiece::GamePiece(const GamePiece* piece, const sf::Color team_, sf::Vector2i pos_) :
+GamePiece::GamePiece(const GamePiece* piece, const sf::Color team_, sf::Vector2i pos_, Direction dir_) :
 	name{piece->name},
 	moveSet{piece->moveSet},
 	team{team_},
-	pos{pos_}
+	pos{pos_},
+	dir{dir_}
 {
 }
 
