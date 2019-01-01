@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <map>
 #include <string>
+#include <exception>
 
 // Forward declarations
 class GamePiece;
@@ -25,6 +26,36 @@ private:
     void loadPieceDefs(std::string fileName);
 
 public:
+	// Exceptions
+
+	class FileFormatException : public std::exception {
+	private:
+		const std::string message;
+	public:
+		// Constructors
+		inline FileFormatException(const std::string m) : message{m} {}
+		inline ~FileFormatException() {}
+
+		// Overridden methods
+		inline virtual const char* what() const throw() {
+			return message.c_str();
+		}
+	};
+
+	class IOException : public std::exception {
+	private:
+		const std::string message;
+	public:
+		// Constructors
+		inline IOException(const std::string m) : message{m} {}
+		inline ~IOException() {}
+
+		// Overridden methods
+		inline virtual const char* what() const throw() {
+			return message.c_str();
+		}
+	};
+
 	// Constructors
 	ResourceLoader(PieceTracker* p);
 	~ResourceLoader();

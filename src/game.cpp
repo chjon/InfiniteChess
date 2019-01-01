@@ -1,3 +1,4 @@
+#include <iostream>
 #include "game.h"
 
 // Public constructors
@@ -50,7 +51,18 @@ Game::~Game() {
  */
 void Game::run() {
 	// Initialize everything
-	resourceLoader->onStartUp();
+
+	// Try loading resources
+	try {
+		resourceLoader->onStartUp();
+	} catch (ResourceLoader::FileFormatException ex) {
+        std::cout << "FileFormatException: " << ex.what() << std::endl;
+        return;
+	} catch (ResourceLoader::IOException ex) {
+        std::cout << "IOException: " << ex.what() << std::endl;
+        return;
+	}
+
 	pieceTracker->onStartup();
 	renderer->onStartup();
 	sf::Vector2f pos;

@@ -16,10 +16,8 @@ void ResourceLoader::loadPieceDefs(std::string fileName) {
 
     // Check whether the file is open
     if (!file.is_open()) {
-		std::cout << "Error: Unable to open file." << std::endl;
-		return;
+		throw IOException("Unable to open file: " + fileName);
     }
-
 
     bool foundDef = false;
     std::string pieceName;
@@ -41,6 +39,7 @@ void ResourceLoader::loadPieceDefs(std::string fileName) {
 				std::cout << pieceName << ": " << moveSet->size() << " moves loaded" << std::endl;
 				moveSet = nullptr;
 
+				// Reset stuff
 				foundDef = false;
 				continue;
 			}
@@ -76,29 +75,28 @@ void ResourceLoader::loadPieceDefs(std::string fileName) {
         } else {
         	// Check if the piece is declared properly
 			if (line[0] != '"') {
-				std::cout << "Error: Line must start with a quotation" << std::endl;
-				return;
+				throw FileFormatException("Line must start with a quotation");
 			}
 
+			// Check whether the file is formatted properly
 			unsigned int i = line.find("\"", 1);
 			if (i == std::string::npos) {
-                std::cout << "Error: Unmatched quotation" << std::endl;
-				return;
+                throw FileFormatException("Unmatched quotation");
 			}
 
+			// Set the name of the piece and initialize the move set
 			pieceName = line.substr(1, i - 1);
 			moveSet = new std::vector<PieceMove*>();
 
 			// Check whether a piece with the desired name exists
 			std::map<std::string, GamePiece*>::iterator it = pieceDefs->find(pieceName);
 			if (it != pieceDefs->end()) {
-				std::cout << "Error: Duplicate definition of " << pieceName << std::endl;
-				return;
+				throw FileFormatException("Duplicate definition of " + pieceName);
 			}
 
+			// Check whether the file is formatted properly
 			if (line[line.length() - 1] != '{') {
-				std::cout << "Error: Beginning of list not found" << std::endl;
-				return;
+				throw FileFormatException("Beginning of list not found");
 			}
 
 			foundDef = true;
