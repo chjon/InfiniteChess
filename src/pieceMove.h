@@ -13,8 +13,11 @@ class PieceTracker;
 // Class declaration
 class PieceMove {
 private:
+	enum MoveType {
+		GENERAL, MOVE_ONLY, ATTACK_ONLY
+	};
+
 	// Flags
-    bool isAttack;
     bool allowScaling;
     bool canLeap;
     bool isXSymmetric;
@@ -22,7 +25,13 @@ private:
     bool isXYSymmetric;
 
     // Members
+    PieceTracker* pieceTracker;
+
+    MoveType moveType;
 	sf::Vector2i baseVector;
+
+	// Utility methods
+	bool canMove (GamePiece::Direction dir, const sf::Vector2i base, const sf::Vector2i newPos);
 
 	// Friends
 	friend GamePiece;
@@ -30,7 +39,7 @@ private:
 
 public:
 	// Constructors
-	PieceMove(sf::Vector2i baseVector_);
+	PieceMove(PieceTracker* p, sf::Vector2i baseVector_);
 	~PieceMove();
 
 	// Methods

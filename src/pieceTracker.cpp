@@ -36,8 +36,12 @@ void PieceTracker::onStartup() {
 	std::vector<PieceMove*>* pawnMoveSet = new std::vector<PieceMove*>();
 
 	// Create pawn step
-	PieceMove* pawnStep = new PieceMove(sf::Vector2i(0, 1));
-	pawnStep->isAttack = false;
+	PieceMove* pawnStep = new PieceMove(this, sf::Vector2i(0, 1));
+	pawnStep->moveType = PieceMove::MoveType::MOVE_ONLY;
+	pawnMoveSet->push_back(pawnStep);
+	pawnStep = new PieceMove(this, sf::Vector2i(1, 1));
+	pawnStep->moveType = PieceMove::MoveType::ATTACK_ONLY;
+	pawnStep->isXSymmetric = true;
 	pawnMoveSet->push_back(pawnStep);
 	pawnStep = nullptr;
 
@@ -45,29 +49,26 @@ void PieceTracker::onStartup() {
 	pieceDefs.insert(std::make_pair("Pawn", new GamePiece("Pawn", pawnMoveSet)));
 	pawnMoveSet = nullptr;
 
-	// Create move set for kings
-	std::vector<PieceMove*>* kingMoveSet = new std::vector<PieceMove*>();
+	// Create move set for queens
+	std::vector<PieceMove*>* queenMoveSet = new std::vector<PieceMove*>();
 
-	// Create king step
-	PieceMove* kingStep = new PieceMove(sf::Vector2i(0, 1));
-	kingStep->isAttack = true;
-	kingStep->isXSymmetric = true;
-	kingStep->isYSymmetric = true;
-	kingStep->isXYSymmetric = true;
-	kingMoveSet->push_back(kingStep);
+	// Create queen step
+	PieceMove* queenStep = new PieceMove(this, sf::Vector2i(0, 1));
+	queenStep->isXSymmetric = true;
+	queenStep->isXYSymmetric = true;
+	queenStep->allowScaling = true;
+	queenMoveSet->push_back(queenStep);
+	queenStep = new PieceMove(this, sf::Vector2i(1, 1));
+	queenStep->isXSymmetric = true;
+	queenStep->isYSymmetric = true;
+	queenStep->allowScaling = true;
+	queenMoveSet->push_back(queenStep);
 
-	kingStep = new PieceMove(sf::Vector2i(1, 1));
-	kingStep->isAttack = true;
-	kingStep->isXSymmetric = true;
-	kingStep->isYSymmetric = true;
-	kingStep->isXYSymmetric = true;
-	kingMoveSet->push_back(kingStep);
+	queenStep = nullptr;
 
-	kingStep = nullptr;
-
-	// Create template king
-	pieceDefs.insert(std::make_pair("King", new GamePiece("King", kingMoveSet)));
-	kingMoveSet = nullptr;
+	// Create template queen
+	pieceDefs.insert(std::make_pair("Queen", new GamePiece("Queen", queenMoveSet)));
+	queenMoveSet = nullptr;
 
 	// Create pawns
     for (int i = 0; i < 8; i++) {
@@ -75,9 +76,9 @@ void PieceTracker::onStartup() {
 		addPiece("Pawn", sf::Color::Green, sf::Vector2i(i, 6), GamePiece::Direction::UP);
     }
 
-    // Create kings
-    addPiece("King", sf::Color::White, sf::Vector2i(4,0), GamePiece::Direction::DOWN);
-    addPiece("King", sf::Color::Green, sf::Vector2i(4,7), GamePiece::Direction::UP);
+    // Create queens
+    addPiece("Queen", sf::Color::White, sf::Vector2i(3,0), GamePiece::Direction::DOWN);
+    addPiece("Queen", sf::Color::Green, sf::Vector2i(3,7), GamePiece::Direction::UP);
 }
 
 
@@ -125,7 +126,6 @@ bool PieceTracker::removePiece(sf::Vector2i pos) {
 	}
 
     pieces.erase(pieces.find(pos));
-
     return true;
 }
 
