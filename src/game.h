@@ -6,12 +6,14 @@
 #include "inputHandler.h"
 #include "pieceTracker.h"
 #include "controller.h"
+#include "resourceLoader.h"
 
 // Forward declarations
 class Renderer;
 class InputHandler;
 class PieceTracker;
 class Controller;
+class ResourceLoader;
 
 
 
@@ -24,11 +26,13 @@ private:
 	InputHandler*     inputHandler;
 	PieceTracker*     pieceTracker;
 	Controller*       controller;
+	ResourceLoader*   resourceLoader;
 
 	// Friends
 	friend Renderer;
 	friend InputHandler;
 	friend Controller;
+	friend PieceTracker;
 
 public:
 	// Constructors

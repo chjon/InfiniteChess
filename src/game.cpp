@@ -15,27 +15,30 @@ Game::Game() {
 		sf::Style::Default
 	);
 
-	renderer     = new Renderer(this, window);
-	inputHandler = new InputHandler(this, window, renderer);
-	pieceTracker = new PieceTracker();
-	controller   = new Controller(this, pieceTracker);
+	renderer       = new Renderer(this, window);
+	inputHandler   = new InputHandler(this, window, renderer);
+	pieceTracker   = new PieceTracker(this);
+	controller     = new Controller(this, pieceTracker);
+	resourceLoader = new ResourceLoader(pieceTracker);
 }
 
 /**
  * Destructor
  */
 Game::~Game() {
+	delete resourceLoader;
 	delete controller;
     delete pieceTracker;
 	delete inputHandler;
 	delete renderer;
 	delete window;
 
-	controller   = nullptr;
-	pieceTracker = nullptr;
-	inputHandler = nullptr;
-	renderer     = nullptr;
-	window       = nullptr;
+	resourceLoader = nullptr;
+	controller     = nullptr;
+	pieceTracker   = nullptr;
+	inputHandler   = nullptr;
+	renderer       = nullptr;
+	window         = nullptr;
 }
 
 
@@ -47,6 +50,7 @@ Game::~Game() {
  */
 void Game::run() {
 	// Initialize everything
+	resourceLoader->onStartUp();
 	pieceTracker->onStartup();
 	renderer->onStartup();
 	sf::Vector2f pos;

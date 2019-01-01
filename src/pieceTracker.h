@@ -7,6 +7,7 @@
 #include "vectorUtils.h"
 
 // Forward declarations
+class Game;
 class Renderer;
 
 
@@ -15,8 +16,9 @@ class Renderer;
 class PieceTracker {
 private:
     // Members
+	Game* game;
 
-    std::map<std::string, GamePiece*> pieceDefs;
+    std::map<std::string, GamePiece*>* pieceDefs;
     std::map<sf::Vector2i, GamePiece*, VectorUtils::cmpVectorLexicographically> pieces;
 
     // Friends
@@ -24,14 +26,13 @@ private:
 
 public:
     // Constructors
-    PieceTracker();
+    PieceTracker(Game* g);
     ~PieceTracker();
 
     // Event handlers
     void onStartup();
 
     // Methods
-    bool definePiece(const std::string name, const std::vector<PieceMove*>* moveSet);
     bool addPiece(std::string name, sf::Color team, sf::Vector2i pos, GamePiece::Direction);
     bool removePiece(sf::Vector2i pos);
     GamePiece* getPiece(sf::Vector2i pos);

@@ -10,6 +10,7 @@ class Renderer;
 class PieceTracker;
 class Controller;
 class PieceMove;
+class ResourceLoader;
 
 
 
@@ -38,6 +39,7 @@ private:
     friend PieceTracker;
     friend Controller;
     friend PieceMove;
+    friend ResourceLoader;
 
 public:
 	// Constructors

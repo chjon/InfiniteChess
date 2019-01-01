@@ -36,6 +36,7 @@ private:
 	// Friends
 	friend GamePiece;
 	friend PieceTracker;
+	friend ResourceLoader;
 
 public:
 	// Constructors

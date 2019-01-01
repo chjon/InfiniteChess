@@ -1,4 +1,5 @@
 #include <map>
+#include "game.h"
 #include "pieceTracker.h"
 #include "pieceMove.h"
 
@@ -7,7 +8,9 @@
 /**
  * Constructor
  */
-PieceTracker::PieceTracker() {
+PieceTracker::PieceTracker(Game* g) :
+	game{g}
+{
 }
 
 /**
@@ -19,11 +22,7 @@ PieceTracker::~PieceTracker() {
         delete it->second;
     }
 
-    // Delete all the definitions
-    for (std::map<std::string, GamePiece*>::iterator it = pieceDefs.begin(); it != pieceDefs.end(); it++) {
-		it->second->definitionDelete();
-		delete it->second;
-    }
+    pieceDefs = nullptr;
 }
 
 // Public event handlers
@@ -32,71 +31,42 @@ PieceTracker::~PieceTracker() {
  * Handle the initial loading of pieces
  */
 void PieceTracker::onStartup() {
-	// Create move set for pawns
-	std::vector<PieceMove*>* pawnMoveSet = new std::vector<PieceMove*>();
-
-	// Create pawn step
-	PieceMove* pawnStep = new PieceMove(this, sf::Vector2i(0, 1));
-	pawnStep->moveType = PieceMove::MoveType::MOVE_ONLY;
-	pawnMoveSet->push_back(pawnStep);
-	pawnStep = new PieceMove(this, sf::Vector2i(1, 1));
-	pawnStep->moveType = PieceMove::MoveType::ATTACK_ONLY;
-	pawnStep->isXSymmetric = true;
-	pawnMoveSet->push_back(pawnStep);
-	pawnStep = nullptr;
-
-	// Create template pawn
-	pieceDefs.insert(std::make_pair("Pawn", new GamePiece("Pawn", pawnMoveSet)));
-	pawnMoveSet = nullptr;
-
-	// Create move set for queens
-	std::vector<PieceMove*>* queenMoveSet = new std::vector<PieceMove*>();
-
-	// Create queen step
-	PieceMove* queenStep = new PieceMove(this, sf::Vector2i(0, 1));
-	queenStep->isXSymmetric = true;
-	queenStep->isXYSymmetric = true;
-	queenStep->allowScaling = true;
-	queenMoveSet->push_back(queenStep);
-	queenStep = new PieceMove(this, sf::Vector2i(1, 1));
-	queenStep->isXSymmetric = true;
-	queenStep->isYSymmetric = true;
-	queenStep->allowScaling = true;
-	queenMoveSet->push_back(queenStep);
-
-	queenStep = nullptr;
-
-	// Create template queen
-	pieceDefs.insert(std::make_pair("Queen", new GamePiece("Queen", queenMoveSet)));
-	queenMoveSet = nullptr;
-
 	// Create pawns
     for (int i = 0; i < 8; i++) {
 		addPiece("Pawn", sf::Color::White, sf::Vector2i(i, 1), GamePiece::Direction::DOWN);
 		addPiece("Pawn", sf::Color::Green, sf::Vector2i(i, 6), GamePiece::Direction::UP);
     }
 
+    // Create rooks
+    addPiece("Rook", sf::Color::White, sf::Vector2i(0, 0), GamePiece::Direction::DOWN);
+    addPiece("Rook", sf::Color::White, sf::Vector2i(7, 0), GamePiece::Direction::DOWN);
+    addPiece("Rook", sf::Color::Green, sf::Vector2i(0, 7), GamePiece::Direction::UP);
+    addPiece("Rook", sf::Color::Green, sf::Vector2i(7, 7), GamePiece::Direction::UP);
+
+    // Create knights
+    addPiece("Knight", sf::Color::White, sf::Vector2i(1, 0), GamePiece::Direction::DOWN);
+    addPiece("Knight", sf::Color::White, sf::Vector2i(6, 0), GamePiece::Direction::DOWN);
+    addPiece("Knight", sf::Color::Green, sf::Vector2i(1, 7), GamePiece::Direction::UP);
+    addPiece("Knight", sf::Color::Green, sf::Vector2i(6, 7), GamePiece::Direction::UP);
+
+    // Create bishops
+    addPiece("Bishop", sf::Color::White, sf::Vector2i(2, 0), GamePiece::Direction::DOWN);
+    addPiece("Bishop", sf::Color::White, sf::Vector2i(5, 0), GamePiece::Direction::DOWN);
+    addPiece("Bishop", sf::Color::Green, sf::Vector2i(2, 7), GamePiece::Direction::UP);
+    addPiece("Bishop", sf::Color::Green, sf::Vector2i(5, 7), GamePiece::Direction::UP);
+
+    // Create kings
+    addPiece("King", sf::Color::White, sf::Vector2i(4, 0), GamePiece::Direction::DOWN);
+    addPiece("King", sf::Color::Green, sf::Vector2i(4, 7), GamePiece::Direction::UP);
+
     // Create queens
-    addPiece("Queen", sf::Color::White, sf::Vector2i(3,0), GamePiece::Direction::DOWN);
-    addPiece("Queen", sf::Color::Green, sf::Vector2i(3,7), GamePiece::Direction::UP);
+    addPiece("Queen", sf::Color::White, sf::Vector2i(3, 0), GamePiece::Direction::DOWN);
+    addPiece("Queen", sf::Color::Green, sf::Vector2i(3, 7), GamePiece::Direction::UP);
 }
 
 
 
 // Public methods
-
-/**
- * Create a template piece
- */
-bool PieceTracker::definePiece(const std::string name, const std::vector<PieceMove*>* moveSet) {
-	// Check whether a piece with the desired name exists
-    std::map<std::string, GamePiece*>::iterator it = pieceDefs.find(name);
-    if (it == pieceDefs.end()) return false;
-
-    // Add the piece to the definitions
-    pieceDefs.insert(std::make_pair(name, new GamePiece(name, moveSet)));
-    return true;
-}
 
 /**
  * Add a piece to the piece tracker
@@ -105,9 +75,11 @@ bool PieceTracker::addPiece(std::string pieceName, sf::Color team, sf::Vector2i 
 	// Check whether a piece is already at the desired location
 	if (pieces.find(pos) != pieces.end()) return false;
 
+	std::map<std::string, GamePiece*>* pieceDefs = game->resourceLoader->pieceDefs;
+
 	// Check whether a piece with the desired name exists
-	std::map<std::string, GamePiece*>::iterator it = pieceDefs.find(pieceName);
-	if (it == pieceDefs.end()) return false;
+	std::map<std::string, GamePiece*>::iterator it = pieceDefs->find(pieceName);
+	if (it == pieceDefs->end()) return false;
 
 	// Create a copy from the definition
 	pieces.insert(std::make_pair(pos, new GamePiece(it->second, team, pos, dir)));
