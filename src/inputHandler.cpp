@@ -9,10 +9,10 @@ void InputHandler::checkKeyboard() {
 	sf::Vector2f translationVec;
 
 	// Handle camera movement
-	if (sf::Keyboard::isKeyPressed(KEY_MOVE_UP  ))  translationVec.y -= MOVE_STEP_SIZE;
-	if (sf::Keyboard::isKeyPressed(KEY_MOVE_D0WN))  translationVec.y += MOVE_STEP_SIZE;
-	if (sf::Keyboard::isKeyPressed(KEY_MOVE_LEFT))  translationVec.x -= MOVE_STEP_SIZE;
-	if (sf::Keyboard::isKeyPressed(KEY_MOVE_RIGHT)) translationVec.x += MOVE_STEP_SIZE;
+	if (sf::Keyboard::isKeyPressed(KEY_MOVE_UP  ))  translationVec.y -= MOVE_STEP_SIZE * renderer->getTileDimensions().y;
+	if (sf::Keyboard::isKeyPressed(KEY_MOVE_D0WN))  translationVec.y += MOVE_STEP_SIZE * renderer->getTileDimensions().y;
+	if (sf::Keyboard::isKeyPressed(KEY_MOVE_LEFT))  translationVec.x -= MOVE_STEP_SIZE * renderer->getTileDimensions().y;
+	if (sf::Keyboard::isKeyPressed(KEY_MOVE_RIGHT)) translationVec.x += MOVE_STEP_SIZE * renderer->getTileDimensions().y;
 
 	// Only move the camera if there is a non-zero displacement
 	if (translationVec.x != 0 || translationVec.y != 0) {

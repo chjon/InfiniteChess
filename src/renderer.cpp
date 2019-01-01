@@ -53,12 +53,8 @@ void Renderer::drawOverlays() const {
 
     // Draw mouse overlay
 
-    // Check if debug data should be drawn
-    if (displayDebugData) {
-		drawTile(mousePos.x, mousePos.y, MOUSE_DEBUG_COLOR);
-
 	// If no piece is selected, only pieces should be selectable
-    } else if (selectedPiece == nullptr) {
+    if (selectedPiece == nullptr) {
 		if (game->pieceTracker->getPiece(mousePos) == nullptr) {
 			drawTile(mousePos.x, mousePos.y, MOUSE_INVALID_COLOR);
 		} else {
@@ -72,6 +68,11 @@ void Renderer::drawOverlays() const {
 		} else {
 			drawTile(mousePos.x, mousePos.y, MOUSE_INVALID_COLOR);
 		}
+    }
+
+    // Check if debug data should be drawn
+    if (displayDebugData) {
+		drawTile(mousePos.x, mousePos.y, MOUSE_DEBUG_COLOR);
     }
 }
 
@@ -139,8 +140,27 @@ void Renderer::drawDebug() const {
 	drawDebugText(s, row++);
 	s = "Mouse position: (" + std::to_string(mousePos.x) + ", " + std::to_string(mousePos.y) + ")";
 	drawDebugText(s, row++);
-	s = "Tile size: (" + std::to_string(tileSize) + ")";
+	s = "Tile size: " + std::to_string(tileSize);
 	drawDebugText(s, row++);
+
+	GamePiece* selectedPiece = game->controller->getSelectedPiece();
+	if (selectedPiece == nullptr) {
+		s = "Selected piece: null";
+		drawDebugText(s, row++);
+	} else {
+		s = "Selected piece: " + selectedPiece->name;
+		drawDebugText(s, row++);
+		s = "Selected piece dir: " + std::to_string(selectedPiece->dir);
+		drawDebugText(s, row++);
+		s = "Selected piece pos: (" + std::to_string(selectedPiece->pos.x) + ", " + std::to_string(selectedPiece->pos.y) + ")";
+		drawDebugText(s, row++);
+		s = "Selected piece team: rgba(" +
+			std::to_string(selectedPiece->team.r) + "," +
+			std::to_string(selectedPiece->team.g) + "," +
+			std::to_string(selectedPiece->team.b) + "," +
+			std::to_string(selectedPiece->team.a) + ")";
+		drawDebugText(s, row++);
+	}
 }
 
 
@@ -254,6 +274,12 @@ sf::Vector2i Renderer::getMouseTilePosition() const {
 	);
 }
 
+/**
+ * Get the tile dimensions
+ */
+sf::Vector2u Renderer::getTileDimensions() const {
+	return dimensionsInTiles;
+}
 
 
 // Public mutators

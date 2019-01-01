@@ -121,8 +121,6 @@ ResourceLoader::ResourceLoader(PieceTracker* p) :
  * Destructor
  */
 ResourceLoader::~ResourceLoader() {
-	pieceTracker = nullptr;
-
 	// Delete all the definitions
     for (std::map<std::string, GamePiece*>::iterator it = pieceDefs->begin(); it != pieceDefs->end(); it++) {
 		it->second->definitionDelete();
@@ -130,6 +128,9 @@ ResourceLoader::~ResourceLoader() {
     }
 
     delete pieceDefs;
+
+    pieceDefs    = nullptr;
+    pieceTracker = nullptr;
 }
 
 

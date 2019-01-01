@@ -14,7 +14,7 @@ class Renderer;
 class InputHandler {
 private:
 	// Configuration constants
-	const float MOVE_STEP_SIZE = 0.1f;
+	const float MOVE_STEP_SIZE = 0.005f;
 
 	// Movement keybinds
 	const sf::Keyboard::Key KEY_MOVE_UP    = sf::Keyboard::Key::W;

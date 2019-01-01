@@ -18,8 +18,8 @@ private:
 	// Configuration constants
 	const unsigned int TILE_PADDING  = 3;
 	const unsigned int MAX_FRAMERATE = 60;
-	const float MIN_TILE_SIZE =   5.f;
-	const float MAX_TILE_SIZE = 300.f;
+	const float MIN_TILE_SIZE =  20.f;
+	const float MAX_TILE_SIZE = 120.f;
 
 	// Resources
 	const std::string FONT_DIRECTORY      = "res/font/";
@@ -57,7 +57,6 @@ private:
 	void drawPiece(GamePiece* p) const;
 	void drawTile(const int x, const int y, const sf::Color c) const;
 	void drawDebug() const;
-
 public:
 	// Flags
     bool needsRedraw = false;
@@ -75,6 +74,7 @@ public:
 	// Accessors
 	sf::Vector2f getMousePosition() const;
 	sf::Vector2i getMouseTilePosition() const;
+	sf::Vector2u getTileDimensions() const;
 
 	// Mutators
 	void setCameraPos(const sf::Vector2f pos);
