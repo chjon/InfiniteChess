@@ -11,6 +11,7 @@ class PieceTracker;
 class Controller;
 class PieceMove;
 class ResourceLoader;
+class MoveMarker;
 
 
 
@@ -46,6 +47,15 @@ public:
 	GamePiece(const std::string n, const std::vector<PieceMove*>* m);
 	GamePiece(const GamePiece* piece, const sf::Color team_, sf::Vector2i pos_, Direction dir_);
 	~GamePiece();
+
+	// Accessors
+
+	/**
+	 * Get the move markers for the piece
+	 *
+	 * @return a vector containing the piece's initial move markers
+	 */
+	std::vector<MoveMarker*> generateMoveMarkers() const;
 
 	// Methods
 	bool canMove (const sf::Vector2i newPos);

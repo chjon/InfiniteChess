@@ -21,6 +21,14 @@ private:
     std::map<std::string, GamePiece*>* pieceDefs;
     std::map<sf::Vector2i, GamePiece*, VectorUtils::cmpVectorLexicographically> pieces;
 
+    // Utility methods
+
+    /**
+     * Create the move markers for each piece
+     */
+    void generateMoveMarkers();
+    void updateMoveMarkers(GamePiece* piece);
+
     // Friends
     friend Renderer;
 
