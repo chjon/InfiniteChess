@@ -45,7 +45,10 @@ void Renderer::drawPieces() const {
 	std::map<sf::Vector2i, GamePiece*, VectorUtils::cmpVectorLexicographically>* pieces = &(game->pieceTracker->pieces);
 
 	// Draw the pieces
-    for (std::map<sf::Vector2i, GamePiece*, VectorUtils::cmpVectorLexicographically>::iterator it = pieces->begin(); it != pieces->end(); it++) {
+    for (std::map<sf::Vector2i, GamePiece*, VectorUtils::cmpVectorLexicographically>::iterator it = pieces->begin();
+		it != pieces->end();
+		++it
+	) {
         drawPiece(it->second);
     }
 }
@@ -67,7 +70,7 @@ void Renderer::drawOverlays() const {
 			++it
 		) {
 			if (!it->second->canMove() && !displayDebugData) continue;
-			drawTile(it->first.x, it->first.y, PIECE_SELECTED_COLOR);
+			drawTile(it->first.x, it->first.y, MOVE_MARKER_COLOR);
 		}
     }
 
@@ -248,6 +251,7 @@ void Renderer::onCameraMove() {
 	cameraShift.x = - tileSize * std::fmod(cameraPos.x, 2.f);
 	cameraShift.y = - tileSize * std::fmod(cameraPos.y, 2.f);
 
+	game->pieceTracker->onCameraChange();
 	needsRedraw = true;
 }
 

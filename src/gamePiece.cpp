@@ -1,6 +1,7 @@
 #include "gamePiece.h"
 #include "pieceMove.h"
 #include "moveMarker.h"
+#include <iostream>
 
 // Private utility methods
 
@@ -18,6 +19,7 @@ void GamePiece::deleteMoveMarkers() {
     }
 
     moveMarkers.clear();
+    terminalMoveMarkers.clear();
 }
 
 /**
@@ -48,7 +50,8 @@ GamePiece::GamePiece(const std::string n, const std::vector<PieceMove*>* m) :
 /**
  * "Copy" constructor for copying from the definition
  */
-GamePiece::GamePiece(const GamePiece* piece, const sf::Color team_, sf::Vector2i pos_, Direction dir_) :
+GamePiece::GamePiece(PieceTracker* pieceTracker_, const GamePiece* piece, const sf::Color team_, sf::Vector2i pos_, Direction dir_) :
+	pieceTracker{pieceTracker_},
 	name{piece->name},
 	moveSet{piece->moveSet},
 	team{team_},
@@ -61,6 +64,7 @@ GamePiece::GamePiece(const GamePiece* piece, const sf::Color team_, sf::Vector2i
  * Destructor
  */
 GamePiece::~GamePiece() {
+	deleteMoveMarkers();
 	moveSet = nullptr;
 }
 
@@ -69,15 +73,53 @@ GamePiece::~GamePiece() {
 // Public methods
 
 /**
- * Update the piece's move markers
+ * Update the piece's move markers when the piece moves
  */
-void GamePiece::updateMoveMarkers() {
+void GamePiece::onMove() {
 	// Delete all current move markers
 	deleteMoveMarkers();
 
     // Generate new move markers
     for (std::vector<PieceMove*>::const_iterator i = moveSet->begin(); i != moveSet->end(); ++i) {
         (*i)->generateMoveMarkers(this);
+    }
+
+    onCameraChange();
+}
+
+/**
+ * Update the piece's move markers when the camera changes
+ */
+void GamePiece::onCameraChange() {
+	std::vector<MoveMarker*> temp;
+
+    // Update the terminal move markers
+    for (std::vector<MoveMarker*>::iterator it = terminalMoveMarkers.begin(); it != terminalMoveMarkers.end(); ++it) {
+		MoveMarker* terminalMarker = *it;
+		const PieceMove* rootMove = terminalMarker->rootMove;
+
+		sf::Vector2i nextPos = terminalMarker->getNextPos();
+		MoveMarker* prev = terminalMarker;
+
+		// Generate all renderable move markers
+        while (pieceTracker->isRenderable(nextPos)) {
+			terminalMarker = new MoveMarker(this, rootMove, terminalMarker->baseVector, nextPos);
+			terminalMarker->setPrev(prev);
+			prev = terminalMarker;
+
+			moveMarkers.insert(std::make_pair(nextPos, terminalMarker));
+			nextPos = terminalMarker->getNextPos();
+        }
+
+        // Store the new terminal move marker
+        temp.push_back(terminalMarker);
+    }
+
+    terminalMoveMarkers.clear();
+
+    // Push the terminal move markers back into the member vector
+    for (std::vector<MoveMarker*>::iterator i = temp.begin(); i != temp.end(); ++i) {
+		terminalMoveMarkers.push_back(*i);
     }
 }
 
@@ -100,5 +142,5 @@ bool GamePiece::canMove(const sf::Vector2i newPos) {
  */
 void GamePiece::move(const sf::Vector2i newPos) {
 	pos = newPos;
-	updateMoveMarkers();
+	onMove();
 }

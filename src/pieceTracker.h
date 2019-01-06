@@ -38,6 +38,7 @@ public:
 
     // Event handlers
     void onStartup();
+    void onCameraChange();
 
     // Accessors
 

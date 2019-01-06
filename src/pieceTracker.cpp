@@ -12,7 +12,7 @@
 void PieceTracker::generateMoveMarkers() {
 	// Generate and add the move markers for each piece
 	for (std::map<sf::Vector2i, GamePiece*>::iterator it = pieces.begin(); it != pieces.end(); ++it) {
-		it->second->updateMoveMarkers();
+		it->second->onMove();
     }
 }
 
@@ -81,6 +81,16 @@ void PieceTracker::onStartup() {
     generateMoveMarkers();
 }
 
+/**
+ * Update the pieces when the cmaera changes
+ */
+void PieceTracker::onCameraChange() {
+    for (std::map<sf::Vector2i, GamePiece*>::iterator i = pieces.begin(); i != pieces.end(); ++i) {
+        GamePiece* piece = i->second;
+        piece->onCameraChange();
+    }
+}
+
 
 
 // Accessors
@@ -110,7 +120,7 @@ bool PieceTracker::addPiece(std::string pieceName, sf::Color team, sf::Vector2i 
 	if (it == pieceDefs->end()) return false;
 
 	// Create a copy from the definition
-	pieces.insert(std::make_pair(pos, new GamePiece(it->second, team, pos, dir)));
+	pieces.insert(std::make_pair(pos, new GamePiece(this, it->second, team, pos, dir)));
 
 	return true;
 }

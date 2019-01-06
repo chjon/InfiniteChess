@@ -32,6 +32,7 @@ private:
 	const sf::Color MOUSE_VALID_COLOR    = sf::Color(  0, 255,   0, 100);
 	const sf::Color MOUSE_INVALID_COLOR  = sf::Color(255,   0,   0, 100);
 	const sf::Color PIECE_SELECTED_COLOR = sf::Color(255, 255,   0, 100);
+	const sf::Color MOVE_MARKER_COLOR    = sf::Color(  0, 255, 255, 100);
 
 	// Flags
 	bool displayDebugData = true;

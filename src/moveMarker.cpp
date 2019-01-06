@@ -1,13 +1,14 @@
 #include "moveMarker.h"
 #include "pieceMove.h"
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
 // Public constructors / destructor
 
 /**
  * Constructor
  */
-MoveMarker::MoveMarker(GamePiece* rootPiece_, PieceMove* rootMove, sf::Vector2i baseVector_, sf::Vector2i pos_) :
+MoveMarker::MoveMarker(GamePiece* rootPiece_, const PieceMove* rootMove, sf::Vector2i baseVector_, sf::Vector2i pos_) :
 	rootPiece{rootPiece_},
 	rootMove{rootMove},
 	baseVector{baseVector_},
@@ -22,7 +23,7 @@ MoveMarker::MoveMarker(GamePiece* rootPiece_, PieceMove* rootMove, sf::Vector2i 
  * Destructor
  */
 MoveMarker::~MoveMarker() {
-	destroyChildren();
+	next = nullptr;
 
 	// Get rid of previous references to this move marker
 	if (prev != nullptr) {
@@ -91,6 +92,56 @@ bool MoveMarker::canMove() const {
 
 
 
+// Mutators
+
+/**
+ * Set the previous move marker
+ */
+void MoveMarker::setPrev(MoveMarker* newPrev) {
+	// Unlink the previous move marker from this move marker
+	if (prev != nullptr) {
+		prev->next = nullptr;
+	}
+
+	// Link the new previous move marker to this move marker
+    if (newPrev != nullptr) {
+		// Unlink the new previous move marker's next move marker
+		if (newPrev->next != nullptr) {
+			newPrev->next->prev = nullptr;
+		}
+
+		newPrev->next = this;
+    }
+
+    // Link this move marker to the new previous move marker
+    prev = newPrev;
+}
+
+/**
+ * Set the next move marker
+ */
+void MoveMarker::setNext(MoveMarker* newNext) {
+	// Unlink the next move marker from this move marker
+	if (next != nullptr) {
+		next->prev = nullptr;
+	}
+
+	// Link the new next move marker to this move marker
+    if (newNext != nullptr) {
+		// Unlink the new next move marker's previous move marker
+		if (newNext->prev != nullptr) {
+			newNext->prev->next = nullptr;
+		}
+
+		newNext->prev = this;
+    }
+
+    // Link this move marker to the new next move marker
+    next = newNext;
+}
+
+
+
 // Public utility methods
 
 /**
@@ -98,12 +149,4 @@ bool MoveMarker::canMove() const {
  */
 bool MoveMarker::isTerminal() {
 	return (prev == nullptr) || (next == nullptr);
-}
-
-/**
- * Delete all the "next" move markers
- */
-void MoveMarker::destroyChildren() {
-	delete next;
-	next = nullptr;
 }

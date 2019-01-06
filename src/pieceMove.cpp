@@ -51,14 +51,14 @@ void PieceMove::generateMoveMarkers(GamePiece* piece) {
 				}
 
 				// Add move markers for the current set of transformations
-				MoveMarker* newMoveMarker;
 				sf::Vector2i nextPos = piece->pos + rotated;
+				MoveMarker* newMoveMarker = new MoveMarker(piece, this, rotated, nextPos);
+				piece->moveMarkers.insert(std::make_pair(nextPos, newMoveMarker));
 
-				do {
-					newMoveMarker = new MoveMarker(piece, this, rotated, nextPos);
-					piece->moveMarkers.insert(std::make_pair(nextPos, newMoveMarker));
-					nextPos = newMoveMarker->getNextPos();
-				} while (allowScaling && pieceTracker->isRenderable(nextPos));
+				// Add the terminal move markers
+                if (allowScaling) {
+					piece->terminalMoveMarkers.push_back(newMoveMarker);
+                }
 
 				// Swap x and y if the move is xy-symmetric to get the next base vector
 				if (isXYSymmetric) {

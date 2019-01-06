@@ -25,6 +25,8 @@ public:
 
 private:
 	// Members
+	PieceTracker* pieceTracker;
+
 	const std::string name;
 	const std::vector<PieceMove*>* moveSet;
 	const sf::Color team;
@@ -37,6 +39,11 @@ private:
 	 * The piece's move markers
 	 */
 	std::map<sf::Vector2i, MoveMarker*, VectorUtils::cmpVectorLexicographically> moveMarkers;
+
+	/**
+	 * The move markers at the ends of the move's "raycasts"
+	 */
+	std::vector<MoveMarker*> terminalMoveMarkers;
 
     // Utility methods
     void definitionDelete();
@@ -56,15 +63,20 @@ private:
 public:
 	// Constructors
 	GamePiece(const std::string n, const std::vector<PieceMove*>* m);
-	GamePiece(const GamePiece* piece, const sf::Color team_, sf::Vector2i pos_, Direction dir_);
+	GamePiece(PieceTracker* pieceTracker_, const GamePiece* piece, const sf::Color team_, sf::Vector2i pos_, Direction dir_);
 	~GamePiece();
 
 	// Utility methods
 
 	/**
-	 * Update the piece's move markers
+	 * Update the piece's move markers when the piece moves
 	 */
-	void updateMoveMarkers();
+	void onMove();
+
+	/**
+	 * Update the piece's move markers when the camera changes
+	 */
+	void onCameraChange();
 
 	bool canMove (const sf::Vector2i newPos);
 	void move (const sf::Vector2i newPos);

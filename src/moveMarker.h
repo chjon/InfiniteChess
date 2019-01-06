@@ -58,7 +58,7 @@ private:
 
 public:
 	// Constructors / Destructor
-	MoveMarker(GamePiece* rootPiece_, PieceMove* rootMove_, sf::Vector2i baseVector, sf::Vector2i pos_);
+	MoveMarker(GamePiece* rootPiece_, const PieceMove* rootMove_, sf::Vector2i baseVector, sf::Vector2i pos_);
 	~MoveMarker();
 
 	// Accessors
@@ -93,17 +93,26 @@ public:
 	 */
 	bool canMove() const;
 
+	// Mutators
+
+	/**
+	 * Set the previous move marker
+	 */
+	void setPrev(MoveMarker* newPrev);
+
+	/**
+	 * Set the next move marker
+	 */
+	void setNext(MoveMarker* newNext);
+
+
+
 	// Utility methods
 
 	/**
 	 * Determine whether the move marker is one of the ends of the move (beginning/end)
 	 */
 	bool isTerminal();
-
-	/**
-	 * Get rid of all the "next" move markers
-	 */
-	void destroyChildren();
 };
 
 #endif // CHESS_MOVE_MARKER_H
