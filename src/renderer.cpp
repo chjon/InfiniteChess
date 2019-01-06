@@ -1,8 +1,19 @@
 #include <string>
 #include "renderer.h"
 #include "vectorUtils.h"
+#include "moveMarker.h"
 
 // Private utility methods
+
+/**
+ * Get the position of a tile on screen
+ */
+sf::Vector2i Renderer::getScreenPos(sf::Vector2i pos) const {
+    return sf::Vector2i(
+		tileStartPos.x + tileSize * (pos.x - cameraPos.x + dimensionsInTiles.x / 2),
+		tileStartPos.y + tileSize * (pos.y - cameraPos.y + dimensionsInTiles.y / 2)
+	);
+}
 
 /**
  * Draw the board
@@ -34,7 +45,10 @@ void Renderer::drawPieces() const {
 	std::map<sf::Vector2i, GamePiece*, VectorUtils::cmpVectorLexicographically>* pieces = &(game->pieceTracker->pieces);
 
 	// Draw the pieces
-    for (std::map<sf::Vector2i, GamePiece*, VectorUtils::cmpVectorLexicographically>::iterator it = pieces->begin(); it != pieces->end(); it++) {
+    for (std::map<sf::Vector2i, GamePiece*, VectorUtils::cmpVectorLexicographically>::iterator it = pieces->begin();
+		it != pieces->end();
+		++it
+	) {
         drawPiece(it->second);
     }
 }
@@ -49,6 +63,15 @@ void Renderer::drawOverlays() const {
     // Draw selection overlay
     if (selectedPiece != nullptr) {
 		drawTile(selectedPiece->pos.x, selectedPiece->pos.y, PIECE_SELECTED_COLOR);
+
+		// Draw possible moves
+		for (std::map<sf::Vector2i, MoveMarker*>::iterator it = selectedPiece->moveMarkers.begin();
+			it != selectedPiece->moveMarkers.end();
+			++it
+		) {
+			if (!it->second->canMove() && !displayDebugData) continue;
+			drawTile(it->first.x, it->first.y, MOVE_MARKER_COLOR);
+		}
     }
 
     // Draw mouse overlay
@@ -228,6 +251,7 @@ void Renderer::onCameraMove() {
 	cameraShift.x = - tileSize * std::fmod(cameraPos.x, 2.f);
 	cameraShift.y = - tileSize * std::fmod(cameraPos.y, 2.f);
 
+	game->pieceTracker->onCameraChange();
 	needsRedraw = true;
 }
 
@@ -281,6 +305,20 @@ sf::Vector2u Renderer::getTileDimensions() const {
 	return dimensionsInTiles;
 }
 
+/**
+ * Determine whether a certain tile position is within the bounds of the screen
+ */
+bool Renderer::isRenderable(sf::Vector2i pos) const {
+    sf::Vector2i screenPos = getScreenPos(pos);
+
+    bool renderable = !((screenPos.x) < -tileSize ||
+		(screenPos.x > 0 && (unsigned int) screenPos.x > window->getSize().x) ||
+		(screenPos.y) < -tileSize ||
+		(screenPos.y > 0 && (unsigned int) screenPos.y > window->getSize().y)
+	);
+
+    return renderable;
+}
 
 // Public mutators
 

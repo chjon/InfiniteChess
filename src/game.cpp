@@ -63,9 +63,8 @@ void Game::run() {
         return;
 	}
 
-	pieceTracker->onStartup();
 	renderer->onStartup();
-	sf::Vector2f pos;
+	pieceTracker->onStartup();
 
 	sf::Clock timer;
 	sf::Time delay = sf::seconds(0.01f);

@@ -53,6 +53,8 @@
 		<Unit filename="src/inputHandler.cpp" />
 		<Unit filename="src/inputHandler.h" />
 		<Unit filename="src/main.cpp" />
+		<Unit filename="src/moveMarker.cpp" />
+		<Unit filename="src/moveMarker.h" />
 		<Unit filename="src/pieceMove.cpp" />
 		<Unit filename="src/pieceMove.h" />
 		<Unit filename="src/pieceTracker.cpp" />

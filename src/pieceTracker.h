@@ -21,6 +21,13 @@ private:
     std::map<std::string, GamePiece*>* pieceDefs;
     std::map<sf::Vector2i, GamePiece*, VectorUtils::cmpVectorLexicographically> pieces;
 
+    // Utility methods
+
+    /**
+     * Create the move markers for each piece
+     */
+    void generateMoveMarkers();
+
     // Friends
     friend Renderer;
 
@@ -31,6 +38,14 @@ public:
 
     // Event handlers
     void onStartup();
+    void onCameraChange();
+
+    // Accessors
+
+    /**
+     * Determine whether a certain position is within the bounds of the screen
+     */
+	bool isRenderable(sf::Vector2i pos) const;
 
     // Methods
     bool addPiece(std::string name, sf::Color team, sf::Vector2i pos, GamePiece::Direction);

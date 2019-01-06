@@ -32,6 +32,7 @@ private:
 	const sf::Color MOUSE_VALID_COLOR    = sf::Color(  0, 255,   0, 100);
 	const sf::Color MOUSE_INVALID_COLOR  = sf::Color(255,   0,   0, 100);
 	const sf::Color PIECE_SELECTED_COLOR = sf::Color(255, 255,   0, 100);
+	const sf::Color MOVE_MARKER_COLOR    = sf::Color(  0, 255, 255, 100);
 
 	// Flags
 	bool displayDebugData = true;
@@ -41,7 +42,7 @@ private:
 	sf::RenderWindow* window;
 
 	unsigned int parity;
-    float tileSize = 50;
+	float tileSize = 50;
 
 	sf::Vector2u dimensionsInTiles;
 	sf::Vector2f tileStartPos;
@@ -49,6 +50,8 @@ private:
 	sf::Vector2f cameraPos;
 
 	// Utility methods
+	sf::Vector2i getScreenPos(sf::Vector2i pos) const;
+
 	void drawBoard() const;
 	void drawPieces() const;
 	void drawOverlays() const;
@@ -59,10 +62,10 @@ private:
 	void drawDebug() const;
 public:
 	// Flags
-    bool needsRedraw = false;
+	bool needsRedraw = false;
 
-    // Constructors
-    Renderer(Game* g, sf::RenderWindow* w);
+	// Constructors
+	Renderer(Game* g, sf::RenderWindow* w);
 	~Renderer();
 
 	// Event handlers
@@ -75,13 +78,14 @@ public:
 	sf::Vector2f getMousePosition() const;
 	sf::Vector2i getMouseTilePosition() const;
 	sf::Vector2u getTileDimensions() const;
+	bool isRenderable(sf::Vector2i pos) const;
 
 	// Mutators
 	void setCameraPos(const sf::Vector2f pos);
 	void moveCamera(const sf::Vector2f translationVec);
-    void toggleDisplayDebugData();
+	void toggleDisplayDebugData();
 
-    // Utility methods
+	// Utility methods
 	void draw();
 };
 
