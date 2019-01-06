@@ -31,11 +31,11 @@ private:
 	const std::vector<PieceMove*>* moveSet;
 	const sf::Color team;
 
-    sf::Vector2i pos;
-    Direction dir;
-    unsigned int moveCount;
+	sf::Vector2i pos;
+	Direction dir;
+	unsigned int moveCount;
 
-    /**
+	/**
 	 * The piece's move markers
 	 */
 	std::map<sf::Vector2i, MoveMarker*, VectorUtils::cmpVectorLexicographically> moveMarkers;
@@ -45,20 +45,20 @@ private:
 	 */
 	std::vector<MoveMarker*> terminalMoveMarkers;
 
-    // Utility methods
-    void definitionDelete();
+	// Utility methods
+	void definitionDelete();
 
-    /**
-     * Delete the piece's current move markers
-     */
+	/**
+	 * Delete the piece's current move markers
+	 */
 	void deleteMoveMarkers();
 
-    // Friends
-    friend Renderer;
-    friend PieceTracker;
-    friend Controller;
-    friend PieceMove;
-    friend ResourceLoader;
+	// Friends
+	friend Renderer;
+	friend PieceTracker;
+	friend Controller;
+	friend PieceMove;
+	friend ResourceLoader;
 
 public:
 	// Constructors

@@ -1,7 +1,6 @@
 #include "gamePiece.h"
 #include "pieceMove.h"
 #include "moveMarker.h"
-#include <iostream>
 
 // Private utility methods
 
@@ -9,30 +8,30 @@
  * Delete the piece's current move markers
  */
 void GamePiece::deleteMoveMarkers() {
-    for (std::map<
+	for (std::map<
 			sf::Vector2i,
 			MoveMarker*,
 			VectorUtils::cmpVectorLexicographically
 		>::iterator i = moveMarkers.begin(); i != moveMarkers.end(); ++i
 	) {
 		delete i->second;
-    }
+	}
 
-    moveMarkers.clear();
-    terminalMoveMarkers.clear();
+	moveMarkers.clear();
+	terminalMoveMarkers.clear();
 }
 
 /**
  * Do a full delete for the definition
  */
 void GamePiece::definitionDelete() {
-    // Delete each of the moves in the move set
-    for (std::vector<PieceMove*>::const_iterator it = moveSet->begin(); it != moveSet->end(); it++) {
-        delete *it;
-    }
+	// Delete each of the moves in the move set
+	for (std::vector<PieceMove*>::const_iterator it = moveSet->begin(); it != moveSet->end(); it++) {
+		delete *it;
+	}
 
-    delete moveSet;
-    moveSet = nullptr;
+	delete moveSet;
+	moveSet = nullptr;
 }
 
 
@@ -79,12 +78,12 @@ void GamePiece::onMove() {
 	// Delete all current move markers
 	deleteMoveMarkers();
 
-    // Generate new move markers
-    for (std::vector<PieceMove*>::const_iterator i = moveSet->begin(); i != moveSet->end(); ++i) {
-        (*i)->generateMoveMarkers(this);
-    }
+	// Generate new move markers
+	for (std::vector<PieceMove*>::const_iterator i = moveSet->begin(); i != moveSet->end(); ++i) {
+		(*i)->generateMoveMarkers(this);
+	}
 
-    onCameraChange();
+	onCameraChange();
 }
 
 /**
@@ -93,8 +92,8 @@ void GamePiece::onMove() {
 void GamePiece::onCameraChange() {
 	std::vector<MoveMarker*> temp;
 
-    // Update the terminal move markers
-    for (std::vector<MoveMarker*>::iterator it = terminalMoveMarkers.begin(); it != terminalMoveMarkers.end(); ++it) {
+	// Update the terminal move markers
+	for (std::vector<MoveMarker*>::iterator it = terminalMoveMarkers.begin(); it != terminalMoveMarkers.end(); ++it) {
 		MoveMarker* terminalMarker = *it;
 		const PieceMove* rootMove = terminalMarker->rootMove;
 
@@ -102,25 +101,25 @@ void GamePiece::onCameraChange() {
 		MoveMarker* prev = terminalMarker;
 
 		// Generate all renderable move markers
-        while (pieceTracker->isRenderable(nextPos)) {
+		while (pieceTracker->isRenderable(nextPos)) {
 			terminalMarker = new MoveMarker(this, rootMove, terminalMarker->baseVector, nextPos);
 			terminalMarker->setPrev(prev);
 			prev = terminalMarker;
 
 			moveMarkers.insert(std::make_pair(nextPos, terminalMarker));
 			nextPos = terminalMarker->getNextPos();
-        }
+		}
 
-        // Store the new terminal move marker
-        temp.push_back(terminalMarker);
-    }
+		// Store the new terminal move marker
+		temp.push_back(terminalMarker);
+	}
 
-    terminalMoveMarkers.clear();
+	terminalMoveMarkers.clear();
 
-    // Push the terminal move markers back into the member vector
-    for (std::vector<MoveMarker*>::iterator i = temp.begin(); i != temp.end(); ++i) {
+	// Push the terminal move markers back into the member vector
+	for (std::vector<MoveMarker*>::iterator i = temp.begin(); i != temp.end(); ++i) {
 		terminalMoveMarkers.push_back(*i);
-    }
+	}
 }
 
 /**

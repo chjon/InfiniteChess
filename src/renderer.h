@@ -42,7 +42,7 @@ private:
 	sf::RenderWindow* window;
 
 	unsigned int parity;
-    float tileSize = 50;
+	float tileSize = 50;
 
 	sf::Vector2u dimensionsInTiles;
 	sf::Vector2f tileStartPos;
@@ -62,10 +62,10 @@ private:
 	void drawDebug() const;
 public:
 	// Flags
-    bool needsRedraw = false;
+	bool needsRedraw = false;
 
-    // Constructors
-    Renderer(Game* g, sf::RenderWindow* w);
+	// Constructors
+	Renderer(Game* g, sf::RenderWindow* w);
 	~Renderer();
 
 	// Event handlers
@@ -83,9 +83,9 @@ public:
 	// Mutators
 	void setCameraPos(const sf::Vector2f pos);
 	void moveCamera(const sf::Vector2f translationVec);
-    void toggleDisplayDebugData();
+	void toggleDisplayDebugData();
 
-    // Utility methods
+	// Utility methods
 	void draw();
 };
 

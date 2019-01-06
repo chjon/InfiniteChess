@@ -18,16 +18,16 @@ private:
 	};
 
 	// Flags
-    bool allowScaling;
-    bool canLeap;
-    bool isXSymmetric;
-    bool isYSymmetric;
-    bool isXYSymmetric;
+	bool allowScaling;
+	bool canLeap;
+	bool isXSymmetric;
+	bool isYSymmetric;
+	bool isXYSymmetric;
 
-    // Members
-    PieceTracker* pieceTracker;
+	// Members
+	PieceTracker* pieceTracker;
 
-    MoveType moveType;
+	MoveType moveType;
 	sf::Vector2i baseVector;
 
 	// Friends

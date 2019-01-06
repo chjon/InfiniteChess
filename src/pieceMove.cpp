@@ -11,12 +11,12 @@
 PieceMove::PieceMove(PieceTracker* p, sf::Vector2i baseVector_) :
 	allowScaling{false},
 	canLeap{false},
-    isXSymmetric{false},
-    isYSymmetric{false},
-    isXYSymmetric{false},
-    pieceTracker{p},
-    moveType{MoveType::GENERAL},
-    baseVector{baseVector_}
+	isXSymmetric{false},
+	isYSymmetric{false},
+	isXYSymmetric{false},
+	pieceTracker{p},
+	moveType{MoveType::GENERAL},
+	baseVector{baseVector_}
 {
 }
 
@@ -56,9 +56,9 @@ void PieceMove::generateMoveMarkers(GamePiece* piece) {
 				piece->moveMarkers.insert(std::make_pair(nextPos, newMoveMarker));
 
 				// Add the terminal move markers
-                if (allowScaling) {
+				if (allowScaling) {
 					piece->terminalMoveMarkers.push_back(newMoveMarker);
-                }
+				}
 
 				// Swap x and y if the move is xy-symmetric to get the next base vector
 				if (isXYSymmetric) {

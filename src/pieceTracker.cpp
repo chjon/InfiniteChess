@@ -13,7 +13,7 @@ void PieceTracker::generateMoveMarkers() {
 	// Generate and add the move markers for each piece
 	for (std::map<sf::Vector2i, GamePiece*>::iterator it = pieces.begin(); it != pieces.end(); ++it) {
 		it->second->onMove();
-    }
+	}
 }
 
 
@@ -32,12 +32,12 @@ PieceTracker::PieceTracker(Game* g) :
  * Destructor
  */
 PieceTracker::~PieceTracker() {
-    // Delete all the stored pieces
-    for (std::map<sf::Vector2i, GamePiece*>::iterator it = pieces.begin(); it != pieces.end(); it++) {
-        delete it->second;
-    }
+	// Delete all the stored pieces
+	for (std::map<sf::Vector2i, GamePiece*>::iterator it = pieces.begin(); it != pieces.end(); it++) {
+		delete it->second;
+	}
 
-    pieceDefs = nullptr;
+	pieceDefs = nullptr;
 }
 
 // Public event handlers
@@ -47,48 +47,48 @@ PieceTracker::~PieceTracker() {
  */
 void PieceTracker::onStartup() {
 	// Create pawns
-    for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < 8; i++) {
 		addPiece("Pawn", sf::Color::White, sf::Vector2i(i, 1), GamePiece::Direction::DOWN);
 		addPiece("Pawn", sf::Color::Green, sf::Vector2i(i, 6), GamePiece::Direction::UP);
-    }
+	}
 
-    // Create rooks
-    addPiece("Rook", sf::Color::White, sf::Vector2i(0, 0), GamePiece::Direction::DOWN);
-    addPiece("Rook", sf::Color::White, sf::Vector2i(7, 0), GamePiece::Direction::DOWN);
-    addPiece("Rook", sf::Color::Green, sf::Vector2i(0, 7), GamePiece::Direction::UP);
-    addPiece("Rook", sf::Color::Green, sf::Vector2i(7, 7), GamePiece::Direction::UP);
+	// Create rooks
+	addPiece("Rook", sf::Color::White, sf::Vector2i(0, 0), GamePiece::Direction::DOWN);
+	addPiece("Rook", sf::Color::White, sf::Vector2i(7, 0), GamePiece::Direction::DOWN);
+	addPiece("Rook", sf::Color::Green, sf::Vector2i(0, 7), GamePiece::Direction::UP);
+	addPiece("Rook", sf::Color::Green, sf::Vector2i(7, 7), GamePiece::Direction::UP);
 
-    // Create knights
-    addPiece("Knight", sf::Color::White, sf::Vector2i(1, 0), GamePiece::Direction::DOWN);
-    addPiece("Knight", sf::Color::White, sf::Vector2i(6, 0), GamePiece::Direction::DOWN);
-    addPiece("Knight", sf::Color::Green, sf::Vector2i(1, 7), GamePiece::Direction::UP);
-    addPiece("Knight", sf::Color::Green, sf::Vector2i(6, 7), GamePiece::Direction::UP);
+	// Create knights
+	addPiece("Knight", sf::Color::White, sf::Vector2i(1, 0), GamePiece::Direction::DOWN);
+	addPiece("Knight", sf::Color::White, sf::Vector2i(6, 0), GamePiece::Direction::DOWN);
+	addPiece("Knight", sf::Color::Green, sf::Vector2i(1, 7), GamePiece::Direction::UP);
+	addPiece("Knight", sf::Color::Green, sf::Vector2i(6, 7), GamePiece::Direction::UP);
 
-    // Create bishops
-    addPiece("Bishop", sf::Color::White, sf::Vector2i(2, 0), GamePiece::Direction::DOWN);
-    addPiece("Bishop", sf::Color::White, sf::Vector2i(5, 0), GamePiece::Direction::DOWN);
-    addPiece("Bishop", sf::Color::Green, sf::Vector2i(2, 7), GamePiece::Direction::UP);
-    addPiece("Bishop", sf::Color::Green, sf::Vector2i(5, 7), GamePiece::Direction::UP);
+	// Create bishops
+	addPiece("Bishop", sf::Color::White, sf::Vector2i(2, 0), GamePiece::Direction::DOWN);
+	addPiece("Bishop", sf::Color::White, sf::Vector2i(5, 0), GamePiece::Direction::DOWN);
+	addPiece("Bishop", sf::Color::Green, sf::Vector2i(2, 7), GamePiece::Direction::UP);
+	addPiece("Bishop", sf::Color::Green, sf::Vector2i(5, 7), GamePiece::Direction::UP);
 
-    // Create kings
-    addPiece("King", sf::Color::White, sf::Vector2i(4, 0), GamePiece::Direction::DOWN);
-    addPiece("King", sf::Color::Green, sf::Vector2i(4, 7), GamePiece::Direction::UP);
+	// Create kings
+	addPiece("King", sf::Color::White, sf::Vector2i(4, 0), GamePiece::Direction::DOWN);
+	addPiece("King", sf::Color::Green, sf::Vector2i(4, 7), GamePiece::Direction::UP);
 
-    // Create queens
-    addPiece("Queen", sf::Color::White, sf::Vector2i(3, 0), GamePiece::Direction::DOWN);
-    addPiece("Queen", sf::Color::Green, sf::Vector2i(3, 7), GamePiece::Direction::UP);
+	// Create queens
+	addPiece("Queen", sf::Color::White, sf::Vector2i(3, 0), GamePiece::Direction::DOWN);
+	addPiece("Queen", sf::Color::Green, sf::Vector2i(3, 7), GamePiece::Direction::UP);
 
-    generateMoveMarkers();
+	generateMoveMarkers();
 }
 
 /**
  * Update the pieces when the cmaera changes
  */
 void PieceTracker::onCameraChange() {
-    for (std::map<sf::Vector2i, GamePiece*>::iterator i = pieces.begin(); i != pieces.end(); ++i) {
-        GamePiece* piece = i->second;
-        piece->onCameraChange();
-    }
+	for (std::map<sf::Vector2i, GamePiece*>::iterator i = pieces.begin(); i != pieces.end(); ++i) {
+		GamePiece* piece = i->second;
+		piece->onCameraChange();
+	}
 }
 
 
@@ -99,7 +99,7 @@ void PieceTracker::onCameraChange() {
  * Determine whether a certain position is within the bounds of the screen
  */
 bool PieceTracker::isRenderable(sf::Vector2i pos) const {
-    return game->renderer->isRenderable(pos);
+	return game->renderer->isRenderable(pos);
 }
 
 
@@ -135,22 +135,22 @@ bool PieceTracker::removePiece(sf::Vector2i pos) {
 		return false;
 	}
 
-    pieces.erase(pieces.find(pos));
-    return true;
+	pieces.erase(pieces.find(pos));
+	return true;
 }
 
  /**
   * Get the piece at a certain spot
   */
 GamePiece* PieceTracker::getPiece(sf::Vector2i pos) {
-    std::map<sf::Vector2i, GamePiece*>::iterator it = pieces.find(pos);
+	std::map<sf::Vector2i, GamePiece*>::iterator it = pieces.find(pos);
 
-    // Return the null pointer if the piece is not in the map
-    if (it == pieces.end()) {
-        return nullptr;
-    }
+	// Return the null pointer if the piece is not in the map
+	if (it == pieces.end()) {
+		return nullptr;
+	}
 
-    return it->second;
+	return it->second;
 }
 
 /**

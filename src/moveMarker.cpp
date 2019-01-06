@@ -27,8 +27,8 @@ MoveMarker::~MoveMarker() {
 
 	// Get rid of previous references to this move marker
 	if (prev != nullptr) {
-        prev->next = nullptr;
-        prev = nullptr;
+		prev->next = nullptr;
+		prev = nullptr;
 	}
 
 	rootPiece  = nullptr;
@@ -78,7 +78,7 @@ MoveMarker* MoveMarker::getNext() const {
  * Determine whether the move marker is a valid move position
  */
 bool MoveMarker::canMove() const {
-    GamePiece* pieceAtLocation = rootMove->pieceTracker->getPiece(pos);
+	GamePiece* pieceAtLocation = rootMove->pieceTracker->getPiece(pos);
 
 	// Check whether the new position meets the attack requirements
 	if ((rootMove->moveType == PieceMove::MoveType::MOVE_ONLY   && (pieceAtLocation != nullptr)) ||
@@ -104,17 +104,17 @@ void MoveMarker::setPrev(MoveMarker* newPrev) {
 	}
 
 	// Link the new previous move marker to this move marker
-    if (newPrev != nullptr) {
+	if (newPrev != nullptr) {
 		// Unlink the new previous move marker's next move marker
 		if (newPrev->next != nullptr) {
 			newPrev->next->prev = nullptr;
 		}
 
 		newPrev->next = this;
-    }
+	}
 
-    // Link this move marker to the new previous move marker
-    prev = newPrev;
+	// Link this move marker to the new previous move marker
+	prev = newPrev;
 }
 
 /**
@@ -127,17 +127,17 @@ void MoveMarker::setNext(MoveMarker* newNext) {
 	}
 
 	// Link the new next move marker to this move marker
-    if (newNext != nullptr) {
+	if (newNext != nullptr) {
 		// Unlink the new next move marker's previous move marker
 		if (newNext->prev != nullptr) {
 			newNext->prev->next = nullptr;
 		}
 
 		newNext->prev = this;
-    }
+	}
 
-    // Link this move marker to the new next move marker
-    next = newNext;
+	// Link this move marker to the new next move marker
+	next = newNext;
 }
 
 
