@@ -30,12 +30,10 @@ private:
     MoveType moveType;
 	sf::Vector2i baseVector;
 
-	// Utility methods
-	bool canMove (GamePiece::Direction dir, const sf::Vector2i base, const sf::Vector2i newPos);
-
 	// Friends
 	friend GamePiece;
 	friend PieceTracker;
+	friend MoveMarker;
 	friend ResourceLoader;
 
 public:
@@ -45,7 +43,6 @@ public:
 
 	// Methods
 	void generateMoveMarkers(GamePiece* piece);
-	bool canMove (GamePiece* piece, const sf::Vector2i newPos);
 };
 
 #endif // CHESS_PIECE_MOVE_H

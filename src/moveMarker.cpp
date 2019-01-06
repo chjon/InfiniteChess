@@ -1,4 +1,5 @@
 #include "moveMarker.h"
+#include "pieceMove.h"
 #include <SFML/Graphics.hpp>
 
 // Public constructors / destructor
@@ -70,6 +71,22 @@ MoveMarker* MoveMarker::getPrev() const {
  */
 MoveMarker* MoveMarker::getNext() const {
 	return next;
+}
+
+/**
+ * Determine whether the move marker is a valid move position
+ */
+bool MoveMarker::canMove() const {
+    GamePiece* pieceAtLocation = rootMove->pieceTracker->getPiece(pos);
+
+	// Check whether the new position meets the attack requirements
+	if ((rootMove->moveType == PieceMove::MoveType::MOVE_ONLY   && (pieceAtLocation != nullptr)) ||
+		(rootMove->moveType == PieceMove::MoveType::ATTACK_ONLY && (pieceAtLocation == nullptr))
+	) {
+		return false;
+	}
+
+	return true;
 }
 
 

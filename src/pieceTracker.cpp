@@ -46,14 +46,6 @@ PieceTracker::~PieceTracker() {
  * Handle the initial loading of pieces
  */
 void PieceTracker::onStartup() {
-	/*
-	addPiece("Pawn", sf::Color::White, sf::Vector2i(0, 0), GamePiece::Direction::DOWN);
-	addPiece("Pawn", sf::Color::Green, sf::Vector2i(1, 1), GamePiece::Direction::UP);
-	addPiece("Pawn", sf::Color::Green, sf::Vector2i(-1, 1), GamePiece::Direction::UP);
-	addPiece("Pawn", sf::Color::Green, sf::Vector2i(1, 3), GamePiece::Direction::UP);
-	addPiece("Pawn", sf::Color::Green, sf::Vector2i(-1, 3), GamePiece::Direction::UP);*/
-
-
 	// Create pawns
     for (int i = 0; i < 8; i++) {
 		addPiece("Pawn", sf::Color::White, sf::Vector2i(i, 1), GamePiece::Direction::DOWN);

@@ -87,15 +87,12 @@ void GamePiece::updateMoveMarkers() {
  * @param newPos the desired position
  */
 bool GamePiece::canMove(const sf::Vector2i newPos) {
-	/*for (PieceMove* move : *moveSet) {
-		if (move->canMove(this, newPos)) {
-			return true;
-		}
+	std::map<sf::Vector2i, MoveMarker*>::iterator it = moveMarkers.find(newPos);
+	if (it == moveMarkers.end()) {
+		return false;
 	}
 
-	return false;
-	*/
-	return moveMarkers.find(newPos) != moveMarkers.end();
+	return it->second->canMove();
 }
 
 /**

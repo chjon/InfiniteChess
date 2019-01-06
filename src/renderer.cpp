@@ -1,6 +1,7 @@
 #include <string>
 #include "renderer.h"
 #include "vectorUtils.h"
+#include "moveMarker.h"
 
 // Private utility methods
 
@@ -59,6 +60,15 @@ void Renderer::drawOverlays() const {
     // Draw selection overlay
     if (selectedPiece != nullptr) {
 		drawTile(selectedPiece->pos.x, selectedPiece->pos.y, PIECE_SELECTED_COLOR);
+
+		// Draw possible moves
+		for (std::map<sf::Vector2i, MoveMarker*>::iterator it = selectedPiece->moveMarkers.begin();
+			it != selectedPiece->moveMarkers.end();
+			++it
+		) {
+			if (!it->second->canMove() && !displayDebugData) continue;
+			drawTile(it->first.x, it->first.y, PIECE_SELECTED_COLOR);
+		}
     }
 
     // Draw mouse overlay
@@ -297,11 +307,13 @@ sf::Vector2u Renderer::getTileDimensions() const {
 bool Renderer::isRenderable(sf::Vector2i pos) const {
     sf::Vector2i screenPos = getScreenPos(pos);
 
-    return !((screenPos.x + tileSize) < 0 ||
-		(screenPos.x) > window->getSize().x ||
-		(screenPos.y + tileSize) < 0 ||
-		(screenPos.y) > window->getSize().y
+    bool renderable = !((screenPos.x) < -tileSize ||
+		(screenPos.x > 0 && (unsigned int) screenPos.x > window->getSize().x) ||
+		(screenPos.y) < -tileSize ||
+		(screenPos.y > 0 && (unsigned int) screenPos.y > window->getSize().y)
 	);
+
+    return renderable;
 }
 
 // Public mutators

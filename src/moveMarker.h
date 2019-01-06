@@ -54,6 +54,7 @@ private:
 
 	// Friends
 	friend GamePiece;
+	friend Renderer;
 
 public:
 	// Constructors / Destructor
@@ -86,6 +87,11 @@ public:
 	 * Get the next move marker
 	 */
 	MoveMarker* getNext() const;
+
+	/**
+	 * Determine whether the move marker is a valid move destination
+	 */
+	bool canMove() const;
 
 	// Utility methods
 
