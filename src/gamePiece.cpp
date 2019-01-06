@@ -1,7 +1,24 @@
 #include "gamePiece.h"
 #include "pieceMove.h"
+#include "moveMarker.h"
 
 // Private utility methods
+
+/**
+ * Delete the piece's current move markers
+ */
+void GamePiece::deleteMoveMarkers() {
+    for (std::map<
+			sf::Vector2i,
+			MoveMarker*,
+			VectorUtils::cmpVectorLexicographically
+		>::iterator i = moveMarkers.begin(); i != moveMarkers.end(); ++i
+	) {
+		delete i->second;
+    }
+
+    moveMarkers.clear();
+}
 
 /**
  * Do a full delete for the definition
@@ -52,18 +69,33 @@ GamePiece::~GamePiece() {
 // Public methods
 
 /**
+ * Update the piece's move markers
+ */
+void GamePiece::updateMoveMarkers() {
+	// Delete all current move markers
+	deleteMoveMarkers();
+
+    // Generate new move markers
+    for (std::vector<PieceMove*>::const_iterator i = moveSet->begin(); i != moveSet->end(); ++i) {
+        (*i)->generateMoveMarkers(this);
+    }
+}
+
+/**
  * Check whether the piece can move to the requested spot
  *
  * @param newPos the desired position
  */
 bool GamePiece::canMove(const sf::Vector2i newPos) {
-	for (PieceMove* move : *moveSet) {
+	/*for (PieceMove* move : *moveSet) {
 		if (move->canMove(this, newPos)) {
 			return true;
 		}
 	}
 
 	return false;
+	*/
+	return moveMarkers.find(newPos) != moveMarkers.end();
 }
 
 /**
@@ -71,4 +103,5 @@ bool GamePiece::canMove(const sf::Vector2i newPos) {
  */
 void GamePiece::move(const sf::Vector2i newPos) {
 	pos = newPos;
+	updateMoveMarkers();
 }

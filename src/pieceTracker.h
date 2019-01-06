@@ -27,7 +27,6 @@ private:
      * Create the move markers for each piece
      */
     void generateMoveMarkers();
-    void updateMoveMarkers(GamePiece* piece);
 
     // Friends
     friend Renderer;
@@ -39,6 +38,13 @@ public:
 
     // Event handlers
     void onStartup();
+
+    // Accessors
+
+    /**
+     * Determine whether a certain position is within the bounds of the screen
+     */
+	bool isRenderable(sf::Vector2i pos) const;
 
     // Methods
     bool addPiece(std::string name, sf::Color team, sf::Vector2i pos, GamePiece::Direction);

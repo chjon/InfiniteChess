@@ -5,6 +5,16 @@
 // Private utility methods
 
 /**
+ * Get the position of a tile on screen
+ */
+sf::Vector2i Renderer::getScreenPos(sf::Vector2i pos) const {
+    return sf::Vector2i(
+		tileStartPos.x + tileSize * (pos.x - cameraPos.x + dimensionsInTiles.x / 2),
+		tileStartPos.y + tileSize * (pos.y - cameraPos.y + dimensionsInTiles.y / 2)
+	);
+}
+
+/**
  * Draw the board
  */
 void Renderer::drawBoard() const {
@@ -281,6 +291,18 @@ sf::Vector2u Renderer::getTileDimensions() const {
 	return dimensionsInTiles;
 }
 
+/**
+ * Determine whether a certain tile position is within the bounds of the screen
+ */
+bool Renderer::isRenderable(sf::Vector2i pos) const {
+    sf::Vector2i screenPos = getScreenPos(pos);
+
+    return !((screenPos.x + tileSize) < 0 ||
+		(screenPos.x) > window->getSize().x ||
+		(screenPos.y + tileSize) < 0 ||
+		(screenPos.y) > window->getSize().y
+	);
+}
 
 // Public mutators
 

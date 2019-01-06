@@ -7,7 +7,7 @@
 // Forward definitions
 class GamePiece;
 class PieceMove;
-class PieceTracker;
+
 
 
 /**
@@ -30,7 +30,7 @@ private:
 	/**
 	 * The base direction vector for this move marker
 	 */
-	const sf::Vector2i* baseVector;
+	const sf::Vector2i baseVector;
 
 	/**
 	 * The previous move marker in the chain
@@ -52,9 +52,12 @@ private:
 	 */
 	const unsigned int lambda;
 
+	// Friends
+	friend GamePiece;
+
 public:
 	// Constructors / Destructor
-	MoveMarker(GamePiece* rootPiece_, PieceMove* rootMove_, sf::Vector2i* baseVector, sf::Vector2i pos_);
+	MoveMarker(GamePiece* rootPiece_, PieceMove* rootMove_, sf::Vector2i baseVector, sf::Vector2i pos_);
 	~MoveMarker();
 
 	// Accessors

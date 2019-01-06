@@ -12,29 +12,8 @@
 void PieceTracker::generateMoveMarkers() {
 	// Generate and add the move markers for each piece
 	for (std::map<sf::Vector2i, GamePiece*>::iterator it = pieces.begin(); it != pieces.end(); ++it) {
-		updateMoveMarkers(it->second);
+		it->second->updateMoveMarkers();
     }
-}
-
-/**
- * Update the move markers for a certain piece
- */
-void PieceTracker::updateMoveMarkers(GamePiece* piece) {
-	// Delete all existing move markers for the piece
-
-	// Get the piece's initial move markers
-	std::vector<MoveMarker*> initMoveMarkers = piece->generateMoveMarkers();
-
-	// Add the move markers to the board
-	for (std::vector<MoveMarker*>::iterator it = initMoveMarkers.begin(); it != initMoveMarkers.end(); ++it) {
-		MoveMarker* cur = *it;
-
-		// Add the move marker as well as all of its children
-		while (cur != nullptr) {
-			moveMarkers->insert(std::make_pair(cur->getPos(), cur));
-			cur = cur->getNext();
-		}
-	}
 }
 
 
@@ -67,9 +46,13 @@ PieceTracker::~PieceTracker() {
  * Handle the initial loading of pieces
  */
 void PieceTracker::onStartup() {
-	addPiece("Pawn", sf::Color::White, sf::Vector2i(0, 0), GamePiece::Direction::DOWN);
-
 	/*
+	addPiece("Pawn", sf::Color::White, sf::Vector2i(0, 0), GamePiece::Direction::DOWN);
+	addPiece("Pawn", sf::Color::Green, sf::Vector2i(1, 1), GamePiece::Direction::UP);
+	addPiece("Pawn", sf::Color::Green, sf::Vector2i(-1, 1), GamePiece::Direction::UP);
+	addPiece("Pawn", sf::Color::Green, sf::Vector2i(1, 3), GamePiece::Direction::UP);
+	addPiece("Pawn", sf::Color::Green, sf::Vector2i(-1, 3), GamePiece::Direction::UP);*/
+
 
 	// Create pawns
     for (int i = 0; i < 8; i++) {
@@ -103,9 +86,18 @@ void PieceTracker::onStartup() {
     addPiece("Queen", sf::Color::White, sf::Vector2i(3, 0), GamePiece::Direction::DOWN);
     addPiece("Queen", sf::Color::Green, sf::Vector2i(3, 7), GamePiece::Direction::UP);
 
-    */
-
     generateMoveMarkers();
+}
+
+
+
+// Accessors
+
+/**
+ * Determine whether a certain position is within the bounds of the screen
+ */
+bool PieceTracker::isRenderable(sf::Vector2i pos) const {
+    return game->renderer->isRenderable(pos);
 }
 
 

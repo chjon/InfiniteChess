@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <vector>
+#include "vectorUtils.h"
 
 // Forward declarations
 class Renderer;
@@ -32,8 +33,18 @@ private:
     Direction dir;
     unsigned int moveCount;
 
+    /**
+	 * The piece's move markers
+	 */
+	std::map<sf::Vector2i, MoveMarker*, VectorUtils::cmpVectorLexicographically> moveMarkers;
+
     // Utility methods
     void definitionDelete();
+
+    /**
+     * Delete the piece's current move markers
+     */
+	void deleteMoveMarkers();
 
     // Friends
     friend Renderer;
@@ -48,16 +59,13 @@ public:
 	GamePiece(const GamePiece* piece, const sf::Color team_, sf::Vector2i pos_, Direction dir_);
 	~GamePiece();
 
-	// Accessors
+	// Utility methods
 
 	/**
-	 * Get the move markers for the piece
-	 *
-	 * @return a vector containing the piece's initial move markers
+	 * Update the piece's move markers
 	 */
-	std::vector<MoveMarker*> generateMoveMarkers() const;
+	void updateMoveMarkers();
 
-	// Methods
 	bool canMove (const sf::Vector2i newPos);
 	void move (const sf::Vector2i newPos);
 };

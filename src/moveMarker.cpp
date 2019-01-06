@@ -6,7 +6,7 @@
 /**
  * Constructor
  */
-MoveMarker::MoveMarker(GamePiece* rootPiece_, PieceMove* rootMove, sf::Vector2i* baseVector_, sf::Vector2i pos_) :
+MoveMarker::MoveMarker(GamePiece* rootPiece_, PieceMove* rootMove, sf::Vector2i baseVector_, sf::Vector2i pos_) :
 	rootPiece{rootPiece_},
 	rootMove{rootMove},
 	baseVector{baseVector_},
@@ -31,7 +31,6 @@ MoveMarker::~MoveMarker() {
 
 	rootPiece  = nullptr;
 	rootMove   = nullptr;
-	baseVector = nullptr;
 }
 
 
@@ -49,14 +48,14 @@ sf::Vector2i MoveMarker::getPos() const {
  * Iterate the move backward to get the position of the previous move marker
  */
 sf::Vector2i MoveMarker::getPrevPos() const {
-	return pos - *baseVector;
+	return pos - baseVector;
 }
 
 /**
  * Iterate the move forward to get the position of the next move marker
  */
 sf::Vector2i MoveMarker::getNextPos() const {
-	return pos + *baseVector;
+	return pos + baseVector;
 }
 
 /**

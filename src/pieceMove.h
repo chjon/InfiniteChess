@@ -44,6 +44,7 @@ public:
 	~PieceMove();
 
 	// Methods
+	void generateMoveMarkers(GamePiece* piece);
 	bool canMove (GamePiece* piece, const sf::Vector2i newPos);
 };
 
