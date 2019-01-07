@@ -29,7 +29,6 @@ private:
 
 	const std::string name;
 	const std::vector<PieceMove*>* moveSet;
-	const sf::Color team;
 
 	sf::Vector2i pos;
 	Direction dir;
@@ -61,10 +60,20 @@ private:
 	friend ResourceLoader;
 
 public:
+	// Members
+	const sf::Color team;
+
 	// Constructors
 	GamePiece(const std::string n, const std::vector<PieceMove*>* m);
 	GamePiece(PieceTracker* pieceTracker_, const GamePiece* piece, const sf::Color team_, sf::Vector2i pos_, Direction dir_);
 	~GamePiece();
+
+	// Accessors
+
+	/**
+	 * Get the piece's position
+	 */
+	sf::Vector2i getPos() const;
 
 	// Utility methods
 

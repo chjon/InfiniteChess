@@ -53,9 +53,9 @@ GamePiece::GamePiece(PieceTracker* pieceTracker_, const GamePiece* piece, const 
 	pieceTracker{pieceTracker_},
 	name{piece->name},
 	moveSet{piece->moveSet},
-	team{team_},
 	pos{pos_},
-	dir{dir_}
+	dir{dir_},
+	team{team_}
 {
 }
 
@@ -65,6 +65,17 @@ GamePiece::GamePiece(PieceTracker* pieceTracker_, const GamePiece* piece, const 
 GamePiece::~GamePiece() {
 	deleteMoveMarkers();
 	moveSet = nullptr;
+}
+
+
+
+// Accessors
+
+/**
+ * Get the piece's position
+ */
+sf::Vector2i GamePiece::getPos() const {
+	return pos;
 }
 
 
@@ -98,13 +109,10 @@ void GamePiece::onCameraChange() {
 		const PieceMove* rootMove = terminalMarker->rootMove;
 
 		sf::Vector2i nextPos = terminalMarker->getNextPos();
-		MoveMarker* prev = terminalMarker;
 
 		// Generate all renderable move markers
 		while (pieceTracker->isRenderable(nextPos)) {
 			terminalMarker = new MoveMarker(this, rootMove, terminalMarker->baseVector, nextPos);
-			terminalMarker->setPrev(prev);
-			prev = terminalMarker;
 
 			moveMarkers.insert(std::make_pair(nextPos, terminalMarker));
 			nextPos = terminalMarker->getNextPos();

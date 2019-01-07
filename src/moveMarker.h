@@ -33,16 +33,6 @@ private:
 	const sf::Vector2i baseVector;
 
 	/**
-	 * The previous move marker in the chain
-	 */
-	MoveMarker* prev;
-
-	/**
-	 * The next movement marker in the chain
-	 */
-	MoveMarker* next;
-
-	/**
 	 * The position of the movement marker
 	 */
 	const sf::Vector2i pos;
@@ -79,40 +69,9 @@ public:
 	sf::Vector2i getNextPos() const;
 
 	/**
-	 * Get the previous move marker
-	 */
-	MoveMarker* getPrev() const;
-
-	/**
-	 * Get the next move marker
-	 */
-	MoveMarker* getNext() const;
-
-	/**
 	 * Determine whether the move marker is a valid move destination
 	 */
 	bool canMove() const;
-
-	// Mutators
-
-	/**
-	 * Set the previous move marker
-	 */
-	void setPrev(MoveMarker* newPrev);
-
-	/**
-	 * Set the next move marker
-	 */
-	void setNext(MoveMarker* newNext);
-
-
-
-	// Utility methods
-
-	/**
-	 * Determine whether the move marker is one of the ends of the move (beginning/end)
-	 */
-	bool isTerminal();
 };
 
 #endif // CHESS_MOVE_MARKER_H
