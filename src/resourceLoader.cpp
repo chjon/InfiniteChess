@@ -39,6 +39,15 @@ void ResourceLoader::loadPieceDefs(std::string fileName) {
 				std::cout << pieceName << ": " << moveSet->size() << " moves loaded" << std::endl;
 				moveSet = nullptr;
 
+				// Load texture
+				sf::Texture* texture = new sf::Texture();
+				if (!texture->loadFromFile(TEXTURES_DIRECTORY + pieceName + TEXTURES_EXTENSION)) {
+					delete texture;
+					texture = nullptr;
+				}
+
+				textures->insert(std::make_pair(pieceName, texture));
+
 				// Reset stuff
 				foundDef = false;
 				continue;
@@ -113,7 +122,8 @@ void ResourceLoader::loadPieceDefs(std::string fileName) {
  */
 ResourceLoader::ResourceLoader(PieceTracker* p) :
 	pieceTracker{p},
-	pieceDefs{new std::map<std::string, GamePiece*>()}
+	pieceDefs{new std::map<std::string, GamePiece*>()},
+	textures{new std::map<std::string, sf::Texture*>()}
 {
 }
 
@@ -121,14 +131,23 @@ ResourceLoader::ResourceLoader(PieceTracker* p) :
  * Destructor
  */
 ResourceLoader::~ResourceLoader() {
+	// Delete all the textures
+    for (std::map<std::string, sf::Texture*>::iterator it = textures->begin(); it != textures->end(); it++) {
+		if (it->second != nullptr) {
+			delete it->second;
+		}
+    }
+
 	// Delete all the definitions
     for (std::map<std::string, GamePiece*>::iterator it = pieceDefs->begin(); it != pieceDefs->end(); it++) {
 		it->second->definitionDelete();
 		delete it->second;
     }
 
+    delete textures;
     delete pieceDefs;
 
+    textures     = nullptr;
     pieceDefs    = nullptr;
     pieceTracker = nullptr;
 }

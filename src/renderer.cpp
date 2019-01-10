@@ -121,15 +121,29 @@ void Renderer::drawDebugText(const std::string& s, const unsigned int row) const
  * @param c the color to fill with
  */
 void Renderer::drawPiece(GamePiece* p) const {
-    sf::CircleShape s(tileSize / 2);
-    s.setFillColor(p->team);
+	std::map<std::string, sf::Texture*>::iterator it = game->resourceLoader->textures->find(p->name);
+	if (it == game->resourceLoader->textures->end() || it->second == nullptr) {
+		sf::CircleShape s(tileSize / 2);
+		s.setFillColor(p->team);
 
-	s.setPosition(
-		tileStartPos.x + tileSize * (p->pos.x - cameraPos.x + dimensionsInTiles.x / 2),
-		tileStartPos.y + tileSize * (p->pos.y - cameraPos.y + dimensionsInTiles.y / 2)
-	);
+		s.setPosition(
+			tileStartPos.x + tileSize * (p->pos.x - cameraPos.x + dimensionsInTiles.x / 2),
+			tileStartPos.y + tileSize * (p->pos.y - cameraPos.y + dimensionsInTiles.y / 2)
+		);
 
-	window->draw(s);
+		window->draw(s);
+	} else {
+        sf::Sprite s;
+        s.setTexture(*(it->second));
+        s.setColor(p->team);
+        s.setScale(sf::Vector2f(tileSize / 16, tileSize / 16));
+        s.setPosition(
+			tileStartPos.x + tileSize * (p->pos.x - cameraPos.x + dimensionsInTiles.x / 2),
+			tileStartPos.y + tileSize * (p->pos.y - cameraPos.y + dimensionsInTiles.y / 2)
+		);
+
+        window->draw(s);
+	}
 }
 
 /**
@@ -360,8 +374,8 @@ void Renderer::draw() {
 
 	window->clear(BACKGROUND_COLOR);
 	drawBoard();
-	drawPieces();
 	drawOverlays();
+	drawPieces();
 
 	// Draw debug data
 	if (displayDebugData) {

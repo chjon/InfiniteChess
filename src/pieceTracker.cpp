@@ -46,37 +46,40 @@ PieceTracker::~PieceTracker() {
  * Handle the initial loading of pieces
  */
 void PieceTracker::onStartup() {
+	sf::Color TEAM_1(255, 255, 255, 255);
+	sf::Color TEAM_2( 32,  32,  32, 255);
+
 	// Create pawns
 	for (int i = 0; i < 8; i++) {
-		addPiece("Pawn", sf::Color::White, sf::Vector2i(i, 1), GamePiece::Direction::DOWN);
-		addPiece("Pawn", sf::Color::Green, sf::Vector2i(i, 6), GamePiece::Direction::UP);
+		addPiece("Pawn", TEAM_1, sf::Vector2i(i, 1), GamePiece::Direction::DOWN);
+		addPiece("Pawn", TEAM_2, sf::Vector2i(i, 6), GamePiece::Direction::UP);
 	}
 
 	// Create rooks
-	addPiece("Rook", sf::Color::White, sf::Vector2i(0, 0), GamePiece::Direction::DOWN);
-	addPiece("Rook", sf::Color::White, sf::Vector2i(7, 0), GamePiece::Direction::DOWN);
-	addPiece("Rook", sf::Color::Green, sf::Vector2i(0, 7), GamePiece::Direction::UP);
-	addPiece("Rook", sf::Color::Green, sf::Vector2i(7, 7), GamePiece::Direction::UP);
+	addPiece("Rook", TEAM_1, sf::Vector2i(0, 0), GamePiece::Direction::DOWN);
+	addPiece("Rook", TEAM_1, sf::Vector2i(7, 0), GamePiece::Direction::DOWN);
+	addPiece("Rook", TEAM_2, sf::Vector2i(0, 7), GamePiece::Direction::UP);
+	addPiece("Rook", TEAM_2, sf::Vector2i(7, 7), GamePiece::Direction::UP);
 
 	// Create knights
-	addPiece("Knight", sf::Color::White, sf::Vector2i(1, 0), GamePiece::Direction::DOWN);
-	addPiece("Knight", sf::Color::White, sf::Vector2i(6, 0), GamePiece::Direction::DOWN);
-	addPiece("Knight", sf::Color::Green, sf::Vector2i(1, 7), GamePiece::Direction::UP);
-	addPiece("Knight", sf::Color::Green, sf::Vector2i(6, 7), GamePiece::Direction::UP);
+	addPiece("Knight", TEAM_1, sf::Vector2i(1, 0), GamePiece::Direction::DOWN);
+	addPiece("Knight", TEAM_1, sf::Vector2i(6, 0), GamePiece::Direction::DOWN);
+	addPiece("Knight", TEAM_2, sf::Vector2i(1, 7), GamePiece::Direction::UP);
+	addPiece("Knight", TEAM_2, sf::Vector2i(6, 7), GamePiece::Direction::UP);
 
 	// Create bishops
-	addPiece("Bishop", sf::Color::White, sf::Vector2i(2, 0), GamePiece::Direction::DOWN);
-	addPiece("Bishop", sf::Color::White, sf::Vector2i(5, 0), GamePiece::Direction::DOWN);
-	addPiece("Bishop", sf::Color::Green, sf::Vector2i(2, 7), GamePiece::Direction::UP);
-	addPiece("Bishop", sf::Color::Green, sf::Vector2i(5, 7), GamePiece::Direction::UP);
+	addPiece("Bishop", TEAM_1, sf::Vector2i(2, 0), GamePiece::Direction::DOWN);
+	addPiece("Bishop", TEAM_1, sf::Vector2i(5, 0), GamePiece::Direction::DOWN);
+	addPiece("Bishop", TEAM_2, sf::Vector2i(2, 7), GamePiece::Direction::UP);
+	addPiece("Bishop", TEAM_2, sf::Vector2i(5, 7), GamePiece::Direction::UP);
 
 	// Create kings
-	addPiece("King", sf::Color::White, sf::Vector2i(4, 0), GamePiece::Direction::DOWN);
-	addPiece("King", sf::Color::Green, sf::Vector2i(4, 7), GamePiece::Direction::UP);
+	addPiece("King", TEAM_1, sf::Vector2i(4, 0), GamePiece::Direction::DOWN);
+	addPiece("King", TEAM_2, sf::Vector2i(4, 7), GamePiece::Direction::UP);
 
 	// Create queens
-	addPiece("Queen", sf::Color::White, sf::Vector2i(3, 0), GamePiece::Direction::DOWN);
-	addPiece("Queen", sf::Color::Green, sf::Vector2i(3, 7), GamePiece::Direction::UP);
+	addPiece("Queen", TEAM_1, sf::Vector2i(3, 0), GamePiece::Direction::DOWN);
+	addPiece("Queen", TEAM_2, sf::Vector2i(3, 7), GamePiece::Direction::UP);
 
 	generateMoveMarkers();
 }

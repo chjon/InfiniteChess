@@ -9,6 +9,7 @@
 // Forward declarations
 class GamePiece;
 class PieceTracker;
+class Renderer;
 
 
 
@@ -17,10 +18,13 @@ class ResourceLoader {
 private:
 	// Constants
     const std::string PIECE_DEFS_FILE = "res/pieces.def";
+    const std::string TEXTURES_DIRECTORY = "res/textures/";
+    const std::string TEXTURES_EXTENSION = ".png";
 
 	// Members
 	PieceTracker* pieceTracker;
 	std::map<std::string, GamePiece*>* pieceDefs;
+	std::map<std::string, sf::Texture*>* textures;
 
 	// Utility methods
     void loadPieceDefs(std::string fileName);
@@ -65,6 +69,7 @@ public:
 
     // Friends
     friend PieceTracker;
+    friend Renderer;
 };
 
 #endif // CHESS_RESOURCE_LOADER_H
