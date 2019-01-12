@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "gamePiece.h"
+#include <vector>
 
 // Forward declarations
 class GamePiece;
@@ -13,22 +14,8 @@ class PieceTracker;
 // Class declaration
 class PieceMove {
 private:
-	enum MoveType {
-		GENERAL, MOVE_ONLY, ATTACK_ONLY
-	};
-
-	// Flags
-	bool allowScaling;
-	bool canLeap;
-	bool isXSymmetric;
-	bool isYSymmetric;
-	bool isXYSymmetric;
-
 	// Members
 	PieceTracker* pieceTracker;
-
-	MoveType moveType;
-	sf::Vector2i baseVector;
 
 	// Friends
 	friend GamePiece;
@@ -37,8 +24,31 @@ private:
 	friend ResourceLoader;
 
 public:
+	// Members
+	const int index;
+
+	const sf::Vector2i baseVector;
+
+	const bool attacksFriendlies;
+	const bool attacksEnemies;
+	const bool movesEmpty;
+	const bool canLeap;
+	const bool endsTurn;
+	const bool isXSymmetric;
+	const bool isYSymmetric;
+	const bool isXYSymmetric;
+
+	const std::vector<int> chainedMoves;
+	const std::vector<int> scalingRules;
+	const std::vector<int> nthStepRules;
+	const std::vector<int> targettingRules;
+
 	// Constructors
-	PieceMove(PieceTracker* p, sf::Vector2i baseVector_);
+	PieceMove(
+		PieceTracker* p, int index_, sf::Vector2i baseVector_, bool attacksFriendlies_, bool attacksEnemies_,
+		bool movesEmpty_, bool canLeap, bool endsTurn, bool isXSymmetric, bool isYSymmetric, bool isXYSymmetric
+	);
+
 	~PieceMove();
 
 	// Methods

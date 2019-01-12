@@ -56,13 +56,13 @@ sf::Vector2i MoveMarker::getNextPos() const {
 bool MoveMarker::canMove() const {
 	GamePiece* pieceAtLocation = rootMove->pieceTracker->getPiece(pos);
 
-	// Check whether the new position meets the attack requirements
+	/*/ Check whether the new position meets the attack requirements
 	if (((pieceAtLocation != nullptr) && rootMove->moveType == PieceMove::MoveType::MOVE_ONLY) ||
 		((pieceAtLocation != nullptr) && pieceAtLocation->team == rootPiece->team) ||
 		((pieceAtLocation == nullptr) && rootMove->moveType == PieceMove::MoveType::ATTACK_ONLY)
 	) {
 		return false;
-	}
+	}*/
 
 	// Check whether there are pieces in the way of the move
 	if (!rootMove->canLeap) {

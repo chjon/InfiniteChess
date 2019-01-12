@@ -10,6 +10,7 @@
 class GamePiece;
 class PieceTracker;
 class Renderer;
+class PieceDef;
 
 
 

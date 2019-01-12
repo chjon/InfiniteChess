@@ -8,15 +8,21 @@
 /**
  * Constructor
  */
-PieceMove::PieceMove(PieceTracker* p, sf::Vector2i baseVector_) :
-	allowScaling{false},
-	canLeap{false},
-	isXSymmetric{false},
-	isYSymmetric{false},
-	isXYSymmetric{false},
+PieceMove::PieceMove(
+	PieceTracker* p, int index_, sf::Vector2i baseVector_, bool attacksFriendlies_, bool attacksEnemies_,
+	bool movesEmpty_, bool canLeap_, bool endsTurn_, bool isXSymmetric_, bool isYSymmetric_, bool isXYSymmetric_
+) :
 	pieceTracker{p},
-	moveType{MoveType::GENERAL},
-	baseVector{baseVector_}
+	index{index_},
+	baseVector{baseVector_},
+	attacksFriendlies{attacksFriendlies_},
+	attacksEnemies{attacksEnemies_},
+    movesEmpty{movesEmpty_},
+    canLeap{canLeap_},
+    endsTurn{endsTurn_},
+    isXSymmetric{isXSymmetric_},
+    isYSymmetric{isYSymmetric_},
+    isXYSymmetric{isXYSymmetric_}
 {
 }
 
@@ -55,10 +61,10 @@ void PieceMove::generateMoveMarkers(GamePiece* piece) {
 				MoveMarker* newMoveMarker = new MoveMarker(piece, this, rotated, nextPos);
 				piece->moveMarkers.insert(std::make_pair(nextPos, newMoveMarker));
 
-				// Add the terminal move markers
+				/*/ Add the terminal move markers
 				if (allowScaling) {
 					piece->terminalMoveMarkers.push_back(newMoveMarker);
-				}
+				}*/
 
 				// Swap x and y if the move is xy-symmetric to get the next base vector
 				if (isXYSymmetric) {
