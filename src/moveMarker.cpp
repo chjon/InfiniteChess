@@ -2,13 +2,15 @@
 #include "pieceMove.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include "pieceDef.h"
+#include "piece.h"
 
 // Public constructors / destructor
 
 /**
  * Constructor
  */
-MoveMarker::MoveMarker(GamePiece* rootPiece_, const PieceMove* rootMove, sf::Vector2i baseVector_, sf::Vector2i pos_) :
+MoveMarker::MoveMarker(Piece* rootPiece_, const PieceMove* rootMove, sf::Vector2i baseVector_, sf::Vector2i pos_) :
 	rootPiece{rootPiece_},
 	rootMove{rootMove},
 	baseVector{baseVector_},
@@ -54,7 +56,7 @@ sf::Vector2i MoveMarker::getNextPos() const {
  * Determine whether the move marker is a valid move position
  */
 bool MoveMarker::canMove() const {
-	GamePiece* pieceAtLocation = rootMove->pieceTracker->getPiece(pos);
+	Piece* pieceAtLocation = rootMove->pieceTracker->getPiece(pos);
 
 	/*/ Check whether the new position meets the attack requirements
 	if (((pieceAtLocation != nullptr) && rootMove->moveType == PieceMove::MoveType::MOVE_ONLY) ||

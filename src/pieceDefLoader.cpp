@@ -1,9 +1,9 @@
 #include "pieceDefLoader.h"
+#include "resourceLoader.h"
 #include "pieceDef.h"
+#include "moveDef.h"
 #include <iostream>
 #include <fstream>
-#include "resourceLoader.h"
-#include "pieceMove.h"
 
 
 // Private constants
@@ -75,7 +75,7 @@ const PieceDef* PieceDefLoader::pieceDefFromString(const std::string& pieceStrin
 		throw ResourceLoader::FileFormatException("Failed to find moveset");
 	}
 
-	const std::map<int, const PieceMove*>* moveSet = getMovesFromString(
+	const std::map<int, const MoveDef*>* moveSet = getMovesFromString(
 		pieceString.substr(index, pieceString.length() - index - 1)
 	);
 
@@ -89,14 +89,14 @@ const PieceDef* PieceDefLoader::pieceDefFromString(const std::string& pieceStrin
  *
  * @return a map containing all of the piece's possible moves
  */
-const std::map<int, const PieceMove*>* PieceDefLoader::getMovesFromString(const std::string& movesString) {
+const std::map<int, const MoveDef*>* PieceDefLoader::getMovesFromString(const std::string& movesString) {
 	// Check whether the moves string is bracket-enclosed
 	if (movesString[0] != BRACKET_OPEN || movesString[movesString.length() - 1] != BRACKET_CLOSE) {
 		throw ResourceLoader::FileFormatException("Expected bracket-enclosed moves list");
 	}
 
 	// Generate the move set
-	std::map<int, const PieceMove*>* moves = new std::map<int, const PieceMove*>();
+	std::map<int, const MoveDef*>* moves = new std::map<int, const MoveDef*>();
 
 	unsigned int nestLevel = 0;
 	unsigned int beginIndex = 1;
@@ -109,7 +109,7 @@ const std::map<int, const PieceMove*>* PieceDefLoader::getMovesFromString(const 
 			nestLevel++;
         } else if (curChar == BRACKET_CLOSE) {
         	if (nestLevel == 1) {
-				const PieceMove* move = getMoveFromString(movesString.substr(beginIndex, index - beginIndex + 1));
+				const MoveDef* move = getMoveFromString(movesString.substr(beginIndex, index - beginIndex + 1));
 
 				// Add a move to the move set
 				moves->insert(std::make_pair(move->index, move));
@@ -138,7 +138,7 @@ const std::map<int, const PieceMove*>* PieceDefLoader::getMovesFromString(const 
  *
  * @return a move generated from the string
  */
-const PieceMove* PieceDefLoader::getMoveFromString(const std::string& moveString) {
+const MoveDef* PieceDefLoader::getMoveFromString(const std::string& moveString) {
 	// Check whether the move string is bracket-enclosed
 	if (moveString[0] != BRACKET_OPEN || moveString[moveString.length() - 1] != BRACKET_CLOSE) {
 		throw ResourceLoader::FileFormatException("Expected bracket-enclosed move string");
@@ -185,10 +185,17 @@ const PieceMove* PieceDefLoader::getMoveFromString(const std::string& moveString
     const bool isYSymmetric      = moveString[++index] - '0';
     const bool isXYSymmetric     = moveString[++index] - '0';
 
-	return new PieceMove(
-		nullptr, moveIndex, baseVector, attacksFriendlies, attacksEnemies, movesEmpty, canLeap, endsTurn,
+	MoveDef* newMove = new MoveDef(
+		moveIndex, baseVector, attacksFriendlies, attacksEnemies, movesEmpty, canLeap, endsTurn,
 		isXSymmetric, isYSymmetric, isXYSymmetric
 	);
+
+	// TODO: Load chained moves
+	// TODO: Load scaling rules
+	// TODO: Load nth step rules
+	// TODO: Load targetting rules
+
+	return newMove;
 }
 
 /**
@@ -317,5 +324,5 @@ std::map<std::string, const PieceDef*>* PieceDefLoader::loadPieceDefs (const std
 	// Close the file
 	file.close();
 
-	return nullptr;
+	return pieceDefs;
 }

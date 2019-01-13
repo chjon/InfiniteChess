@@ -1,4 +1,5 @@
 #include "controller.h"
+#include "piece.h"
 
 // Private event handlers
 
@@ -11,13 +12,13 @@ void Controller::onMousePress(sf::Vector2i pos) {
 		selectedPiece = game->pieceTracker->getPiece(pos);
 
 	// Deselect
-    } else if (selectedPiece->pos == pos) {
+    } else if (selectedPiece->getPos() == pos) {
     	selectedPiece = nullptr;
 
 	// Move piece
-	} else if (selectedPiece->canMove(pos)) {
+	} /*else if (selectedPiece->canMove(pos)) {
 		movePiece(pos);
-	}
+	}*/
 
 	game->renderer->needsRedraw = true;
 }
@@ -31,10 +32,10 @@ void Controller::onMousePress(sf::Vector2i pos) {
  */
 void Controller::movePiece(sf::Vector2i pos) {
 	// Move the piece at the position
-	game->pieceTracker->movePiece(selectedPiece->pos, pos);
+	game->pieceTracker->movePiece(selectedPiece->getPos(), pos);
 
 	// Move the piece
-	selectedPiece->move(pos);
+	//selectedPiece->move(pos);
 
 	// Deselect the piece
 	selectedPiece = nullptr;
@@ -68,6 +69,6 @@ Controller::~Controller() {
 /**
  * Get the currently selected piece
  */
-GamePiece* Controller::getSelectedPiece() const {
+Piece* Controller::getSelectedPiece() const {
 	return selectedPiece;
 }

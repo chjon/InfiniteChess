@@ -5,7 +5,7 @@
 #include "pieceTracker.h"
 
 // Forward definitions
-class GamePiece;
+class Piece;
 class PieceMove;
 
 
@@ -20,7 +20,7 @@ private:
 	/**
 	 * The game piece that this move marker belongs to
 	 */
-	const GamePiece* rootPiece;
+	const Piece* rootPiece;
 
 	/**
 	 * The move that this move marker belongs to
@@ -43,12 +43,12 @@ private:
 	const unsigned int lambda;
 
 	// Friends
-	friend GamePiece;
+	friend Piece;
 	friend Renderer;
 
 public:
 	// Constructors / Destructor
-	MoveMarker(GamePiece* rootPiece_, const PieceMove* rootMove_, sf::Vector2i baseVector, sf::Vector2i pos_);
+	MoveMarker(Piece* rootPiece_, const PieceMove* rootMove_, sf::Vector2i baseVector, sf::Vector2i pos_);
 	~MoveMarker();
 
 	// Accessors

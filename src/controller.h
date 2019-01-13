@@ -7,7 +7,7 @@
 // Forward declarations
 class Game;
 class PieceTracker;
-class GamePiece;
+class Piece;
 class InputHandler;
 
 
@@ -19,7 +19,7 @@ private:
 	Game* game;
 	PieceTracker* pieceTracker;
 
-	GamePiece* selectedPiece;
+	Piece* selectedPiece;
 
 	// Event handlers
 	void onMousePress (sf::Vector2i pos);
@@ -36,7 +36,7 @@ public:
 	~Controller();
 
 	// Accessors
-	GamePiece* getSelectedPiece() const;
+	Piece* getSelectedPiece() const;
 };
 
 #endif // CHESS_CONTROLLER_H

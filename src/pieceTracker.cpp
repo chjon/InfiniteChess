@@ -3,6 +3,8 @@
 #include "pieceTracker.h"
 #include "pieceMove.h"
 #include "moveMarker.h"
+#include "piece.h"
+#include <iostream>
 
 // Private utility methods
 
@@ -11,8 +13,8 @@
  */
 void PieceTracker::generateMoveMarkers() {
 	// Generate and add the move markers for each piece
-	for (std::map<sf::Vector2i, GamePiece*>::iterator it = pieces.begin(); it != pieces.end(); ++it) {
-		it->second->onMove();
+	for (std::map<sf::Vector2i, Piece*>::iterator it = pieces.begin(); it != pieces.end(); ++it) {
+		//it->second->onMove();
 	}
 }
 
@@ -33,7 +35,7 @@ PieceTracker::PieceTracker(Game* g) :
  */
 PieceTracker::~PieceTracker() {
 	// Delete all the stored pieces
-	for (std::map<sf::Vector2i, GamePiece*>::iterator it = pieces.begin(); it != pieces.end(); it++) {
+	for (std::map<sf::Vector2i, Piece*>::iterator it = pieces.begin(); it != pieces.end(); it++) {
 		delete it->second;
 	}
 
@@ -51,35 +53,35 @@ void PieceTracker::onStartup() {
 
 	// Create pawns
 	for (int i = 0; i < 8; i++) {
-		addPiece("Pawn", TEAM_1, sf::Vector2i(i, 1), GamePiece::Direction::DOWN);
-		addPiece("Pawn", TEAM_2, sf::Vector2i(i, 6), GamePiece::Direction::UP);
+		addPiece("Pawn", TEAM_1, sf::Vector2i(i, 1), PieceDef::Direction::DOWN);
+		addPiece("Pawn", TEAM_2, sf::Vector2i(i, 6), PieceDef::Direction::UP);
 	}
 
 	// Create rooks
-	addPiece("Rook", TEAM_1, sf::Vector2i(0, 0), GamePiece::Direction::DOWN);
-	addPiece("Rook", TEAM_1, sf::Vector2i(7, 0), GamePiece::Direction::DOWN);
-	addPiece("Rook", TEAM_2, sf::Vector2i(0, 7), GamePiece::Direction::UP);
-	addPiece("Rook", TEAM_2, sf::Vector2i(7, 7), GamePiece::Direction::UP);
+	addPiece("Rook", TEAM_1, sf::Vector2i(0, 0), PieceDef::Direction::DOWN);
+	addPiece("Rook", TEAM_1, sf::Vector2i(7, 0), PieceDef::Direction::DOWN);
+	addPiece("Rook", TEAM_2, sf::Vector2i(0, 7), PieceDef::Direction::UP);
+	addPiece("Rook", TEAM_2, sf::Vector2i(7, 7), PieceDef::Direction::UP);
 
 	// Create knights
-	addPiece("Knight", TEAM_1, sf::Vector2i(1, 0), GamePiece::Direction::DOWN);
-	addPiece("Knight", TEAM_1, sf::Vector2i(6, 0), GamePiece::Direction::DOWN);
-	addPiece("Knight", TEAM_2, sf::Vector2i(1, 7), GamePiece::Direction::UP);
-	addPiece("Knight", TEAM_2, sf::Vector2i(6, 7), GamePiece::Direction::UP);
+	addPiece("Knight", TEAM_1, sf::Vector2i(1, 0), PieceDef::Direction::DOWN);
+	addPiece("Knight", TEAM_1, sf::Vector2i(6, 0), PieceDef::Direction::DOWN);
+	addPiece("Knight", TEAM_2, sf::Vector2i(1, 7), PieceDef::Direction::UP);
+	addPiece("Knight", TEAM_2, sf::Vector2i(6, 7), PieceDef::Direction::UP);
 
 	// Create bishops
-	addPiece("Bishop", TEAM_1, sf::Vector2i(2, 0), GamePiece::Direction::DOWN);
-	addPiece("Bishop", TEAM_1, sf::Vector2i(5, 0), GamePiece::Direction::DOWN);
-	addPiece("Bishop", TEAM_2, sf::Vector2i(2, 7), GamePiece::Direction::UP);
-	addPiece("Bishop", TEAM_2, sf::Vector2i(5, 7), GamePiece::Direction::UP);
+	addPiece("Bishop", TEAM_1, sf::Vector2i(2, 0), PieceDef::Direction::DOWN);
+	addPiece("Bishop", TEAM_1, sf::Vector2i(5, 0), PieceDef::Direction::DOWN);
+	addPiece("Bishop", TEAM_2, sf::Vector2i(2, 7), PieceDef::Direction::UP);
+	addPiece("Bishop", TEAM_2, sf::Vector2i(5, 7), PieceDef::Direction::UP);
 
 	// Create kings
-	addPiece("King", TEAM_1, sf::Vector2i(4, 0), GamePiece::Direction::DOWN);
-	addPiece("King", TEAM_2, sf::Vector2i(4, 7), GamePiece::Direction::UP);
+	addPiece("King", TEAM_1, sf::Vector2i(4, 0), PieceDef::Direction::DOWN);
+	addPiece("King", TEAM_2, sf::Vector2i(4, 7), PieceDef::Direction::UP);
 
 	// Create queens
-	addPiece("Queen", TEAM_1, sf::Vector2i(3, 0), GamePiece::Direction::DOWN);
-	addPiece("Queen", TEAM_2, sf::Vector2i(3, 7), GamePiece::Direction::UP);
+	addPiece("Queen", TEAM_1, sf::Vector2i(3, 0), PieceDef::Direction::DOWN);
+	addPiece("Queen", TEAM_2, sf::Vector2i(3, 7), PieceDef::Direction::UP);
 
 	generateMoveMarkers();
 }
@@ -88,9 +90,9 @@ void PieceTracker::onStartup() {
  * Update the pieces when the cmaera changes
  */
 void PieceTracker::onCameraChange() {
-	for (std::map<sf::Vector2i, GamePiece*>::iterator i = pieces.begin(); i != pieces.end(); ++i) {
-		GamePiece* piece = i->second;
-		piece->onCameraChange();
+	for (std::map<sf::Vector2i, Piece*>::iterator i = pieces.begin(); i != pieces.end(); ++i) {
+		//Piece* piece = i->second;
+		//piece->onCameraChange();
 	}
 }
 
@@ -112,18 +114,18 @@ bool PieceTracker::isRenderable(sf::Vector2i pos) const {
 /**
  * Add a piece to the piece tracker
  */
-bool PieceTracker::addPiece(std::string pieceName, sf::Color team, sf::Vector2i pos, GamePiece::Direction dir) {
+bool PieceTracker::addPiece(std::string pieceName, sf::Color team, sf::Vector2i pos, PieceDef::Direction dir) {
 	// Check whether a piece is already at the desired location
 	if (pieces.find(pos) != pieces.end()) return false;
 
-	std::map<std::string, GamePiece*>* pieceDefs = game->resourceLoader->pieceDefs;
+	std::map<std::string, const PieceDef*>* pieceDefs = game->resourceLoader->pieceDefs;
 
 	// Check whether a piece with the desired name exists
-	std::map<std::string, GamePiece*>::iterator it = pieceDefs->find(pieceName);
+	std::map<std::string, const PieceDef*>::iterator it = pieceDefs->find(pieceName);
 	if (it == pieceDefs->end()) return false;
 
 	// Create a copy from the definition
-	pieces.insert(std::make_pair(pos, new GamePiece(this, it->second, team, pos, dir)));
+	pieces.insert(std::make_pair(pos, new Piece(it->second, team, pos, dir)));
 
 	return true;
 }
@@ -132,7 +134,7 @@ bool PieceTracker::addPiece(std::string pieceName, sf::Color team, sf::Vector2i 
  * Remove a piece from the piece tracker
  */
 bool PieceTracker::removePiece(sf::Vector2i pos) {
-	GamePiece* piece = getPiece(pos);
+	Piece* piece = getPiece(pos);
 
 	if (piece == nullptr) {
 		return false;
@@ -145,8 +147,8 @@ bool PieceTracker::removePiece(sf::Vector2i pos) {
  /**
   * Get the piece at a certain spot
   */
-GamePiece* PieceTracker::getPiece(sf::Vector2i pos) {
-	std::map<sf::Vector2i, GamePiece*>::iterator it = pieces.find(pos);
+Piece* PieceTracker::getPiece(sf::Vector2i pos) {
+	std::map<sf::Vector2i, Piece*>::iterator it = pieces.find(pos);
 
 	// Return the null pointer if the piece is not in the map
 	if (it == pieces.end()) {
@@ -165,8 +167,8 @@ GamePiece* PieceTracker::getPiece(sf::Vector2i pos) {
  * @return false if there is no piece at pos1, true otherwise
  */
 bool PieceTracker::movePiece(sf::Vector2i pos1, sf::Vector2i pos2) {
-	std::map<sf::Vector2i, GamePiece*>::iterator it1 = pieces.find(pos1);
-	std::map<sf::Vector2i, GamePiece*>::iterator it2 = pieces.find(pos2);
+	std::map<sf::Vector2i, Piece*>::iterator it1 = pieces.find(pos1);
+	std::map<sf::Vector2i, Piece*>::iterator it2 = pieces.find(pos2);
 
 	// Check if there is a piece to move
 	if (it1 == pieces.end()) {
@@ -174,7 +176,7 @@ bool PieceTracker::movePiece(sf::Vector2i pos1, sf::Vector2i pos2) {
 	}
 
 	// Get the game piece at pos1
-	GamePiece* piece = it1->second;
+	Piece* piece = it1->second;
 
 	// Remove the piece at the final destination
 	if (it2 != pieces.end()) {

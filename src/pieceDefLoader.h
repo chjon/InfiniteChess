@@ -8,7 +8,7 @@
 
 // Forward declarations
 class PieceDef;
-class PieceMove;
+class MoveDef;
 
 
 
@@ -27,8 +27,8 @@ private:
 	// Methods
     static const bool isValidFileName(const std::string& fileName);
     static const PieceDef* pieceDefFromString(const std::string& pieceString);
-    static const std::map<int, const PieceMove*>* getMovesFromString(const std::string& movesString);
-    static const PieceMove* getMoveFromString(const std::string& moveString);
+    static const std::map<int, const MoveDef*>* getMovesFromString(const std::string& movesString);
+    static const MoveDef* getMoveFromString(const std::string& moveString);
     static const int getNumArgs(const std::string& s);
     static const sf::Vector2i getVectorFromString(const std::string& s);
 

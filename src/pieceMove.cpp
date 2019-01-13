@@ -2,6 +2,8 @@
 #include "vectorUtils.h"
 #include "pieceTracker.h"
 #include "moveMarker.h"
+#include "pieceDef.h"
+#include "piece.h"
 
 // Public constructors
 
@@ -40,7 +42,7 @@ PieceMove::~PieceMove() {
 /**
  * Generate the move markers for this move
  */
-void PieceMove::generateMoveMarkers(GamePiece* piece) {
+void PieceMove::generateMoveMarkers(Piece* piece) {
 	sf::Vector2i transformation = baseVector;
 
 	for (int x = (isXSymmetric ? 0 : 1); x < 2; x++) {
@@ -48,18 +50,18 @@ void PieceMove::generateMoveMarkers(GamePiece* piece) {
 			for (int xy = (isXYSymmetric ? 0 : 1); xy < 2; xy++) {
 				// Rotate the vector to the correct direction
 				sf::Vector2i rotated = transformation;
-				if (piece->dir == GamePiece::Direction::UP) {
+				if (piece->dir == PieceDef::Direction::UP) {
 					VectorUtils::rotate180(rotated);
-				} else if (piece->dir == GamePiece::Direction::LEFT) {
+				} else if (piece->dir == PieceDef::Direction::LEFT) {
 					VectorUtils::rotate90(rotated);
-				} else if (piece->dir == GamePiece::Direction::RIGHT) {
+				} else if (piece->dir == PieceDef::Direction::RIGHT) {
 					VectorUtils::rotate270(rotated);
 				}
 
 				// Add move markers for the current set of transformations
 				sf::Vector2i nextPos = piece->pos + rotated;
 				MoveMarker* newMoveMarker = new MoveMarker(piece, this, rotated, nextPos);
-				piece->moveMarkers.insert(std::make_pair(nextPos, newMoveMarker));
+				//piece->moveMarkers.insert(std::make_pair(nextPos, newMoveMarker));
 
 				/*/ Add the terminal move markers
 				if (allowScaling) {

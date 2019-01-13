@@ -14,7 +14,6 @@
 # DataSpecifiers: <[LastMove,LastTurn,NumMoves]><NumRule>
 #
 # TransformationRules: [[Move,[<{~}x,{~}y>]], [Destroy], [ChangeColor]]
-# If the move vector is [], the targetted piece is captured
 
 [Pawn,00,[
 	[0,[0,1],00101000,[],[=1,],[=*,],[[Destroy],]],

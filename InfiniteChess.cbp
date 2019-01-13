@@ -48,13 +48,15 @@
 		<Unit filename="src/controller.h" />
 		<Unit filename="src/game.cpp" />
 		<Unit filename="src/game.h" />
-		<Unit filename="src/gamePiece.cpp" />
-		<Unit filename="src/gamePiece.h" />
 		<Unit filename="src/inputHandler.cpp" />
 		<Unit filename="src/inputHandler.h" />
 		<Unit filename="src/main.cpp" />
+		<Unit filename="src/moveDef.cpp" />
+		<Unit filename="src/moveDef.h" />
 		<Unit filename="src/moveMarker.cpp" />
 		<Unit filename="src/moveMarker.h" />
+		<Unit filename="src/piece.cpp" />
+		<Unit filename="src/piece.h" />
 		<Unit filename="src/pieceDef.cpp" />
 		<Unit filename="src/pieceDef.h" />
 		<Unit filename="src/pieceDefLoader.cpp" />

@@ -8,7 +8,7 @@
 // Forward declarations
 class Game;
 class InputHandler;
-class GamePiece;
+class Piece;
 
 
 
@@ -57,7 +57,7 @@ private:
 	void drawOverlays() const;
 
 	void drawDebugText(const std::string& s, const unsigned int row) const;
-	void drawPiece(GamePiece* p) const;
+	void drawPiece(Piece* p) const;
 	void drawTile(const int x, const int y, const sf::Color c) const;
 	void drawDebug() const;
 public:

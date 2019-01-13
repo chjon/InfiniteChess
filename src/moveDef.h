@@ -1,28 +1,11 @@
-#ifndef CHESS_PIECE_MOVE_H
-#define CHESS_PIECE_MOVE_H
+#ifndef CHESS_MOVE_DEF_H
+#define CHESS_MOVE_DEF_H
 
 #include <SFML/Graphics.hpp>
-#include <vector>
-
-// Forward declarations
-class PieceTracker;
-class MoveMarker;
-class ResourceLoader;
-class Piece;
-
-
 
 // Class declaration
-class PieceMove {
+class MoveDef {
 private:
-	// Members
-	PieceTracker* pieceTracker;
-
-	// Friends
-	friend PieceTracker;
-	friend MoveMarker;
-	friend ResourceLoader;
-
 public:
 	// Members
 	const int index;
@@ -44,15 +27,12 @@ public:
 	const std::vector<int> targettingRules;
 
 	// Constructors
-	PieceMove(
-		PieceTracker* p, int index_, sf::Vector2i baseVector_, bool attacksFriendlies_, bool attacksEnemies_,
+	MoveDef(
+		int index_, sf::Vector2i baseVector_, bool attacksFriendlies_, bool attacksEnemies_,
 		bool movesEmpty_, bool canLeap, bool endsTurn, bool isXSymmetric, bool isYSymmetric, bool isXYSymmetric
 	);
 
-	~PieceMove();
-
-	// Methods
-	void generateMoveMarkers(Piece* piece);
+	~MoveDef();
 };
 
-#endif // CHESS_PIECE_MOVE_H
+#endif // CHESS_MOVE_DEF_H

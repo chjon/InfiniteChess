@@ -2,6 +2,7 @@
 #include "renderer.h"
 #include "vectorUtils.h"
 #include "moveMarker.h"
+#include "piece.h"
 
 // Private utility methods
 
@@ -42,10 +43,10 @@ void Renderer::drawBoard() const {
  * Draw the pieces
  */
 void Renderer::drawPieces() const {
-	std::map<sf::Vector2i, GamePiece*, VectorUtils::cmpVectorLexicographically>* pieces = &(game->pieceTracker->pieces);
+	std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>* pieces = &(game->pieceTracker->pieces);
 
 	// Draw the pieces
-    for (std::map<sf::Vector2i, GamePiece*, VectorUtils::cmpVectorLexicographically>::iterator it = pieces->begin();
+    for (std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>::iterator it = pieces->begin();
 		it != pieces->end();
 		++it
 	) {
@@ -58,20 +59,20 @@ void Renderer::drawPieces() const {
  */
 void Renderer::drawOverlays() const {
 	const sf::Vector2i mousePos = getMouseTilePosition();
-	GamePiece* selectedPiece = game->controller->getSelectedPiece();
+	Piece* selectedPiece = game->controller->getSelectedPiece();
 
     // Draw selection overlay
     if (selectedPiece != nullptr) {
-		drawTile(selectedPiece->pos.x, selectedPiece->pos.y, PIECE_SELECTED_COLOR);
+		drawTile(selectedPiece->getPos().x, selectedPiece->getPos().y, PIECE_SELECTED_COLOR);
 
 		// Draw possible moves
-		for (std::map<sf::Vector2i, MoveMarker*>::iterator it = selectedPiece->moveMarkers.begin();
+		/*for (std::map<sf::Vector2i, MoveMarker*>::iterator it = selectedPiece->moveMarkers.begin();
 			it != selectedPiece->moveMarkers.end();
 			++it
 		) {
 			if (!it->second->canMove() && !displayDebugData) continue;
 			drawTile(it->first.x, it->first.y, MOVE_MARKER_COLOR);
-		}
+		}*/
     }
 
     // Draw mouse overlay
@@ -86,11 +87,11 @@ void Renderer::drawOverlays() const {
 
 	// If a piece is selected, only valid move positions should be selectable
     } else {
-		if (selectedPiece->canMove(mousePos)) {
-			drawTile(mousePos.x, mousePos.y, MOUSE_VALID_COLOR);
-		} else {
+		//if (selectedPiece->canMove(mousePos)) {
+		//	drawTile(mousePos.x, mousePos.y, MOUSE_VALID_COLOR);
+		//} else {
 			drawTile(mousePos.x, mousePos.y, MOUSE_INVALID_COLOR);
-		}
+		//}
     }
 
     // Check if debug data should be drawn
@@ -120,8 +121,8 @@ void Renderer::drawDebugText(const std::string& s, const unsigned int row) const
  * @param y the y position to draw to
  * @param c the color to fill with
  */
-void Renderer::drawPiece(GamePiece* p) const {
-	std::map<std::string, sf::Texture*>::iterator it = game->resourceLoader->textures->find(p->name);
+void Renderer::drawPiece(Piece* p) const {
+	std::map<std::string, sf::Texture*>::iterator it = game->resourceLoader->textures->find(p->pieceDef->name);
 	if (it == game->resourceLoader->textures->end() || it->second == nullptr) {
 		sf::CircleShape s(tileSize / 2);
 		s.setFillColor(p->team);
@@ -180,12 +181,12 @@ void Renderer::drawDebug() const {
 	s = "Tile size: " + std::to_string(tileSize);
 	drawDebugText(s, row++);
 
-	GamePiece* selectedPiece = game->controller->getSelectedPiece();
+	Piece* selectedPiece = game->controller->getSelectedPiece();
 	if (selectedPiece == nullptr) {
 		s = "Selected piece: null";
 		drawDebugText(s, row++);
 	} else {
-		s = "Selected piece: " + selectedPiece->name;
+		s = "Selected piece: " + selectedPiece->pieceDef->name;
 		drawDebugText(s, row++);
 		s = "Selected piece dir: " + std::to_string(selectedPiece->dir);
 		drawDebugText(s, row++);
