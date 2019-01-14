@@ -55,14 +55,14 @@
 		<Unit filename="src/moveDef.h" />
 		<Unit filename="src/moveMarker.cpp" />
 		<Unit filename="src/moveMarker.h" />
+		<Unit filename="src/moveTracker.cpp" />
+		<Unit filename="src/moveTracker.h" />
 		<Unit filename="src/piece.cpp" />
 		<Unit filename="src/piece.h" />
 		<Unit filename="src/pieceDef.cpp" />
 		<Unit filename="src/pieceDef.h" />
 		<Unit filename="src/pieceDefLoader.cpp" />
 		<Unit filename="src/pieceDefLoader.h" />
-		<Unit filename="src/pieceMove.cpp" />
-		<Unit filename="src/pieceMove.h" />
 		<Unit filename="src/pieceTracker.cpp" />
 		<Unit filename="src/pieceTracker.h" />
 		<Unit filename="src/renderer.cpp" />
