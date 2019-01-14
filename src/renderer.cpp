@@ -3,6 +3,7 @@
 #include "vectorUtils.h"
 #include "moveMarker.h"
 #include "piece.h"
+#include "moveTracker.h"
 
 // Private utility methods
 
@@ -66,13 +67,22 @@ void Renderer::drawOverlays() const {
 		drawTile(selectedPiece->getPos().x, selectedPiece->getPos().y, PIECE_SELECTED_COLOR);
 
 		// Draw possible moves
-		/*for (std::map<sf::Vector2i, MoveMarker*>::iterator it = selectedPiece->moveMarkers.begin();
-			it != selectedPiece->moveMarkers.end();
-			++it
+		for (std::map<const MoveDef*, std::map<
+				sf::Vector2i, MoveMarker*, VectorUtils::cmpVectorLexicographically>*
+			>::iterator i = selectedPiece->moveTracker->moveMarkers->begin();
+			i != selectedPiece->moveTracker->moveMarkers->end();
+			++i
 		) {
-			if (!it->second->canMove() && !displayDebugData) continue;
-			drawTile(it->first.x, it->first.y, MOVE_MARKER_COLOR);
-		}*/
+			for (std::map<
+					sf::Vector2i, MoveMarker*, VectorUtils::cmpVectorLexicographically
+				>::iterator j = i->second->begin();
+				j != i->second->end();
+				++j
+			) {
+				if (!j->second->canMove() && !displayDebugData) continue;
+				drawTile(j->first.x, j->first.y, MOVE_MARKER_COLOR);
+			}
+		}
     }
 
     // Draw mouse overlay

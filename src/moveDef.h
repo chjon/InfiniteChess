@@ -3,6 +3,12 @@
 
 #include <SFML/Graphics.hpp>
 
+// Forward declarations
+class MoveMarker;
+class Piece;
+
+
+
 // Class declaration
 class MoveDef {
 private:
@@ -33,6 +39,9 @@ public:
 	);
 
 	~MoveDef();
+
+	// Methods
+	const std::vector<MoveMarker*>* generateMarkers(const Piece* piece) const;
 };
 
 #endif // CHESS_MOVE_DEF_H

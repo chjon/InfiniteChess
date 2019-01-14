@@ -1,7 +1,6 @@
 #include <map>
 #include "game.h"
 #include "pieceTracker.h"
-#include "pieceMove.h"
 #include "moveMarker.h"
 #include "piece.h"
 #include <iostream>
@@ -14,7 +13,7 @@
 void PieceTracker::generateMoveMarkers() {
 	// Generate and add the move markers for each piece
 	for (std::map<sf::Vector2i, Piece*>::iterator it = pieces.begin(); it != pieces.end(); ++it) {
-		//it->second->onMove();
+		it->second->onMove();
 	}
 }
 
@@ -91,8 +90,8 @@ void PieceTracker::onStartup() {
  */
 void PieceTracker::onCameraChange() {
 	for (std::map<sf::Vector2i, Piece*>::iterator i = pieces.begin(); i != pieces.end(); ++i) {
-		//Piece* piece = i->second;
-		//piece->onCameraChange();
+		Piece* piece = i->second;
+		piece->onCameraChange(this);
 	}
 }
 

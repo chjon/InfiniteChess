@@ -7,7 +7,9 @@
 // Forward declarations
 class PieceDef;
 class Renderer;
+class MoveTracker;
 class PieceMove;
+class PieceTracker;
 
 
 
@@ -17,15 +19,19 @@ private:
 	// Piece definition
     const PieceDef* pieceDef;
 
-    // Members
+    // Piece properties
     sf::Color team;
     sf::Vector2i pos;
 	PieceDef::Direction dir;
 	unsigned int moveCount;
 
+	// Move tracker
+	MoveTracker* moveTracker;
+
 	// Friends
 	friend Renderer;
 	friend PieceMove;
+	friend MoveDef;
 
 public:
 	// Constructors
@@ -34,6 +40,11 @@ public:
 
 	// Accessors
 	const sf::Vector2i getPos() const;
+	const PieceDef* getDef() const;
+
+	// Event handlers
+	void onMove();
+	void onCameraChange(PieceTracker* pieceTracker);
 };
 
 #endif // CHESS_PIECE_H

@@ -1,16 +1,17 @@
 #include "moveMarker.h"
-#include "pieceMove.h"
+
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include "pieceDef.h"
+#include "moveDef.h"
 #include "piece.h"
+#include "pieceDef.h"
 
 // Public constructors / destructor
 
 /**
  * Constructor
  */
-MoveMarker::MoveMarker(Piece* rootPiece_, const PieceMove* rootMove, sf::Vector2i baseVector_, sf::Vector2i pos_) :
+MoveMarker::MoveMarker(const Piece* rootPiece_, const MoveDef* rootMove, sf::Vector2i baseVector_, sf::Vector2i pos_) :
 	rootPiece{rootPiece_},
 	rootMove{rootMove},
 	baseVector{baseVector_},
@@ -39,13 +40,6 @@ sf::Vector2i MoveMarker::getPos() const {
 }
 
 /**
- * Iterate the move backward to get the position of the previous move marker
- */
-sf::Vector2i MoveMarker::getPrevPos() const {
-	return pos - baseVector;
-}
-
-/**
  * Iterate the move forward to get the position of the next move marker
  */
 sf::Vector2i MoveMarker::getNextPos() const {
@@ -53,18 +47,32 @@ sf::Vector2i MoveMarker::getNextPos() const {
 }
 
 /**
+ * Get the root move for the move marker
+ */
+const MoveDef* MoveMarker::getRootMove() const {
+	return rootMove;
+}
+
+/**
+ * Get the base vector for the move marker
+ */
+const sf::Vector2i MoveMarker::getBaseVector() const {
+	return baseVector;
+}
+
+/**
  * Determine whether the move marker is a valid move position
  */
 bool MoveMarker::canMove() const {
-	Piece* pieceAtLocation = rootMove->pieceTracker->getPiece(pos);
+	/*const Piece* pieceAtLocation = rootMove->pieceTracker->getPiece(pos);
 
-	/*/ Check whether the new position meets the attack requirements
+	// Check whether the new position meets the attack requirements
 	if (((pieceAtLocation != nullptr) && rootMove->moveType == PieceMove::MoveType::MOVE_ONLY) ||
 		((pieceAtLocation != nullptr) && pieceAtLocation->team == rootPiece->team) ||
 		((pieceAtLocation == nullptr) && rootMove->moveType == PieceMove::MoveType::ATTACK_ONLY)
 	) {
 		return false;
-	}*/
+	}
 
 	// Check whether there are pieces in the way of the move
 	if (!rootMove->canLeap) {
@@ -79,7 +87,7 @@ bool MoveMarker::canMove() const {
 
 			cur += baseVector;
 		}
-	}
+	}*/
 
 	return true;
 }

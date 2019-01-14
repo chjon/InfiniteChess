@@ -6,7 +6,7 @@
 
 // Forward definitions
 class Piece;
-class PieceMove;
+class MoveDef;
 
 
 
@@ -25,7 +25,7 @@ private:
 	/**
 	 * The move that this move marker belongs to
 	 */
-	const PieceMove* rootMove;
+	const MoveDef* rootMove;
 
 	/**
 	 * The base direction vector for this move marker
@@ -48,7 +48,7 @@ private:
 
 public:
 	// Constructors / Destructor
-	MoveMarker(Piece* rootPiece_, const PieceMove* rootMove_, sf::Vector2i baseVector, sf::Vector2i pos_);
+	MoveMarker(const Piece* rootPiece_, const MoveDef* rootMove_, sf::Vector2i baseVector, sf::Vector2i pos_);
 	~MoveMarker();
 
 	// Accessors
@@ -59,14 +59,19 @@ public:
 	sf::Vector2i getPos() const;
 
 	/**
-	 * Iterate the move backward to get the position of the previous move marker
-	 */
-	sf::Vector2i getPrevPos() const;
-
-	/**
 	 * Iterate the move forward to get the position of the next move marker
 	 */
 	sf::Vector2i getNextPos() const;
+
+	/**
+	 * Get the root move for the move marker
+	 */
+	const MoveDef* getRootMove() const;
+
+	/**
+	 * Get the base vector for the move marker
+	 */
+	const sf::Vector2i getBaseVector() const;
 
 	/**
 	 * Determine whether the move marker is a valid move destination
