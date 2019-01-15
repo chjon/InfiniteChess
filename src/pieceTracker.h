@@ -54,6 +54,7 @@ public:
     bool removePiece(sf::Vector2i pos);
     Piece* getPiece(sf::Vector2i pos);
     bool movePiece(sf::Vector2i pos1, sf::Vector2i pos2);
+    bool canMove(Piece* piece, sf::Vector2i dest);
 };
 
 #endif // CHESS_PIECE_TRACKER_H

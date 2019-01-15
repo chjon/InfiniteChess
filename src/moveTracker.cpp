@@ -29,7 +29,7 @@ void MoveTracker::clearMarkers() {
             delete j->second;
 		}
 
-		i->second->empty();
+		i->second->clear();
     }
 }
 
@@ -51,6 +51,7 @@ void MoveTracker::generateMarkers() {
 		}
 
 		delete markers;
+		markers = nullptr;
     }
 }
 
@@ -152,7 +153,7 @@ void MoveTracker::onMove() {
 /**
  * Get all of the piece's move markers at a certain position
  */
-std::vector<MoveMarker*>* MoveTracker::getMoveMarkers(sf::Vector2i pos) {
+const std::vector<MoveMarker*>* MoveTracker::getMoveMarkers(sf::Vector2i pos) const {
 	std::vector<MoveMarker*>* markers = new std::vector<MoveMarker*>();
 
 	// Add all of the move markers at the given position

@@ -97,11 +97,11 @@ void Renderer::drawOverlays() const {
 
 	// If a piece is selected, only valid move positions should be selectable
     } else {
-		//if (selectedPiece->canMove(mousePos)) {
-		//	drawTile(mousePos.x, mousePos.y, MOUSE_VALID_COLOR);
-		//} else {
+		if (game->pieceTracker->canMove(selectedPiece, mousePos)) {
+			drawTile(mousePos.x, mousePos.y, MOUSE_VALID_COLOR);
+		} else {
 			drawTile(mousePos.x, mousePos.y, MOUSE_INVALID_COLOR);
-		//}
+		}
     }
 
     // Check if debug data should be drawn

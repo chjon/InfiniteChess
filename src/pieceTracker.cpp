@@ -1,7 +1,9 @@
+#include "pieceTracker.h"
+
 #include <map>
 #include "game.h"
-#include "pieceTracker.h"
 #include "moveMarker.h"
+#include "moveTracker.h"
 #include "piece.h"
 #include <iostream>
 
@@ -83,10 +85,11 @@ void PieceTracker::onStartup() {
 	addPiece("Queen", TEAM_2, sf::Vector2i(3, 7), PieceDef::Direction::UP);
 
 	generateMoveMarkers();
+	onCameraChange();
 }
 
 /**
- * Update the pieces when the cmaera changes
+ * Update the pieces when the camera changes
  */
 void PieceTracker::onCameraChange() {
 	for (std::map<sf::Vector2i, Piece*>::iterator i = pieces.begin(); i != pieces.end(); ++i) {
@@ -179,12 +182,28 @@ bool PieceTracker::movePiece(sf::Vector2i pos1, sf::Vector2i pos2) {
 
 	// Remove the piece at the final destination
 	if (it2 != pieces.end()) {
+		delete it2->second;
 		pieces.erase(it2);
 	}
 
 	// Update the position of the piece
-	pieces.insert(std::make_pair(pos2, piece));
 	pieces.erase(it1);
+	pieces.insert(std::make_pair(pos2, piece));
+
+	// Update the piece
+	piece->setPos(pos2);
+	piece->onCameraChange(this);
 
 	return true;
+}
+
+/**
+ * Determine whether the piece can move
+ */
+bool PieceTracker::canMove (Piece* piece, sf::Vector2i dest) {
+	const std::vector<MoveMarker*>* markers = piece->getMoveTracker()->getMoveMarkers(dest);
+	bool canMove = !(markers->empty());
+	delete markers;
+
+    return canMove;
 }

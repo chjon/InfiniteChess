@@ -28,6 +28,19 @@ const PieceDef* Piece::getDef() const {
 	return pieceDef;
 }
 
+const MoveTracker* Piece::getMoveTracker() const {
+	return moveTracker;
+}
+
+// Mutators
+
+void Piece::setPos(sf::Vector2i newPos) {
+    pos = newPos;
+    onMove();
+}
+
+
+
 // Event handlers
 
 void Piece::onMove() {

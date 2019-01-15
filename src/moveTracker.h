@@ -49,7 +49,7 @@ public:
 	void onMove();
 
     // Methods
-    std::vector<MoveMarker*>* getMoveMarkers(sf::Vector2i pos);
+    const std::vector<MoveMarker*>* getMoveMarkers(sf::Vector2i pos) const;
 };
 
 #endif // CHESS_MOVE_TRACKER_H
