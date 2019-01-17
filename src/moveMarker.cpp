@@ -16,7 +16,10 @@ MoveMarker::MoveMarker(const Piece* rootPiece_, const MoveDef* rootMove, sf::Vec
 	rootMove{rootMove},
 	baseVector{baseVector_},
 	pos{pos_},
-	lambda{1}
+	lambda{1},
+	next{nullptr},
+	prev{nullptr},
+	requiresLeap{false}
 {
 }
 
@@ -26,6 +29,41 @@ MoveMarker::MoveMarker(const Piece* rootPiece_, const MoveDef* rootMove, sf::Vec
 MoveMarker::~MoveMarker() {
 	rootPiece  = nullptr;
 	rootMove   = nullptr;
+	next       = nullptr;
+	prev       = nullptr;
+}
+
+
+
+// Event handlers
+
+/**
+ * Update whether the move marker requires leaping when a piece leaves the tile
+ */
+void MoveMarker::onPieceLeave(PieceTracker* pieceTracker) {
+	requiresLeap = false;
+
+	// Check whether to propagate the event
+	if (next != nullptr && pieceTracker->getPiece(pos) == nullptr) {
+		next->onPieceLeave(pieceTracker);
+	}
+}
+
+
+
+/**
+ * Update whether the move marker requires leaping when a piece enters the tile
+ */
+void MoveMarker::onPieceEnter() {
+	// Check whether the tile is already accessible only via leap
+	if (!requiresLeap) {
+		requiresLeap = true;
+
+		// Check if there is a next tile
+		if (next != nullptr) {
+			next->onPieceEnter();
+		}
+	}
 }
 
 
@@ -47,6 +85,13 @@ sf::Vector2i MoveMarker::getNextPos() const {
 }
 
 /**
+ * Get the next move marker
+ */
+MoveMarker* MoveMarker::getNext() const {
+	return next;
+}
+
+/**
  * Get the root move for the move marker
  */
 const MoveDef* MoveMarker::getRootMove() const {
@@ -61,33 +106,52 @@ const sf::Vector2i MoveMarker::getBaseVector() const {
 }
 
 /**
+ * Get whether the move marker requires a leap
+ */
+const bool MoveMarker::getRequiresLeap() const {
+	return requiresLeap;
+}
+
+/**
  * Determine whether the move marker is a valid move position
  */
-bool MoveMarker::canMove() const {
-	/*const Piece* pieceAtLocation = rootMove->pieceTracker->getPiece(pos);
+bool MoveMarker::canMove(PieceTracker* pieceTracker) const {
+	const Piece* pieceAtLocation = pieceTracker->getPiece(pos);
 
 	// Check whether the new position meets the attack requirements
-	if (((pieceAtLocation != nullptr) && rootMove->moveType == PieceMove::MoveType::MOVE_ONLY) ||
-		((pieceAtLocation != nullptr) && pieceAtLocation->team == rootPiece->team) ||
-		((pieceAtLocation == nullptr) && rootMove->moveType == PieceMove::MoveType::ATTACK_ONLY)
-	) {
-		return false;
+	if (pieceAtLocation == nullptr) {
+		if (!rootMove->movesEmpty) return false;
+	} else if (pieceAtLocation->getTeam() == rootPiece->getTeam()) {
+		if (!rootMove->attacksFriendlies) return false;
+	} else {
+		if (!rootMove->attacksEnemies) return false;
 	}
 
 	// Check whether there are pieces in the way of the move
-	if (!rootMove->canLeap) {
-		sf::Vector2i cur = rootPiece->getPos() + baseVector;
-
-		while (cur != pos) {
-			pieceAtLocation = rootMove->pieceTracker->getPiece(cur);
-
-			if (pieceAtLocation != nullptr) {
-				return false;
-			}
-
-			cur += baseVector;
-		}
-	}*/
+	if (!rootMove->canLeap && requiresLeap) {
+		return false;
+	}
 
 	return true;
+}
+
+// Mutators
+
+/**
+ * Set the next move marker
+ */
+void MoveMarker::setNext(MoveMarker* newNext) {
+    next = newNext;
+
+    // Link backward as well
+    if (newNext != nullptr) {
+		newNext->prev = this;
+    }
+}
+
+/**
+ * Set whether the move marker requires a leap
+ */
+void MoveMarker::setRequiresLeap(bool requiresLeap_) {
+	requiresLeap = requiresLeap_;
 }

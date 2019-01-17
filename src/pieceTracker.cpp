@@ -194,6 +194,32 @@ bool PieceTracker::movePiece(sf::Vector2i pos1, sf::Vector2i pos2) {
 	piece->setPos(pos2);
 	piece->onCameraChange(this);
 
+	// Update the move markers for leaving
+	std::vector<MoveMarker*>* leavePos = getMoveMarkers(pos1);
+	for (std::vector<MoveMarker*>::iterator i = leavePos->begin(); i != leavePos->end(); ++i) {
+        MoveMarker* next = (*i)->getNext();
+
+        if (!(*i)->getRequiresLeap() && next != nullptr) {
+			next->onPieceLeave(this);
+        }
+	}
+
+	// Update the move markers for entering
+	std::vector<MoveMarker*>* enterPos = getMoveMarkers(pos2);
+	for (std::vector<MoveMarker*>::iterator i = enterPos->begin(); i != enterPos->end(); ++i) {
+        MoveMarker* next = (*i)->getNext();
+
+        if (next != nullptr) {
+			next->onPieceEnter();
+        }
+	}
+
+	// Clean up
+	delete leavePos;
+	delete enterPos;
+	leavePos = nullptr;
+	enterPos = nullptr;
+
 	return true;
 }
 
@@ -202,8 +228,44 @@ bool PieceTracker::movePiece(sf::Vector2i pos1, sf::Vector2i pos2) {
  */
 bool PieceTracker::canMove (Piece* piece, sf::Vector2i dest) {
 	const std::vector<MoveMarker*>* markers = piece->getMoveTracker()->getMoveMarkers(dest);
-	bool canMove = !(markers->empty());
+	bool canMove = false;
+
+	for (std::vector<MoveMarker*>::const_iterator i = markers->begin(); i != markers->end(); ++i) {
+        if ((*i)->canMove(this)) {
+			canMove = true;
+			break;
+        }
+	}
+
+	// Clean up
 	delete markers;
+	markers = nullptr;
 
     return canMove;
+}
+
+/**
+ * Get all the move markers at a position
+ */
+std::vector<MoveMarker*>* PieceTracker::getMoveMarkers(sf::Vector2i pos) const {
+	std::vector<MoveMarker*>* markers = new std::vector<MoveMarker*>();
+
+	// Iterate through each piece
+	for (std::map<
+			sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically
+		>::const_iterator i = pieces.begin(); i != pieces.end(); ++i
+	) {
+        const std::vector<MoveMarker*>* markersForPiece = i->second->getMoveTracker()->getMoveMarkers(pos);
+
+		// Add all the move markers
+		for (std::vector<MoveMarker*>::const_iterator j = markersForPiece->begin(); j != markersForPiece->end(); ++j) {
+            markers->push_back(*j);
+		}
+
+		// Clean up
+		delete markersForPiece;
+		markersForPiece = nullptr;
+	}
+
+	return markers;
 }

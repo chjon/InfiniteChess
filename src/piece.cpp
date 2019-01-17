@@ -24,6 +24,10 @@ const sf::Vector2i Piece::getPos() const {
 	return pos;
 }
 
+const sf::Color Piece::getTeam() const {
+	return team;
+}
+
 const PieceDef* Piece::getDef() const {
 	return pieceDef;
 }

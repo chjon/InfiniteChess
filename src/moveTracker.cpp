@@ -120,7 +120,16 @@ void MoveTracker::onCameraChange(PieceTracker* pieceTracker) {
         // Extend the move marker upward
         while (pieceTracker->isRenderable(terminal->getNextPos())) {
 			const MoveDef* rootMove = terminal->getRootMove();
+			MoveMarker* prev = terminal;
 			terminal = new MoveMarker(piece, rootMove, terminal->getBaseVector(), terminal->getNextPos());
+
+			// Link the move markers
+			prev->setNext(terminal);
+
+			// Check if a leap is necessary for the move
+			if (prev->getRequiresLeap() || pieceTracker->getPiece(prev->getPos()) != nullptr) {
+				terminal->setRequiresLeap(true);
+			}
             moveMarkers->find(rootMove)->second->insert(std::make_pair(terminal->getPos(), terminal));
         }
 

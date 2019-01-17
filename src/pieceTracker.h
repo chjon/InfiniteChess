@@ -8,9 +8,10 @@
 
 // Forward declarations
 class Game;
-class Renderer;
-class PieceDef;
+class MoveMarker;
 class Piece;
+class PieceDef;
+class Renderer;
 
 
 
@@ -55,6 +56,7 @@ public:
     Piece* getPiece(sf::Vector2i pos);
     bool movePiece(sf::Vector2i pos1, sf::Vector2i pos2);
     bool canMove(Piece* piece, sf::Vector2i dest);
+    std::vector<MoveMarker*>* getMoveMarkers(sf::Vector2i pos) const;
 };
 
 #endif // CHESS_PIECE_TRACKER_H
