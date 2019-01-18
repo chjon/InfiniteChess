@@ -63,6 +63,7 @@ private:
 
 public:
 	// Constructors / Destructor
+	MoveMarker(const Piece* rootPiece_, const MoveDef* rootMove_, sf::Vector2i baseVector, sf::Vector2i pos_, unsigned int lambda_);
 	MoveMarker(const Piece* rootPiece_, const MoveDef* rootMove_, sf::Vector2i baseVector, sf::Vector2i pos_);
 	~MoveMarker();
 
@@ -89,6 +90,11 @@ public:
 	 * Iterate the move forward to get the position of the next move marker
 	 */
 	sf::Vector2i getNextPos() const;
+
+	/**
+	 * Get the move marker's scale factor
+	 */
+	unsigned int getLambda() const;
 
 	/**
 	 * Get the next move marker

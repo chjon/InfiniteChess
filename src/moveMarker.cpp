@@ -1,8 +1,8 @@
 #include "moveMarker.h"
 
 #include <SFML/Graphics.hpp>
-#include <iostream>
 #include "moveDef.h"
+#include "numRule.h"
 #include "piece.h"
 #include "pieceDef.h"
 
@@ -11,7 +11,26 @@
 /**
  * Constructor
  */
-MoveMarker::MoveMarker(const Piece* rootPiece_, const MoveDef* rootMove, sf::Vector2i baseVector_, sf::Vector2i pos_) :
+MoveMarker::MoveMarker(
+	const Piece* rootPiece_, const MoveDef* rootMove, sf::Vector2i baseVector_,
+	sf::Vector2i pos_, unsigned int lambda_
+) :
+	rootPiece{rootPiece_},
+	rootMove{rootMove},
+	baseVector{baseVector_},
+	pos{pos_},
+	lambda{lambda_},
+	next{nullptr},
+	prev{nullptr},
+	requiresLeap{false}
+{
+}
+
+/**
+ * Constructor
+ */
+MoveMarker::MoveMarker(
+	const Piece* rootPiece_, const MoveDef* rootMove, sf::Vector2i baseVector_, sf::Vector2i pos_) :
 	rootPiece{rootPiece_},
 	rootMove{rootMove},
 	baseVector{baseVector_},
@@ -85,6 +104,13 @@ sf::Vector2i MoveMarker::getNextPos() const {
 }
 
 /**
+ * Get the move marker's scale factor
+ */
+unsigned int MoveMarker::getLambda() const {
+	return lambda;
+}
+
+/**
  * Get the next move marker
  */
 MoveMarker* MoveMarker::getNext() const {
@@ -129,6 +155,38 @@ bool MoveMarker::canMove(PieceTracker* pieceTracker) const {
 
 	// Check whether there are pieces in the way of the move
 	if (!rootMove->canLeap && requiresLeap) {
+		return false;
+	}
+
+	// Check whether the position meets the scaling rules
+	bool meetsScalingRule = false;
+	for (std::vector<NumRule*>::const_iterator i = rootMove->scalingRules->begin();
+		i != rootMove->scalingRules->end(); ++i
+	) {
+		// Check if the position meets the scaling rule
+        if ((*i)->matches(lambda)) {
+			meetsScalingRule = true;
+			break;
+        }
+	}
+
+	if (!meetsScalingRule) {
+		return false;
+	}
+
+	// Check whether the position meets the nth step rules
+	bool meetsNthStepRule = false;
+	for (std::vector<NumRule*>::const_iterator i = rootMove->nthStepRules->begin();
+		i != rootMove->nthStepRules->end(); ++i
+	) {
+		// Check if the position meets the nth step rule
+        if ((*i)->matches(rootPiece->getMoveCount())) {
+			meetsNthStepRule = true;
+			break;
+        }
+	}
+
+	if (!meetsNthStepRule) {
 		return false;
 	}
 

@@ -12,7 +12,9 @@
  */
 MoveDef::MoveDef(
 	int index_, sf::Vector2i baseVector_, bool attacksFriendlies_, bool attacksEnemies_,
-	bool movesEmpty_, bool canLeap_, bool endsTurn_, bool isXSymmetric_, bool isYSymmetric_, bool isXYSymmetric_
+	bool movesEmpty_, bool canLeap_, bool endsTurn_, bool isXSymmetric_, bool isYSymmetric_, bool isXYSymmetric_,
+	const std::vector<int>* chainedMoves_, const std::vector<NumRule*>* scalingRules_,
+	const std::vector<NumRule*>* nthStepRules_
 ) :
 	index{index_},
 	baseVector{baseVector_},
@@ -23,7 +25,11 @@ MoveDef::MoveDef(
     endsTurn{endsTurn_},
     isXSymmetric{isXSymmetric_},
     isYSymmetric{isYSymmetric_},
-    isXYSymmetric{isXYSymmetric_}
+    isXYSymmetric{isXYSymmetric_},
+    chainedMoves{chainedMoves_},
+    scalingRules{scalingRules_},
+    nthStepRules{nthStepRules_},
+    targettingRules{nullptr}
 {
 }
 
@@ -31,6 +37,9 @@ MoveDef::MoveDef(
  * Destructor
  */
 MoveDef::~MoveDef() {
+	delete chainedMoves;
+
+	chainedMoves = nullptr;
 }
 
 

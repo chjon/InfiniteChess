@@ -2,7 +2,7 @@
 #include "resourceLoader.h"
 #include "pieceDef.h"
 #include "moveDef.h"
-#include <iostream>
+#include "numRule.h"
 #include <fstream>
 
 
@@ -173,27 +173,60 @@ const MoveDef* PieceDefLoader::getMoveFromString(const std::string& moveString) 
 		}
 	}
 
-	const sf::Vector2i baseVector = getVectorFromString(moveString.substr(beginIndex, index - beginIndex));
+	const sf::Vector2i baseVector = getVectorFromString(moveString.substr(beginIndex, index++ - beginIndex));
 
     // Get the move properties
-    const bool attacksFriendlies = moveString[++index] - '0';
-    const bool attacksEnemies    = moveString[++index] - '0';
-    const bool movesEmpty        = moveString[++index] - '0';
-    const bool canLeap           = moveString[++index] - '0';
-    const bool endsTurn          = moveString[++index] - '0';
-    const bool isXSymmetric      = moveString[++index] - '0';
-    const bool isYSymmetric      = moveString[++index] - '0';
-    const bool isXYSymmetric     = moveString[++index] - '0';
+    const bool attacksFriendlies = moveString[index++] - '0';
+    const bool attacksEnemies    = moveString[index++] - '0';
+    const bool movesEmpty        = moveString[index++] - '0';
+    const bool canLeap           = moveString[index++] - '0';
+    const bool endsTurn          = moveString[index++] - '0';
+    const bool isXSymmetric      = moveString[index++] - '0';
+    const bool isYSymmetric      = moveString[index++] - '0';
+    const bool isXYSymmetric     = moveString[index++] - '0';
+
+	// Load chained moves
+	beginIndex = index + 1;
+	index = beginIndex + 1;
+
+	while (index < moveString.length() - 1) {
+		if (moveString[index++] == BRACKET_CLOSE) {
+			break;
+		}
+	}
+
+	const std::vector<int>* chainedMoves = getChainedMovesFromString(moveString.substr(beginIndex, index - beginIndex));
+
+	// Load scaling rules
+	beginIndex = index + 1;
+	index = beginIndex + 1;
+
+	while (index < moveString.length() - 1) {
+		if (moveString[index++] == BRACKET_CLOSE) {
+			break;
+		}
+	}
+
+	const std::vector<NumRule*>* scalingRules = getNumRulesFromString(moveString.substr(beginIndex, index - beginIndex));
+
+	// Load nth step rules
+	beginIndex = index + 1;
+	index = beginIndex + 1;
+
+	while (index < moveString.length() - 1) {
+		if (moveString[index++] == BRACKET_CLOSE) {
+			break;
+		}
+	}
+
+	const std::vector<NumRule*>* nthStepRules = getNumRulesFromString(moveString.substr(beginIndex, index - beginIndex));
+
+	// TODO: Load targetting rules
 
 	MoveDef* newMove = new MoveDef(
 		moveIndex, baseVector, attacksFriendlies, attacksEnemies, movesEmpty, canLeap, endsTurn,
-		isXSymmetric, isYSymmetric, isXYSymmetric
+		isXSymmetric, isYSymmetric, isXYSymmetric, chainedMoves, scalingRules, nthStepRules
 	);
-
-	// TODO: Load chained moves
-	// TODO: Load scaling rules
-	// TODO: Load nth step rules
-	// TODO: Load targetting rules
 
 	return newMove;
 }
@@ -236,7 +269,7 @@ const sf::Vector2i PieceDefLoader::getVectorFromString(const std::string& s) {
 	}
 
 	unsigned int beginIndex = 1;
-	unsigned int index = s.find(SEPARATOR, 0);
+	unsigned int index = s.find(SEPARATOR, beginIndex);
 
 	// Check whether a separator exists
 	if (index == std::string::npos) {
@@ -247,6 +280,54 @@ const sf::Vector2i PieceDefLoader::getVectorFromString(const std::string& s) {
 	const int y = std::stoi(s.substr(index + 1, s.length() - index - 1));
 
 	return sf::Vector2i(x, y);
+}
+
+/**
+ * Get a list of integers from a string
+ */
+const std::vector<int>* PieceDefLoader::getChainedMovesFromString(const std::string& s) {
+	// Check whether the string is bracket-enclosed
+	if (s[0] != BRACKET_OPEN || s[s.length() - 1] != BRACKET_CLOSE) {
+		throw ResourceLoader::FileFormatException("Expected bracket-enclosed string");
+	}
+
+	std::vector<int>* list = new std::vector<int>();
+
+	unsigned int beginIndex = 1;
+	unsigned int index = s.find(SEPARATOR, beginIndex);
+
+	// Load list elements
+	while (index != std::string::npos) {
+		list->push_back(std::stoi(s.substr(beginIndex, index - beginIndex)));
+		beginIndex = ++index;
+		index = s.find(SEPARATOR, beginIndex);
+	}
+
+	return list;
+}
+
+/**
+ * Get a list of number rules from a string
+ */
+const std::vector<NumRule*>* PieceDefLoader::getNumRulesFromString(const std::string& s) {
+	// Check whether the string is bracket-enclosed
+	if (s[0] != BRACKET_OPEN || s[s.length() - 1] != BRACKET_CLOSE) {
+		throw ResourceLoader::FileFormatException("Expected bracket-enclosed string");
+	}
+
+	std::vector<NumRule*>* list = new std::vector<NumRule*>();
+
+	unsigned int beginIndex = 1;
+	unsigned int index = s.find(SEPARATOR, beginIndex);
+
+	// Load num rules
+	while (index != std::string::npos) {
+		list->push_back(new NumRule(s.substr(beginIndex, index - beginIndex)));
+		beginIndex = ++index;
+		index = s.find(SEPARATOR, beginIndex);
+	}
+
+	return list;
 }
 
 

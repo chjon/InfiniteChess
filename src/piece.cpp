@@ -28,6 +28,10 @@ const sf::Color Piece::getTeam() const {
 	return team;
 }
 
+const unsigned int Piece::getMoveCount() const {
+	return moveCount;
+}
+
 const PieceDef* Piece::getDef() const {
 	return pieceDef;
 }
@@ -49,6 +53,7 @@ void Piece::setPos(sf::Vector2i newPos) {
 
 void Piece::onMove() {
 	moveTracker->onMove();
+	moveCount++;
 }
 
 void Piece::onCameraChange(PieceTracker* pieceTracker) {

@@ -1,9 +1,7 @@
-#include <iostream>
 #include <fstream>
 #include <string>
 #include "resourceLoader.h"
 #include "stringUtils.h"
-#include "pieceMove.h"
 #include "pieceDefLoader.h"
 #include "pieceDef.h"
 

@@ -5,6 +5,7 @@
 
 // Forward declarations
 class MoveMarker;
+class NumRule;
 class Piece;
 
 
@@ -27,15 +28,17 @@ public:
 	const bool isYSymmetric;
 	const bool isXYSymmetric;
 
-	const std::vector<int> chainedMoves;
-	const std::vector<int> scalingRules;
-	const std::vector<int> nthStepRules;
-	const std::vector<int> targettingRules;
+	const std::vector<int>* chainedMoves;
+	const std::vector<NumRule*>* scalingRules;
+	const std::vector<NumRule*>* nthStepRules;
+	const std::vector<int>* targettingRules;
 
 	// Constructors
 	MoveDef(
 		int index_, sf::Vector2i baseVector_, bool attacksFriendlies_, bool attacksEnemies_,
-		bool movesEmpty_, bool canLeap, bool endsTurn, bool isXSymmetric, bool isYSymmetric, bool isXYSymmetric
+		bool movesEmpty_, bool canLeap, bool endsTurn, bool isXSymmetric, bool isYSymmetric, bool isXYSymmetric,
+		const std::vector<int>* chainedMoves, const std::vector<NumRule*>* scalingRules,
+		const std::vector<NumRule*>* nthStepRules
 	);
 
 	~MoveDef();

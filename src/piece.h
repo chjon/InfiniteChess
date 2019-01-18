@@ -41,6 +41,7 @@ public:
 	// Accessors
 	const sf::Vector2i getPos() const;
 	const sf::Color getTeam() const;
+	const unsigned int getMoveCount() const;
 	const PieceDef* getDef() const;
 	const MoveTracker* getMoveTracker() const;
 

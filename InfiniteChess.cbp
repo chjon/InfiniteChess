@@ -57,6 +57,8 @@
 		<Unit filename="src/moveMarker.h" />
 		<Unit filename="src/moveTracker.cpp" />
 		<Unit filename="src/moveTracker.h" />
+		<Unit filename="src/numRule.cpp" />
+		<Unit filename="src/numRule.h" />
 		<Unit filename="src/piece.cpp" />
 		<Unit filename="src/piece.h" />
 		<Unit filename="src/pieceDef.cpp" />

@@ -9,7 +9,7 @@
 // Forward declarations
 class PieceDef;
 class MoveDef;
-
+class NumRule;
 
 
 // Class declaration
@@ -31,6 +31,8 @@ private:
     static const MoveDef* getMoveFromString(const std::string& moveString);
     static const int getNumArgs(const std::string& s);
     static const sf::Vector2i getVectorFromString(const std::string& s);
+    static const std::vector<int>* getChainedMovesFromString(const std::string& s);
+    static const std::vector<NumRule*>* getNumRulesFromString(const std::string& s);
 
 public:
 	// Methods
