@@ -1,47 +1,100 @@
-"Pawn" {
-	100000,0,1
-	100000,0,2
-	200100,1,1
-}
+# Piece Definition Save Format:
+# [<PieceName>,<CheckVulnerable><Royal>,<MoveSet[Moves...]>]
+# 
+# Move Save Format:
+# [<MoveId>,<BaseVector[<x,y>]>,<AttacksFriendlies><AttacksEnemies><MovesEmpty><CanLeap><EndsTurn><XSymmetric><YSymmetric><XYSymmetric>,
+#  <ChainedMoves[MoveIds...]>,<ScalingRules[NumRules...]>,<NthStepRules[NumRules...]>,<TargettingRules[TargetRules...]>]
+#
+# NumRule Save Format:
+# <Operator: [<, <=, =, >=, >, !=]><Number>
+#
+# TargetRule Save Format:
+# [<OffsetVector[<x,y>]>,<PieceName>,<SelectionCriteria [DataSpecifiers...]>,<TransformationRules[TransformationRules...]>]
+#
+# DataSpecifiers: <[LastMove,LastTurn,NumMoves]><NumRule>
+#
+# TransformationRules: [[Move,[<{~}x,{~}y>]], [Destroy], [ChangeColor]]
 
-"Rook" {
-	010011,0,1
-}
+[Pawn,00,[
+	[0,[0,1],00101000,[],[=1,],[!=-1,],[[Destroy],]],
+	[1,[0,1],00101000,[],[=2,],[=1,],[[Destroy],]],
+	[2,[1,1],01001100,[1,2,],[=1,],[!=-1,],[
+		[[0,0],*,[],[]],
+	]],
+]]
 
-"Knight" {
-	000111,1,2
-}
+[Rook,00,[
+	[0,[0,1],01101011,[],[!=-1,],[!=-1,],[
+		[[0,0],*,[],[[Destroy],]],
+	]],
+]]
 
-"Bishop" {
-	010110,1,1
-}
+[Knight,00,[
+	[0,[1,2],01101111,[],[=1,],[!=-1,],[
+		[[0,0],*,[],[[Destroy],]],
+	]],
+]]
 
-"Queen" {
-	010011,0,1
-	010110,1,1
-}
+[Bishop,00,[
+	[0,[1,1],01101110,[],[!=-1,],[!=-1,],[
+		[[0,0],*,[],[[Destroy],]],
+	]],
+]]
 
-"King" {
-	000011,0,1
-	000110,1,1
-}
+[Queen,00,[
+	[0,[0,1],01101011,[],[!=-1,],[!=-1,],[
+		[[0,0],*,[],[[Destroy],]],
+	]],
+	[1,[1,1],01101110,[],[!=-1,],[!=-1,],[
+		[[0,0],*,[],[[Destroy],]],
+	]],
+]]
 
-"Princess" {
-	000111,1,2
-	010110,1,1
-}
+[King,11,[
+	[0,[0,1],01101011,[],[=1,],[!=-1,],[
+		[[0,0],*,[],[[Destroy],]],
+	]],
+	[1,[1,1],01101110,[],[=1,],[!=-1,],[
+		[[0,0],*,[],[[Destroy],]],
+	]],
+	[2,[1,0],01101100,[],[=1,],[!=-1,],[
+		[[1,0],Rook,[NumMoves=0],[[Move,[-1,0]],]],
+		[[2,0],Rook,[NumMoves=0],[[Move,[-1,0]],]],
+	]],
+]]
 
-"Empress" {
-	010011,0,1
-	000111,1,2
-}
+[Princess,00,[
+	[0,[1,2],01101111,[],[=1,],[!=-1,],[
+		[[0,0],*,[],[[Destroy],]],
+	]],
+	[1,[1,1],01101110,[],[!=-1,],[!=-1,],[
+		[[0,0],*,[],[[Destroy],]],
+	]],
+]]
 
-"Amazon" {
-	010011,0,1
-	000111,1,2
-	010110,1,1
-}
+[Empress,00,[
+	[0,[1,2],01101111,[],[=1,],[!=-1,],[
+		[[0,0],*,[],[[Destroy],]],
+	]],
+	[1,[0,1],01101011,[],[!=-1,],[!=-1,],[
+		[[0,0],*,[],[[Destroy],]],
+	]],
+]]
 
-"Nightrider" {
-	010111,1,2
-}
+[Amazon,00,[
+	[0,[1,2],01101111,[],[=1,],[!=-1,],[
+		[[0,0],*,[],[[Destroy],]],
+	]],
+	[1,[1,1],01101110,[],[!=-1,],[!=-1,],[
+		[[0,0],*,[],[[Destroy],]],
+	]],
+	[2,[0,1],01101011,[],[!=-1,],[!=-1,],[
+		[[0,0],*,[],[[Destroy],]],
+	]],
+]]
+
+[Nightrider,00,[
+	[0,[1,2],01111111,[],[=1,],[!=-1,],[
+		[[0,0],*,[],[[Destroy],]],
+	]],
+]]

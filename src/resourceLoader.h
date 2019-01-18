@@ -7,9 +7,10 @@
 #include <exception>
 
 // Forward declarations
-class GamePiece;
+class PieceDef;
 class PieceTracker;
 class Renderer;
+class PieceDef;
 
 
 
@@ -23,11 +24,12 @@ private:
 
 	// Members
 	PieceTracker* pieceTracker;
-	std::map<std::string, GamePiece*>* pieceDefs;
+	std::map<std::string, const PieceDef*>* pieceDefs;
 	std::map<std::string, sf::Texture*>* textures;
 
 	// Utility methods
     void loadPieceDefs(std::string fileName);
+    void loadTextures();
 
 public:
 	// Exceptions

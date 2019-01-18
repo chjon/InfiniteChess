@@ -5,8 +5,8 @@
 #include "pieceTracker.h"
 
 // Forward definitions
-class GamePiece;
-class PieceMove;
+class Piece;
+class MoveDef;
 
 
 
@@ -20,12 +20,12 @@ private:
 	/**
 	 * The game piece that this move marker belongs to
 	 */
-	const GamePiece* rootPiece;
+	const Piece* rootPiece;
 
 	/**
 	 * The move that this move marker belongs to
 	 */
-	const PieceMove* rootMove;
+	const MoveDef* rootMove;
 
 	/**
 	 * The base direction vector for this move marker
@@ -42,14 +42,42 @@ private:
 	 */
 	const unsigned int lambda;
 
+	/**
+	 * The next move marker
+	 */
+	MoveMarker* next;
+
+	/**
+	 * The previous move marker
+	 */
+	MoveMarker* prev;
+
+	/**
+	 * Whether a leap is required to get to the move marker
+	 */
+	bool requiresLeap;
+
 	// Friends
-	friend GamePiece;
+	friend Piece;
 	friend Renderer;
 
 public:
 	// Constructors / Destructor
-	MoveMarker(GamePiece* rootPiece_, const PieceMove* rootMove_, sf::Vector2i baseVector, sf::Vector2i pos_);
+	MoveMarker(const Piece* rootPiece_, const MoveDef* rootMove_, sf::Vector2i baseVector, sf::Vector2i pos_, unsigned int lambda_);
+	MoveMarker(const Piece* rootPiece_, const MoveDef* rootMove_, sf::Vector2i baseVector, sf::Vector2i pos_);
 	~MoveMarker();
+
+	// Event handlers
+
+	/**
+	 * Update whether the move marker requires leaping when a piece leaves the tile
+	 */
+	void onPieceLeave(PieceTracker* pieceTracker);
+
+	/**
+	 * Update whether the move marker requires leaping when a piece enters the tile
+	 */
+	void onPieceEnter();
 
 	// Accessors
 
@@ -59,19 +87,51 @@ public:
 	sf::Vector2i getPos() const;
 
 	/**
-	 * Iterate the move backward to get the position of the previous move marker
-	 */
-	sf::Vector2i getPrevPos() const;
-
-	/**
 	 * Iterate the move forward to get the position of the next move marker
 	 */
 	sf::Vector2i getNextPos() const;
 
 	/**
+	 * Get the move marker's scale factor
+	 */
+	unsigned int getLambda() const;
+
+	/**
+	 * Get the next move marker
+	 */
+	MoveMarker* getNext() const;
+
+	/**
+	 * Get the root move for the move marker
+	 */
+	const MoveDef* getRootMove() const;
+
+	/**
+	 * Get the base vector for the move marker
+	 */
+	const sf::Vector2i getBaseVector() const;
+
+	/**
+	 * Get whether the move marker requires a leap
+	 */
+	const bool getRequiresLeap() const;
+
+	/**
 	 * Determine whether the move marker is a valid move destination
 	 */
-	bool canMove() const;
+	bool canMove(PieceTracker* pieceTracker) const;
+
+	// Mutators
+
+	/**
+	 * Set the next move marker
+	 */
+	void setNext(MoveMarker* newNext);
+
+	/**
+	 * Set whether the move marker requires a leap
+	 */
+	void setRequiresLeap(bool requiresLeap_);
 };
 
 #endif // CHESS_MOVE_MARKER_H
