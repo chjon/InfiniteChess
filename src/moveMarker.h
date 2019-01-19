@@ -119,6 +119,7 @@ public:
 	/**
 	 * Determine whether the move marker is a valid move destination
 	 */
+	bool canMove(PieceTracker* pieceTracker, const Piece* testPiece) const;
 	bool canMove(PieceTracker* pieceTracker) const;
 
 	// Mutators

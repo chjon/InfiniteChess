@@ -141,8 +141,8 @@ const bool MoveMarker::getRequiresLeap() const {
 /**
  * Determine whether the move marker is a valid move position
  */
-bool MoveMarker::canMove(PieceTracker* pieceTracker) const {
-	const Piece* pieceAtLocation = pieceTracker->getPiece(pos);
+bool MoveMarker::canMove(PieceTracker* pieceTracker, const Piece* testPiece) const {
+	const Piece* pieceAtLocation = (testPiece == nullptr) ? (pieceTracker->getPiece(pos)) : (testPiece);
 
 	// Check whether the new position meets the attack requirements
 	if (pieceAtLocation == nullptr) {
@@ -190,7 +190,38 @@ bool MoveMarker::canMove(PieceTracker* pieceTracker) const {
 		return false;
 	}
 
+	// Check if the attacked position contains a royal piece
+	if (pieceAtLocation != nullptr && pieceAtLocation->getDef()->isRoyal) {
+		return true;
+	}
+
+	// Check whether the position is under attack if the piece is check vulnerable
+	if (rootPiece->getDef()->isCheckVulnerable) {
+		std::vector<MoveMarker*>* markers = pieceTracker->getMoveMarkers(pos);
+
+		bool positionIsAttacked = false;
+		for (std::vector<MoveMarker*>::iterator i = markers->begin(); i != markers->end(); ++i) {
+            if ((*i)->rootPiece->getTeam() != rootPiece->getTeam() &&
+				(*i)->rootMove->attacksEnemies &&
+				(*i)->canMove(pieceTracker, rootPiece)
+			) {
+				positionIsAttacked = true;
+				break;
+            }
+		}
+
+		delete markers;
+
+		if (positionIsAttacked) {
+			return false;
+		}
+	}
+
 	return true;
+}
+
+bool MoveMarker::canMove(PieceTracker* pieceTracker) const {
+	return canMove(pieceTracker, nullptr);
 }
 
 // Mutators
