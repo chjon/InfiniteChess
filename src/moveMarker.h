@@ -5,8 +5,9 @@
 #include "pieceTracker.h"
 
 // Forward definitions
-class Piece;
 class MoveDef;
+class NumRule;
+class Piece;
 
 
 
@@ -57,6 +58,48 @@ private:
 	 */
 	bool requiresLeap;
 
+	/**
+	 * Whether the move marker meets the attack requirements
+	 */
+	bool meetsAttackRequirements;
+
+	/**
+	 * Whether the move marker meets a scaling rule
+	 */
+	bool meetsScalingRule;
+
+	/**
+	 * Whether the piece meets an nth step rule
+	 */
+	bool meetsNthStepRule;
+
+	// Helpers
+
+	/**
+	 * Determine whether a move meets the attack requirements
+	 */
+	void updateMeetsAttackRequirements(PieceTracker* pieceTracker);
+
+	/**
+	 * Determine whether the move marker meets a NumRule
+	 */
+	bool meetsNumRule(const std::vector<NumRule*>* numRules, unsigned int candidate, bool deleteList) const;
+
+	/**
+	 * Update the move marker chain when a piece leaves the tile
+	 */
+	void onPieceLeaveNext(Piece* piece, PieceTracker* pieceTracker);
+
+	/**
+	 * Update the move marker chain when a piece enters the tile
+	 */
+	void onPieceEnterNext(Piece* piece, PieceTracker* pieceTracker);
+
+	/**
+	 * Determine whether the position is being attacked
+	 */
+    bool isAttacked(PieceTracker* pieceTracker) const;
+
 	// Friends
 	friend Piece;
 	friend Renderer;
@@ -70,14 +113,19 @@ public:
 	// Event handlers
 
 	/**
-	 * Update whether the move marker requires leaping when a piece leaves the tile
+	 * Update the move marker when it is generated
 	 */
-	void onPieceLeave(PieceTracker* pieceTracker);
+	void onGeneration(PieceTracker* pieceTracker);
 
 	/**
-	 * Update whether the move marker requires leaping when a piece enters the tile
+	 * Update the move marker when a piece leaves the tile
 	 */
-	void onPieceEnter();
+	void onPieceLeave(Piece* piece, PieceTracker* pieceTracker);
+
+	/**
+	 * Update the move marker when a piece enters the tile
+	 */
+	void onPieceEnter(Piece* piece, PieceTracker* pieceTracker);
 
 	// Accessors
 
@@ -119,6 +167,7 @@ public:
 	/**
 	 * Determine whether the move marker is a valid move destination
 	 */
+	bool canMove(PieceTracker* pieceTracker, const Piece* testPiece) const;
 	bool canMove(PieceTracker* pieceTracker) const;
 
 	// Mutators

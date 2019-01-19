@@ -108,6 +108,13 @@ MoveTracker::~MoveTracker() {
 // Event handlers
 
 /**
+ * Update the move markers when the game starts
+ */
+void MoveTracker::onStartUp(PieceTracker* pieceTracker) {
+	onMove();
+}
+
+/**
  * Update the move markers when the camera changes
  */
 void MoveTracker::onCameraChange(PieceTracker* pieceTracker) {
@@ -116,6 +123,9 @@ void MoveTracker::onCameraChange(PieceTracker* pieceTracker) {
 	// Update the terminal markers
 	for (std::vector<MoveMarker*>::iterator i = terminalMoveMarkers->begin(); i != terminalMoveMarkers->end(); ++i) {
         MoveMarker* terminal = *i;
+
+        // Update the move marker on generation
+		terminal->onGeneration(pieceTracker);
 
         // Extend the move marker upward
         while (pieceTracker->isRenderable(terminal->getNextPos())) {
@@ -132,7 +142,11 @@ void MoveTracker::onCameraChange(PieceTracker* pieceTracker) {
 			if (prev->getRequiresLeap() || pieceTracker->getPiece(prev->getPos()) != nullptr) {
 				terminal->setRequiresLeap(true);
 			}
+
             moveMarkers->find(rootMove)->second->insert(std::make_pair(terminal->getPos(), terminal));
+
+            // Update the move marker on generation
+            terminal->onGeneration(pieceTracker);
         }
 
         // Add the new terminal move marker to a temporary list
