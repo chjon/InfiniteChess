@@ -49,6 +49,7 @@ public:
 	void setPos(sf::Vector2i newPos);
 
 	// Event handlers
+	void onStartUp();
 	void onMove();
 	void onCameraChange(PieceTracker* pieceTracker);
 };

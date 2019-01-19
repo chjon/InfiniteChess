@@ -15,7 +15,7 @@
 void PieceTracker::generateMoveMarkers() {
 	// Generate and add the move markers for each piece
 	for (std::map<sf::Vector2i, Piece*>::iterator it = pieces.begin(); it != pieces.end(); ++it) {
-		it->second->onMove();
+		it->second->onStartUp();
 	}
 }
 

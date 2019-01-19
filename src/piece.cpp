@@ -51,6 +51,10 @@ void Piece::setPos(sf::Vector2i newPos) {
 
 // Event handlers
 
+void Piece::onStartUp() {
+	moveTracker->onMove();
+}
+
 void Piece::onMove() {
 	moveTracker->onMove();
 	moveCount++;
