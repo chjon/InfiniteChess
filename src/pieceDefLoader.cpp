@@ -1,14 +1,15 @@
 #include "pieceDefLoader.h"
-#include "resourceLoader.h"
-#include "pieceDef.h"
+
+#include <fstream>
+#include <iostream>
 #include "moveDef.h"
 #include "numRule.h"
-#include <fstream>
+#include "pieceDef.h"
+#include "resourceLoader.h"
 
-
-// Private constants
-
+// Initialize constants
 const std::string PieceDefLoader::EXTENSION = ".def";
+const std::vector<char>* PieceDefLoader::WHITESPACE = new std::vector<char>(' ', '\t');
 
 
 
@@ -49,36 +50,27 @@ const bool PieceDefLoader::isValidFileName(const std::string& fileName) {
  *        if the piece name cannot be found, or if the move set cannot be found
  */
 const PieceDef* PieceDefLoader::pieceDefFromString(const std::string& pieceString) {
-	// Check whether the piece string is bracket-enclosed
-	if (pieceString[0] != BRACKET_OPEN || pieceString[pieceString.length() - 1] != BRACKET_CLOSE) {
-		throw ResourceLoader::FileFormatException("Expected bracket-enclosed piece definition");
-	}
+	// Validate input
+	checkBracketEnclosed(pieceString);
+    checkNumArgs(pieceString.substr(1, pieceString.length() - 2), 3);
+
+	const std::vector<std::string>* properties = split(pieceString.substr(1, pieceString.length() - 2));
 
 	// Get the name
-	unsigned int index = 0;
-	while (index < pieceString.length() && pieceString[index] != SEPARATOR) {
-        index++;
-	}
-
-	if (index == pieceString.length()) {
-		throw ResourceLoader::FileFormatException("Failed to find piece name");
-	}
-
-	const std::string pieceName = pieceString.substr(1, index++ - 1);
+	unsigned int propertyIndex = 0;
+	const std::string pieceName = (*properties)[propertyIndex++];
 
 	// Get piece properties
-	const bool isCheckVulnerable = pieceString[index++] - '0';
-	const bool isRoyal = pieceString[index++] - '0';
+	unsigned int index = 0;
+	const bool isCheckVulnerable = (*properties)[propertyIndex][index++] - '0';
+	const bool isRoyal = (*properties)[propertyIndex][index++] - '0';
+	propertyIndex++;
 
 	// Get move set
-	if (pieceString[index++] != SEPARATOR) {
-		throw ResourceLoader::FileFormatException("Failed to find moveset");
-	}
+	const std::map<int, const MoveDef*>* moveSet = getMovesFromString((*properties)[propertyIndex++]);
 
-	const std::map<int, const MoveDef*>* moveSet = getMovesFromString(
-		pieceString.substr(index, pieceString.length() - index - 1)
-	);
-
+	// Clean up and return
+	delete properties;
     return new PieceDef(pieceName, isCheckVulnerable, isRoyal, moveSet);
 }
 
@@ -90,44 +82,21 @@ const PieceDef* PieceDefLoader::pieceDefFromString(const std::string& pieceStrin
  * @return a map containing all of the piece's possible moves
  */
 const std::map<int, const MoveDef*>* PieceDefLoader::getMovesFromString(const std::string& movesString) {
-	// Check whether the moves string is bracket-enclosed
-	if (movesString[0] != BRACKET_OPEN || movesString[movesString.length() - 1] != BRACKET_CLOSE) {
-		throw ResourceLoader::FileFormatException("Expected bracket-enclosed moves list");
-	}
+	// Validate input
+	checkBracketEnclosed(movesString);
 
 	// Generate the move set
 	std::map<int, const MoveDef*>* moves = new std::map<int, const MoveDef*>();
+	const std::vector<std::string>* moveStrings = split(movesString.substr(1, movesString.length() - 2));
 
-	unsigned int nestLevel = 0;
-	unsigned int beginIndex = 1;
-	unsigned int index = 1;
-
-	while (index < movesString.length() - 1) {
-        const char curChar = movesString[index];
-
-        if (curChar == BRACKET_OPEN) {
-			nestLevel++;
-        } else if (curChar == BRACKET_CLOSE) {
-        	if (nestLevel == 1) {
-				const MoveDef* move = getMoveFromString(movesString.substr(beginIndex, index - beginIndex + 1));
-
-				// Add a move to the move set
-				moves->insert(std::make_pair(move->index, move));
-
-				beginIndex = index + 2;
-        	}
-
-			nestLevel--;
-        } else if (nestLevel == 0) {
-        	// Check if the file is formatted correctly
-        	if (movesString[index] != SEPARATOR) {
-				throw ResourceLoader::FileFormatException("Expected token '" + std::to_string(SEPARATOR) + "'");
-			}
-        }
-
-        index++;
+	// Load integers
+	for (std::vector<std::string>::const_iterator i = moveStrings->begin(); i != moveStrings->end(); ++i) {
+		const MoveDef* moveDef = getMoveFromString(*i);
+		moves->insert(std::make_pair(moveDef->index, moveDef));
 	}
 
+	// Clean up and return
+	delete moveStrings;
 	return moves;
 }
 
@@ -139,87 +108,33 @@ const std::map<int, const MoveDef*>* PieceDefLoader::getMovesFromString(const st
  * @return a move generated from the string
  */
 const MoveDef* PieceDefLoader::getMoveFromString(const std::string& moveString) {
-	// Check whether the move string is bracket-enclosed
-	if (moveString[0] != BRACKET_OPEN || moveString[moveString.length() - 1] != BRACKET_CLOSE) {
-		throw ResourceLoader::FileFormatException("Expected bracket-enclosed move string");
-	}
+	// Validate input
+	checkBracketEnclosed(moveString);
+	checkNumArgs(moveString.substr(1, moveString.length() - 2), NUM_MOVE_ARGS);
 
-	// Check whether the move string has the correct number of arguments
-	int numMoveArgs = getNumArgs(moveString.substr(1, moveString.length() - 2));
-	if (numMoveArgs != NUM_MOVE_ARGS) {
-		throw ResourceLoader::FileFormatException(
-			"Expecting " + std::to_string(NUM_MOVE_ARGS) + " arguments, received " + std::to_string(numMoveArgs)
-		);
-	}
+	// Get all arguments
+	const std::vector<std::string>* args = split(moveString.substr(1, moveString.length() - 2));
+	unsigned int argIndex = 0;
 
-	unsigned int index = 1;
-	unsigned int beginIndex = 1;
-
-	// Get the index for the move
-	while (index < moveString.length() - 1) {
-		if (moveString[index++] == SEPARATOR) {
-			break;
-		}
-	}
-
-	const int moveIndex = std::stoi(moveString.substr(beginIndex, index - beginIndex));
-
-	beginIndex = index;
-
-    // Get the vector for the move
-	while (index < moveString.length() - 1) {
-		if (moveString[index++] == BRACKET_CLOSE) {
-			break;
-		}
-	}
-
-	const sf::Vector2i baseVector = getVectorFromString(moveString.substr(beginIndex, index++ - beginIndex));
+	const int moveIndex = std::stoi((*args)[argIndex++]);
+	const sf::Vector2i baseVector = getVectorFromString((*args)[argIndex++]);
 
     // Get the move properties
-    const bool attacksFriendlies = moveString[index++] - '0';
-    const bool attacksEnemies    = moveString[index++] - '0';
-    const bool movesEmpty        = moveString[index++] - '0';
-    const bool canLeap           = moveString[index++] - '0';
-    const bool endsTurn          = moveString[index++] - '0';
-    const bool isXSymmetric      = moveString[index++] - '0';
-    const bool isYSymmetric      = moveString[index++] - '0';
-    const bool isXYSymmetric     = moveString[index++] - '0';
+    unsigned int index = 0;
+    const bool attacksFriendlies = (*args)[argIndex][index++] - '0';
+    const bool attacksEnemies    = (*args)[argIndex][index++] - '0';
+    const bool movesEmpty        = (*args)[argIndex][index++] - '0';
+    const bool canLeap           = (*args)[argIndex][index++] - '0';
+    const bool endsTurn          = (*args)[argIndex][index++] - '0';
+    const bool isXSymmetric      = (*args)[argIndex][index++] - '0';
+    const bool isYSymmetric      = (*args)[argIndex][index++] - '0';
+    const bool isXYSymmetric     = (*args)[argIndex][index++] - '0';
+    argIndex++;
 
-	// Load chained moves
-	beginIndex = index + 1;
-	index = beginIndex + 1;
-
-	while (index < moveString.length() - 1) {
-		if (moveString[index++] == BRACKET_CLOSE) {
-			break;
-		}
-	}
-
-	const std::vector<int>* chainedMoves = getChainedMovesFromString(moveString.substr(beginIndex, index - beginIndex));
-
-	// Load scaling rules
-	beginIndex = index + 1;
-	index = beginIndex + 1;
-
-	while (index < moveString.length() - 1) {
-		if (moveString[index++] == BRACKET_CLOSE) {
-			break;
-		}
-	}
-
-	const std::vector<NumRule*>* scalingRules = getNumRulesFromString(moveString.substr(beginIndex, index - beginIndex));
-
-	// Load nth step rules
-	beginIndex = index + 1;
-	index = beginIndex + 1;
-
-	while (index < moveString.length() - 1) {
-		if (moveString[index++] == BRACKET_CLOSE) {
-			break;
-		}
-	}
-
-	const std::vector<NumRule*>* nthStepRules = getNumRulesFromString(moveString.substr(beginIndex, index - beginIndex));
+    // Load chained moves and movement rules
+	const std::vector<int>* chainedMoves = getChainedMovesFromString((*args)[argIndex++]);
+	const std::vector<NumRule*>* scalingRules = getNumRulesFromString((*args)[argIndex++]);
+	const std::vector<NumRule*>* nthStepRules = getNumRulesFromString((*args)[argIndex++]);
 
 	// TODO: Load targetting rules
 
@@ -228,21 +143,23 @@ const MoveDef* PieceDefLoader::getMoveFromString(const std::string& moveString) 
 		isXSymmetric, isYSymmetric, isXYSymmetric, chainedMoves, scalingRules, nthStepRules
 	);
 
+	// Clean up and return
+	delete args;
 	return newMove;
 }
 
 /**
  * Determine the number of arguments in the string
  */
-const int PieceDefLoader::getNumArgs(const std::string& s) {
+const unsigned int PieceDefLoader::getNumArgs(const std::string& s) {
 	// Check whether the string is empty
 	if (s.empty()) {
 		return 0;
 	}
 
 	// Count the number of arguments
-	int nestLevel = 0;
-	int argCount = 1;
+	unsigned int nestLevel = 0;
+	unsigned int argCount = 0;
 
     for (unsigned int i = 0; i < s.length(); ++i) {
 		char curChar = s[i];
@@ -263,22 +180,17 @@ const int PieceDefLoader::getNumArgs(const std::string& s) {
  * Create a vector from a string
  */
 const sf::Vector2i PieceDefLoader::getVectorFromString(const std::string& s) {
-	// Check whether the string is bracket-enclosed
-	if (s[0] != BRACKET_OPEN || s[s.length() - 1] != BRACKET_CLOSE) {
-		throw ResourceLoader::FileFormatException("Expected bracket-enclosed string");
-	}
+	// Validate input
+	checkBracketEnclosed(s);
+	checkNumArgs(s.substr(1, s.length() - 2), 2);
 
-	unsigned int beginIndex = 1;
-	unsigned int index = s.find(SEPARATOR, beginIndex);
+	// Load vector components
+	const std::vector<std::string>* strings = split(s.substr(1, s.length() - 2));
+	const int x = std::stoi((*strings)[0]);
+	const int y = std::stoi((*strings)[1]);
 
-	// Check whether a separator exists
-	if (index == std::string::npos) {
-		throw ResourceLoader::FileFormatException("Expected token '" + std::to_string(SEPARATOR) + "'");
-	}
-
-	const int x = std::stoi(s.substr(beginIndex, index - beginIndex));
-	const int y = std::stoi(s.substr(index + 1, s.length() - index - 1));
-
+	// Clean up and return
+	delete strings;
 	return sf::Vector2i(x, y);
 }
 
@@ -286,50 +198,176 @@ const sf::Vector2i PieceDefLoader::getVectorFromString(const std::string& s) {
  * Get a list of integers from a string
  */
 const std::vector<int>* PieceDefLoader::getChainedMovesFromString(const std::string& s) {
-	// Check whether the string is bracket-enclosed
-	if (s[0] != BRACKET_OPEN || s[s.length() - 1] != BRACKET_CLOSE) {
-		throw ResourceLoader::FileFormatException("Expected bracket-enclosed string");
+	// Validate input
+	checkBracketEnclosed(s);
+
+	std::vector<int>* chainedMovesList = new std::vector<int>();
+	const std::vector<std::string>* strings = split(s.substr(1, s.length() - 2));
+
+	// Load integers
+	for (std::vector<std::string>::const_iterator i = strings->begin(); i != strings->end(); ++i) {
+		chainedMovesList->push_back(std::stoi(*i));
 	}
 
-	std::vector<int>* list = new std::vector<int>();
-
-	unsigned int beginIndex = 1;
-	unsigned int index = s.find(SEPARATOR, beginIndex);
-
-	// Load list elements
-	while (index != std::string::npos) {
-		list->push_back(std::stoi(s.substr(beginIndex, index - beginIndex)));
-		beginIndex = ++index;
-		index = s.find(SEPARATOR, beginIndex);
-	}
-
-	return list;
+	// Clean up and return
+	delete strings;
+	return chainedMovesList;
 }
 
 /**
  * Get a list of number rules from a string
  */
 const std::vector<NumRule*>* PieceDefLoader::getNumRulesFromString(const std::string& s) {
+	// Validate input
+	checkBracketEnclosed(s);
+
+	std::vector<NumRule*>* rulesList = new std::vector<NumRule*>();
+	const std::vector<std::string>* rulesStrings = split(s.substr(1, s.length() - 2));
+
+	// Load num rules
+	for (std::vector<std::string>::const_iterator i = rulesStrings->begin(); i != rulesStrings->end(); ++i) {
+		rulesList->push_back(new NumRule(*i));
+	}
+
+	// Clean up and return
+	delete rulesStrings;
+	return rulesList;
+}
+
+/**
+ * Split the string on the separator while leaving bracket-enclosed groups intact
+ */
+const std::vector<std::string>* PieceDefLoader::split(const std::string& s) {
+	// Read each line of the file
+	std::vector<std::string>* splitStrings = new std::vector<std::string>();
+	std::string stringSoFar = "";
+	int nestLevel = 0;
+
+	// Split the string on the separator
+	int lineBegin = 0;
+	for (unsigned int i = 0; i < s.length(); i++) {
+		const char curChar = s[i];
+		if (curChar == BRACKET_OPEN) {
+			nestLevel++;
+		} else if (curChar == BRACKET_CLOSE) {
+			// Check if a bracket was expected
+			if (nestLevel == 0) {
+				throw ResourceLoader::FileFormatException(
+					"Unexpected token '" + std::to_string(BRACKET_CLOSE) + "'"
+				);
+			}
+
+			nestLevel--;
+		} else if (curChar == SEPARATOR && nestLevel == 0) {
+			// Split
+			stringSoFar += s.substr(lineBegin, i - lineBegin);
+			lineBegin = i + 1;
+			splitStrings->push_back(stringSoFar);
+			stringSoFar = "";
+		}
+	}
+
+	return splitStrings;
+}
+
+/**
+ * Read a file into a single string, removing whitespace
+ */
+const std::string PieceDefLoader::removeWhiteSpace(const std::string& fileName) {
+	std::ifstream file(fileName, std::ios::in);
+	std::string line;
+
+	// Check whether the file is open
+	if (!file.is_open()) {
+		throw ResourceLoader::IOException("Unable to open file: " + fileName);
+	}
+
+	// Read each line of the file into a single string
+	std::string compressedString = "";
+	while (std::getline(file, line)) {
+		unsigned int beginIndex = 0;
+        for (unsigned int i = 0; i < line.length(); i++) {
+			// Skip the rest of the line if it is commented out
+			if (line[i] == COMMENT_MARKER) {
+				compressedString += line.substr(beginIndex, i - beginIndex);
+				beginIndex = line.length();
+				break;
+			}
+
+			// Skip whitespace
+            if (isWhitespace(line[i])) {
+				if (beginIndex != i) {
+					compressedString += line.substr(beginIndex, i - beginIndex);
+				}
+
+				beginIndex = i + 1;
+            }
+        }
+
+        compressedString += line.substr(beginIndex);
+	}
+
+	// Close the file
+	file.close();
+
+	return compressedString;
+}
+
+/**
+ * Check whether a character is a whitespace character
+ */
+const bool PieceDefLoader::isWhitespace(const char candidate) {
+    for (std::vector<char>::const_iterator i = WHITESPACE->begin(); i != WHITESPACE->end(); ++i) {
+        if (*i == candidate) return true;
+    }
+
+    return false;
+}
+
+/**
+ * Create the piece definition map from a list of piece strings
+ */
+std::map<std::string, const PieceDef*>* PieceDefLoader::getPieceDefsFromStrings(const std::vector<std::string>* pieceStrings) {
+	// Create the pieces from each of the piece strings
+	std::map<std::string, const PieceDef*>* pieceDefs = new std::map<std::string, const PieceDef*>();
+	for (std::string s : *pieceStrings) {
+		const PieceDef* pieceDef = pieceDefFromString(s);
+
+		// Check if the piece definition already exists
+		if (pieceDefs->find(pieceDef->name) != pieceDefs->end()) {
+			throw ResourceLoader::FileFormatException("Duplicate definition of " + pieceDef->name);
+		}
+
+        pieceDefs->insert(std::make_pair(pieceDef->name, pieceDef));
+	}
+
+	return pieceDefs;
+}
+
+
+// Validation methods
+
+/**
+ * Check whether the string is bracket enclosed
+ */
+const void PieceDefLoader::checkBracketEnclosed(const std::string& s) {
 	// Check whether the string is bracket-enclosed
 	if (s[0] != BRACKET_OPEN || s[s.length() - 1] != BRACKET_CLOSE) {
 		throw ResourceLoader::FileFormatException("Expected bracket-enclosed string");
 	}
-
-	std::vector<NumRule*>* list = new std::vector<NumRule*>();
-
-	unsigned int beginIndex = 1;
-	unsigned int index = s.find(SEPARATOR, beginIndex);
-
-	// Load num rules
-	while (index != std::string::npos) {
-		list->push_back(new NumRule(s.substr(beginIndex, index - beginIndex)));
-		beginIndex = ++index;
-		index = s.find(SEPARATOR, beginIndex);
-	}
-
-	return list;
 }
 
+/**
+ * Check whether the string contains the expected number of arguments
+ */
+const void PieceDefLoader::checkNumArgs(const std::string& s, unsigned int expected) {
+	unsigned int numMoveArgs = getNumArgs(s);
+	if (numMoveArgs != expected) {
+		throw ResourceLoader::FileFormatException(
+			"Expecting " + std::to_string(expected) + " arguments, received " + std::to_string(numMoveArgs)
+		);
+	}
+}
 
 // Public methods
 
@@ -342,68 +380,11 @@ std::map<std::string, const PieceDef*>* PieceDefLoader::loadPieceDefs (const std
 		throw ResourceLoader::FileFormatException("Invalid file name");
 	}
 
-	std::ifstream file(fileName, std::ios::in);
-	std::string line;
+	// Create the piece definitions
+	const std::vector<std::string>* pieceStrings = split(removeWhiteSpace(fileName));
+	std::map<std::string, const PieceDef*>* pieceDefs = getPieceDefsFromStrings(pieceStrings);
 
-	// Check whether the file is open
-	if (!file.is_open()) {
-		throw ResourceLoader::IOException("Unable to open file: " + fileName);
-	}
-
-	// Read each line of the file
-	std::vector<std::string> pieceStrings;
-	std::string pieceSoFar = "";
-	int nestLevel = 0;
-
-	// Process the file into one string per piece definition
-	while (std::getline(file, line)) {
-		// Check if the line is a comment
-		if (line[0] == '#') continue;
-
-		int lineBegin = 0;
-        for (unsigned int i = 0; i < line.length(); i++) {
-			const char curChar = line[i];
-			if (curChar == BRACKET_OPEN) {
-				nestLevel++;
-			} else if (curChar == BRACKET_CLOSE){
-				// Check if a bracket was expected
-				if (nestLevel == 0) {
-					throw ResourceLoader::FileFormatException(
-						"Unexpected token '" + std::to_string(BRACKET_CLOSE) + "'"
-					);
-				} else if (nestLevel == 1) {
-                    pieceSoFar += line.substr(lineBegin, i - lineBegin + 1);
-                    lineBegin = i + 1;
-                    pieceStrings.push_back(pieceSoFar);
-                    pieceSoFar = "";
-				}
-
-				nestLevel--;
-			} else if (curChar == ' ' || curChar == '\t') {
-				pieceSoFar += line.substr(lineBegin, i - lineBegin);
-				lineBegin = i + 1;
-			}
-        }
-
-        // Add the line to the piece
-        pieceSoFar += line.substr(lineBegin);
-	}
-
-	// Create the pieces from each of the piece strings
-	std::map<std::string, const PieceDef*>* pieceDefs = new std::map<std::string, const PieceDef*>();
-	for (std::string s : pieceStrings) {
-		const PieceDef* pieceDef = pieceDefFromString(s);
-
-		// Check if the piece definition already exists
-		if (pieceDefs->find(pieceDef->name) != pieceDefs->end()) {
-			throw ResourceLoader::FileFormatException("Duplicate definition of " + pieceDef->name);
-		}
-
-        pieceDefs->insert(std::make_pair(pieceDef->name, pieceDef));
-	}
-
-	// Close the file
-	file.close();
-
+	// Clean up and return
+	delete pieceStrings;
 	return pieceDefs;
 }
