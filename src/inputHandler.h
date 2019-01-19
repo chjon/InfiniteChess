@@ -18,7 +18,7 @@ private:
 
 	// Movement keybinds
 	const sf::Keyboard::Key KEY_MOVE_UP    = sf::Keyboard::Key::W;
-	const sf::Keyboard::Key KEY_MOVE_D0WN  = sf::Keyboard::Key::S;
+	const sf::Keyboard::Key KEY_MOVE_DOWN  = sf::Keyboard::Key::S;
 	const sf::Keyboard::Key KEY_MOVE_LEFT  = sf::Keyboard::Key::A;
 	const sf::Keyboard::Key KEY_MOVE_RIGHT = sf::Keyboard::Key::D;
 
