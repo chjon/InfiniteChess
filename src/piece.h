@@ -49,9 +49,9 @@ public:
 	void setPos(sf::Vector2i newPos);
 
 	// Event handlers
-	void onStartUp();
-	void onMove();
+	void onStartUp(PieceTracker* pieceTracker);
 	void onCameraChange(PieceTracker* pieceTracker);
+	void onMove();
 };
 
 #endif // CHESS_PIECE_H

@@ -1,10 +1,76 @@
 #include "moveMarker.h"
 
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include "moveDef.h"
 #include "numRule.h"
 #include "piece.h"
 #include "pieceDef.h"
+#include "pieceTracker.h"
+
+// Private helpers
+
+/**
+ * Determine whether a piece meets the attack requirements
+ */
+void MoveMarker::updateMeetsAttackRequirements(PieceTracker* pieceTracker) {
+	// Check whether the new position meets the attack requirements
+	Piece* piece = pieceTracker->getPiece(pos);
+	meetsAttackRequirements = true;
+	if (piece == nullptr) {
+		if (!rootMove->movesEmpty) meetsAttackRequirements = false;
+	} else if (piece->getTeam() == rootPiece->getTeam()) {
+		if (!rootMove->attacksFriendlies) meetsAttackRequirements = false;
+	} else {
+		if (!rootMove->attacksEnemies) meetsAttackRequirements = false;
+	}
+}
+
+/**
+ * Determine whether the move marker meets a NumRule
+ */
+bool MoveMarker::meetsNumRule(const std::vector<NumRule*>* numRules, unsigned int candidate, bool deleteList) const {
+	// Check if the candidate meets any of the num rules
+	bool meetsNumRule = false;
+	for (std::vector<NumRule*>::const_iterator i = numRules->begin(); i != numRules->end(); ++i) {
+        if ((*i)->matches(candidate)) {
+			meetsNumRule = true;
+        }
+	}
+
+	// Delete the input list if required
+	if (deleteList) {
+		delete numRules;
+	}
+
+	return meetsNumRule;
+}
+
+/**
+ * Determine whether the position is being attacked
+ */
+bool MoveMarker::isAttacked(PieceTracker* pieceTracker) const {
+	std::vector<MoveMarker*>* markers = pieceTracker->getMoveMarkers(pos);
+
+	bool positionIsAttacked = false;
+	for (std::vector<MoveMarker*>::iterator i = markers->begin(); i != markers->end(); ++i) {
+		if (((*i)->rootPiece->getTeam() == rootPiece->getTeam()) ||
+			(!(*i)->rootMove->attacksEnemies) ||
+			(!(*i)->rootMove->canLeap && (*i)->requiresLeap) ||
+			(!(*i)->meetsScalingRule) ||
+			(!(*i)->meetsNthStepRule)
+		) {
+			continue;
+		}
+
+		positionIsAttacked = true;
+		break;
+	}
+
+	delete markers;
+	return positionIsAttacked;
+}
+
 
 // Public constructors / destructor
 
@@ -22,7 +88,10 @@ MoveMarker::MoveMarker(
 	lambda{lambda_},
 	next{nullptr},
 	prev{nullptr},
-	requiresLeap{false}
+	requiresLeap{false},
+	meetsAttackRequirements{false},
+	meetsScalingRule{false},
+	meetsNthStepRule{false}
 {
 }
 
@@ -57,31 +126,60 @@ MoveMarker::~MoveMarker() {
 // Event handlers
 
 /**
- * Update whether the move marker requires leaping when a piece leaves the tile
+ * Update the move marker when it is generated
  */
-void MoveMarker::onPieceLeave(PieceTracker* pieceTracker) {
+void MoveMarker::onGeneration(PieceTracker* pieceTracker) {
+    updateMeetsAttackRequirements(pieceTracker);
+    meetsScalingRule = meetsNumRule(rootMove->scalingRules, lambda, false);
+    meetsNthStepRule = meetsNumRule(rootMove->nthStepRules, rootPiece->getMoveCount(), false);
+}
+
+/**
+ * Update the move marker chain when a piece leaves the tile
+ */
+void MoveMarker::onPieceLeaveNext(Piece* piece, PieceTracker* pieceTracker) {
 	requiresLeap = false;
 
 	// Check whether to propagate the event
 	if (next != nullptr && pieceTracker->getPiece(pos) == nullptr) {
-		next->onPieceLeave(pieceTracker);
+		next->onPieceLeaveNext(piece, pieceTracker);
 	}
 }
 
-
-
 /**
- * Update whether the move marker requires leaping when a piece enters the tile
+ * Update the move marker chain when a piece enters the tile
  */
-void MoveMarker::onPieceEnter() {
+void MoveMarker::onPieceEnterNext(Piece* piece, PieceTracker* pieceTracker) {
 	// Check whether the tile is already accessible only via leap
 	if (!requiresLeap) {
 		requiresLeap = true;
 
 		// Check if there is a next tile
 		if (next != nullptr) {
-			next->onPieceEnter();
+			next->onPieceEnterNext(piece, pieceTracker);
 		}
+	}
+}
+
+/**
+ * Update the move marker when a piece leaves the tile
+ */
+void MoveMarker::onPieceLeave(Piece* piece, PieceTracker* pieceTracker) {
+	updateMeetsAttackRequirements(pieceTracker);
+
+	if (!requiresLeap && next != nullptr) {
+		next->onPieceLeaveNext(piece, pieceTracker);
+	}
+}
+
+/**
+ * Update the move marker when a piece enters the tile
+ */
+void MoveMarker::onPieceEnter(Piece* piece, PieceTracker* pieceTracker) {
+	updateMeetsAttackRequirements(pieceTracker);
+
+	if (next != nullptr) {
+		next->onPieceEnterNext(piece, pieceTracker);
 	}
 }
 
@@ -142,79 +240,14 @@ const bool MoveMarker::getRequiresLeap() const {
  * Determine whether the move marker is a valid move position
  */
 bool MoveMarker::canMove(PieceTracker* pieceTracker, const Piece* testPiece) const {
-	const Piece* pieceAtLocation = (testPiece == nullptr) ? (pieceTracker->getPiece(pos)) : (testPiece);
-
-	// Check whether the new position meets the attack requirements
-	if (pieceAtLocation == nullptr) {
-		if (!rootMove->movesEmpty) return false;
-	} else if (pieceAtLocation->getTeam() == rootPiece->getTeam()) {
-		if (!rootMove->attacksFriendlies) return false;
-	} else {
-		if (!rootMove->attacksEnemies) return false;
-	}
-
-	// Check whether there are pieces in the way of the move
-	if (!rootMove->canLeap && requiresLeap) {
-		return false;
-	}
-
-	// Check whether the position meets the scaling rules
-	bool meetsScalingRule = false;
-	for (std::vector<NumRule*>::const_iterator i = rootMove->scalingRules->begin();
-		i != rootMove->scalingRules->end(); ++i
+	// Check if the position meets the movement requirements
+	if ((!meetsAttackRequirements) ||
+		(!rootMove->canLeap && requiresLeap) ||
+		(!meetsScalingRule) ||
+		(!meetsNthStepRule) ||
+		(rootPiece->getDef()->isCheckVulnerable && isAttacked(pieceTracker))
 	) {
-		// Check if the position meets the scaling rule
-        if ((*i)->matches(lambda)) {
-			meetsScalingRule = true;
-			break;
-        }
-	}
-
-	if (!meetsScalingRule) {
 		return false;
-	}
-
-	// Check whether the position meets the nth step rules
-	bool meetsNthStepRule = false;
-	for (std::vector<NumRule*>::const_iterator i = rootMove->nthStepRules->begin();
-		i != rootMove->nthStepRules->end(); ++i
-	) {
-		// Check if the position meets the nth step rule
-        if ((*i)->matches(rootPiece->getMoveCount())) {
-			meetsNthStepRule = true;
-			break;
-        }
-	}
-
-	if (!meetsNthStepRule) {
-		return false;
-	}
-
-	// Check if the attacked position contains a royal piece
-	if (pieceAtLocation != nullptr && pieceAtLocation->getDef()->isRoyal) {
-		return true;
-	}
-
-	// Check whether the position is under attack if the piece is check vulnerable
-	if (rootPiece->getDef()->isCheckVulnerable) {
-		std::vector<MoveMarker*>* markers = pieceTracker->getMoveMarkers(pos);
-
-		bool positionIsAttacked = false;
-		for (std::vector<MoveMarker*>::iterator i = markers->begin(); i != markers->end(); ++i) {
-            if ((*i)->rootPiece->getTeam() != rootPiece->getTeam() &&
-				(*i)->rootMove->attacksEnemies &&
-				(*i)->canMove(pieceTracker, rootPiece)
-			) {
-				positionIsAttacked = true;
-				break;
-            }
-		}
-
-		delete markers;
-
-		if (positionIsAttacked) {
-			return false;
-		}
 	}
 
 	return true;

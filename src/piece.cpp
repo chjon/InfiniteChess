@@ -51,8 +51,8 @@ void Piece::setPos(sf::Vector2i newPos) {
 
 // Event handlers
 
-void Piece::onStartUp() {
-	moveTracker->onMove();
+void Piece::onStartUp(PieceTracker* pieceTracker) {
+	moveTracker->onStartUp(pieceTracker);
 }
 
 void Piece::onMove() {

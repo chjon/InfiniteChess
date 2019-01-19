@@ -15,7 +15,7 @@
 void PieceTracker::generateMoveMarkers() {
 	// Generate and add the move markers for each piece
 	for (std::map<sf::Vector2i, Piece*>::iterator it = pieces.begin(); it != pieces.end(); ++it) {
-		it->second->onStartUp();
+		it->second->onStartUp(this);
 	}
 }
 
@@ -197,21 +197,13 @@ bool PieceTracker::movePiece(sf::Vector2i pos1, sf::Vector2i pos2) {
 	// Update the move markers for leaving
 	std::vector<MoveMarker*>* leavePos = getMoveMarkers(pos1);
 	for (std::vector<MoveMarker*>::iterator i = leavePos->begin(); i != leavePos->end(); ++i) {
-        MoveMarker* next = (*i)->getNext();
-
-        if (!(*i)->getRequiresLeap() && next != nullptr) {
-			next->onPieceLeave(this);
-        }
+		(*i)->onPieceLeave(piece, this);
 	}
 
 	// Update the move markers for entering
 	std::vector<MoveMarker*>* enterPos = getMoveMarkers(pos2);
 	for (std::vector<MoveMarker*>::iterator i = enterPos->begin(); i != enterPos->end(); ++i) {
-        MoveMarker* next = (*i)->getNext();
-
-        if (next != nullptr) {
-			next->onPieceEnter();
-        }
+		(*i)->onPieceEnter(piece, this);
 	}
 
 	// Clean up

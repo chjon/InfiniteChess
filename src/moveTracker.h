@@ -45,6 +45,7 @@ public:
     ~MoveTracker();
 
     // Event handlers
+    void onStartUp(PieceTracker* pieceTracker);
     void onCameraChange(PieceTracker* pieceTracker);
 	void onMove();
 
