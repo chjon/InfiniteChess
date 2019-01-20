@@ -7,6 +7,7 @@
 #include "resourceLoader.h"
 
 // Initialize constants
+
 const std::string PieceDefLoader::EXTENSION = ".def";
 const std::vector<char>* PieceDefLoader::WHITESPACE = new std::vector<char>(' ', '\t');
 
@@ -106,6 +107,10 @@ const MoveDef* PieceDefLoader::getMoveFromString(const std::string& moveString) 
 
 /**
  * Create a vector from a string
+ *
+ * @param s the string from which to generate the vector
+ *
+ * @return a vector generated from the string
  */
 const sf::Vector2i PieceDefLoader::getVectorFromString(const std::string& s) {
 	// Validate input
@@ -124,6 +129,12 @@ const sf::Vector2i PieceDefLoader::getVectorFromString(const std::string& s) {
 
 /**
  * Get a list of objects from a string
+ *
+ * @param listString the string from which to generate the list of objects
+ * @param objectFromString a function for generating an object from a string
+ * @param T the type of object to stored in the returned list
+ *
+ * @return the list of objects represented by the string
  */
 template <typename T> std::vector<T>* PieceDefLoader::getListFromString(
 	const std::string& listString,
@@ -148,6 +159,14 @@ template <typename T> std::vector<T>* PieceDefLoader::getListFromString(
 
 /**
  * Get a map of objects from a string
+ *
+ * @param listString the string from which to generate the map of objects
+ * @param keyFromObject a function for generating a key from an object
+ * @param objectFromString a function for generating an object from a string
+ * @param K the key type by which to index the objects
+ * @param V the type of object to be stored in the map
+ *
+ * @return the map of objects represented by the string
  */
 template <typename K, typename V> std::map<K, V>* PieceDefLoader::getMapFromString(
 	const std::string& listString,
@@ -365,11 +384,9 @@ std::map<std::string, const PieceDef*>* PieceDefLoader::loadPieceDefs (const std
 	}
 
 	// Create the piece definitions
-	std::map<std::string, const PieceDef*>* pieceDefs = getMapFromString(
+	return getMapFromString(
 		removeWhiteSpace(fileName),
         (std::string(*)(const PieceDef*))[](auto val){ return val->name; },
         (const PieceDef*(*)(const std::string&))[](auto s){ return getPieceDefFromString(s); }
 	);
-
-	return pieceDefs;
 }
