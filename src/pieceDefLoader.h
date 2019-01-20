@@ -2,8 +2,8 @@
 #define CHESS_PIECE_DEF_LOADER_H
 
 #include <SFML/Graphics.hpp>
-#include <string>
 #include <map>
+#include <string>
 #include <vector>
 
 // Forward declarations
@@ -26,22 +26,28 @@ private:
 
 	static const int NUM_MOVE_ARGS = 7;
 
+	// Object generation methods
+    static const PieceDef* getPieceDefFromString(const std::string& pieceString);
+    static const MoveDef* getMoveFromString(const std::string& moveString);
+    static const sf::Vector2i getVectorFromString(const std::string& s);
+    template <typename T> static std::vector<T>* getListFromString(
+		const std::string& listString,
+		T(*objectFromString)(const std::string& s)
+	);
+	template <typename K, typename V> static std::map<K, V>* getMapFromString(
+		const std::string& listString,
+		K(*keyFromObject)(V v),
+		V(*objectFromString)(const std::string& s)
+	);
 
 	// Helper methods
-    static const bool isValidFileName(const std::string& fileName);
-    static const PieceDef* pieceDefFromString(const std::string& pieceString);
-    static const std::map<int, const MoveDef*>* getMovesFromString(const std::string& movesString);
-    static const MoveDef* getMoveFromString(const std::string& moveString);
-    static const unsigned int getNumArgs(const std::string& s);
-    static const sf::Vector2i getVectorFromString(const std::string& s);
-    static const std::vector<int>* getChainedMovesFromString(const std::string& s);
-    static const std::vector<NumRule*>* getNumRulesFromString(const std::string& s);
+	static const unsigned int getNumArgs(const std::string& s);
 	static const std::vector<std::string>* split(const std::string& s);
 	static const std::string removeWhiteSpace(const std::string& fileName);
 	static const bool isWhitespace(const char candidate);
-	static std::map<std::string, const PieceDef*>* getPieceDefsFromStrings(const std::vector<std::string>* pieceStrings);
 
     // Validation methods
+    static const bool isValidFileName(const std::string& fileName);
     static const void checkBracketEnclosed(const std::string& s);
     static const void checkNumArgs(const std::string& s, unsigned int expected);
 
