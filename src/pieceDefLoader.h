@@ -10,6 +10,7 @@
 class PieceDef;
 class MoveDef;
 class NumRule;
+class TargetingRule;
 
 
 // Class declaration
@@ -25,11 +26,13 @@ private:
 	static const char COMMENT_MARKER = '#';
 
 	static const int NUM_MOVE_ARGS = 7;
+	static const int NUM_TARGETTING_RULE_ARGS = 4;
 
 	// Object generation methods
     static const PieceDef* getPieceDefFromString(const std::string& pieceString);
     static const MoveDef* getMoveFromString(const std::string& moveString);
     static const sf::Vector2i getVectorFromString(const std::string& s);
+    static const TargetingRule* getTargetingRuleFromString(const std::string& s);
     template <typename T> static std::vector<T>* getListFromString(
 		const std::string& listString,
 		T(*objectFromString)(const std::string& s)

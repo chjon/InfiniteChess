@@ -28,6 +28,10 @@ const sf::Color Piece::getTeam() const {
 	return team;
 }
 
+const PieceDef::Direction Piece::getDir() const {
+	return dir;
+}
+
 const unsigned int Piece::getMoveCount() const {
 	return moveCount;
 }

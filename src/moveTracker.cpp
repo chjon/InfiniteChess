@@ -132,7 +132,8 @@ void MoveTracker::onCameraChange(PieceTracker* pieceTracker) {
 			const MoveDef* rootMove = terminal->getRootMove();
 			MoveMarker* prev = terminal;
 			terminal = new MoveMarker(
-				piece, rootMove, terminal->getBaseVector(), terminal->getNextPos(), terminal->getLambda() + 1
+				piece, rootMove, terminal->getBaseVector(), terminal->getNextPos(),
+				terminal->switchedX, terminal->switchedY, terminal->switchedXY, terminal->lambda + 1
 			);
 
 			// Link the move markers
