@@ -39,8 +39,8 @@ private:
 	);
 	template <typename K, typename V> static std::map<K, V>* getMapFromString(
 		const std::string& listString,
-		K(*keyFromObject)(V v),
-		V(*objectFromString)(const std::string& s)
+		K(*keyFromObject)(V),
+		V(*objectFromString)(const std::string&)
 	);
 
 	// Helper methods

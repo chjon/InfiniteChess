@@ -59,7 +59,7 @@ bool MoveMarker::meetsTargetingRule(PieceTracker* pieceTracker) const {
         const sf::Vector2i transformed = MoveDef::reflect(rotated, switchedX, switchedY, switchedXY);
 
         // Check if the targeting rule is met
-        if ((*i)->matches(pieceTracker->getPiece(pos + transformed))) {
+        if ((*i)->matches(rootPiece, pieceTracker->getPiece(pos + transformed))) {
 			return true;
         }
     }

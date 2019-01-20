@@ -135,24 +135,53 @@ const sf::Vector2i PieceDefLoader::getVectorFromString(const std::string& s) {
  *
  * @return the targeting rule represented by the string
  */
-const TargetingRule* PieceDefLoader::getTargetingRuleFromString(const std::string& s) {
+const TargetingRule* PieceDefLoader::getTargetingRuleFromString(const std::string& targetingRulesString) {
 	// Validate input
-	checkBracketEnclosed(s);
-	checkNumArgs(s.substr(1, s.length() - 2), NUM_TARGETTING_RULE_ARGS);
+	checkBracketEnclosed(targetingRulesString);
+	checkNumArgs(targetingRulesString.substr(1, targetingRulesString.length() - 2), NUM_TARGETTING_RULE_ARGS);
 
 	// Get all arguments
-	const std::vector<std::string>* args = split(s.substr(1, s.length() - 2));
+	const std::vector<std::string>* args = split(targetingRulesString.substr(1, targetingRulesString.length() - 2));
 	unsigned int argIndex = 0;
 
 	// Get properties
     const sf::Vector2i offsetVector = getVectorFromString((*args)[argIndex++]);
     const std::string targetName = (*args)[argIndex++];
 
+    // Get data specifiers
+    const std::vector<std::pair<std::string, const NumRule*>>* dataSpecifierList = getListFromString(
+		(*args)[argIndex++],
+        (std::pair<std::string, const NumRule*>(*)(const std::string& s)) [](auto s){
+			// Validate input
+			checkBracketEnclosed(s);
+			checkNumArgs(s.substr(1, s.length() - 2), 2);
+
+			// Generate pair
+			const std::vector<std::string>* dataSpecArgs = split(s.substr(1, s.length() - 2));
+			std::pair<std::string, const NumRule*> result =
+				std::make_pair((*dataSpecArgs)[0], new NumRule((*dataSpecArgs)[1]));
+
+			// Clean up and return
+			delete dataSpecArgs;
+			return result;
+		}
+	);
+
+	// Create map from vector
+	std::map<std::string, const NumRule*>* dataSpecifiers = new std::map<std::string, const NumRule*>();
+    for (
+		std::vector<std::pair<std::string, const NumRule*>>::const_iterator i = dataSpecifierList->begin();
+		i != dataSpecifierList->end(); ++i
+	) {
+        dataSpecifiers->insert(*i);
+    }
+
     // Create targetting rule
-    TargetingRule* targetingRule = new TargetingRule(offsetVector, targetName);
+    TargetingRule* targetingRule = new TargetingRule(offsetVector, targetName, dataSpecifiers);
 
     // Clean up and return
     delete args;
+    delete dataSpecifierList;
     return targetingRule;
 }
 
