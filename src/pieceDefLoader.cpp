@@ -1,7 +1,6 @@
 #include "pieceDefLoader.h"
 
 #include <fstream>
-#include <iostream>
 #include "moveDef.h"
 #include "numRule.h"
 #include "pieceDef.h"
@@ -13,31 +12,7 @@ const std::vector<char>* PieceDefLoader::WHITESPACE = new std::vector<char>(' ',
 
 
 
-// Private methods
-
-/**
- * Determine whether a file name is valid. A file name is valid if it ends with
- * the correct extension
- *
- * @param fileName the candidate file name
- *
- * @return true if the file name is valid, false otherwise
- */
-const bool PieceDefLoader::isValidFileName(const std::string& fileName) {
-	// Check whether the filename has the required length
-	if (fileName.length() < EXTENSION.length()) {
-		return false;
-	}
-
-	// Check whether the file ends with the correct extension
-	for (unsigned int i = 1; i <= EXTENSION.length(); i++) {
-		if (EXTENSION[EXTENSION.length() - i] != fileName[fileName.length() - i]) {
-			return false;
-		}
-	}
-
-	return true;
-}
+// Private object generation methods
 
 /**
  * Create a piece definition from a string
@@ -49,7 +24,7 @@ const bool PieceDefLoader::isValidFileName(const std::string& fileName) {
  * @throw ResourceLoader::FileFormatException if the piece string is not bracket-enclosed,
  *        if the piece name cannot be found, or if the move set cannot be found
  */
-const PieceDef* PieceDefLoader::pieceDefFromString(const std::string& pieceString) {
+const PieceDef* PieceDefLoader::getPieceDefFromString(const std::string& pieceString) {
 	// Validate input
 	checkBracketEnclosed(pieceString);
     checkNumArgs(pieceString.substr(1, pieceString.length() - 2), 3);
@@ -67,37 +42,15 @@ const PieceDef* PieceDefLoader::pieceDefFromString(const std::string& pieceStrin
 	propertyIndex++;
 
 	// Get move set
-	const std::map<int, const MoveDef*>* moveSet = getMovesFromString((*properties)[propertyIndex++]);
+	const std::map<int, const MoveDef*>* moveSet = getMapFromString(
+		(*properties)[propertyIndex++],
+        (int(*)(const MoveDef*)) [](auto val){ return val->index; },
+        (const MoveDef*(*)(const std::string&)) [](auto s){ return getMoveFromString(s); }
+	);
 
 	// Clean up and return
 	delete properties;
     return new PieceDef(pieceName, isCheckVulnerable, isRoyal, moveSet);
-}
-
-/**
- * Create a move set from a string
- *
- * @param movesString the string from which to generate the move set
- *
- * @return a map containing all of the piece's possible moves
- */
-const std::map<int, const MoveDef*>* PieceDefLoader::getMovesFromString(const std::string& movesString) {
-	// Validate input
-	checkBracketEnclosed(movesString);
-
-	// Generate the move set
-	std::map<int, const MoveDef*>* moves = new std::map<int, const MoveDef*>();
-	const std::vector<std::string>* moveStrings = split(movesString.substr(1, movesString.length() - 2));
-
-	// Load integers
-	for (std::vector<std::string>::const_iterator i = moveStrings->begin(); i != moveStrings->end(); ++i) {
-		const MoveDef* moveDef = getMoveFromString(*i);
-		moves->insert(std::make_pair(moveDef->index, moveDef));
-	}
-
-	// Clean up and return
-	delete moveStrings;
-	return moves;
 }
 
 /**
@@ -132,9 +85,12 @@ const MoveDef* PieceDefLoader::getMoveFromString(const std::string& moveString) 
     argIndex++;
 
     // Load chained moves and movement rules
-	const std::vector<int>* chainedMoves = getChainedMovesFromString((*args)[argIndex++]);
-	const std::vector<NumRule*>* scalingRules = getNumRulesFromString((*args)[argIndex++]);
-	const std::vector<NumRule*>* nthStepRules = getNumRulesFromString((*args)[argIndex++]);
+	const std::vector<int>* chainedMoves = getListFromString
+		((*args)[argIndex++], (int(*)(const std::string&)) [](auto s){ return std::stoi(s); });
+	const std::vector<NumRule*>* scalingRules = getListFromString
+		((*args)[argIndex++], (NumRule*(*)(const std::string& s)) [](auto s){ return new NumRule(s); });
+	const std::vector<NumRule*>* nthStepRules = getListFromString
+		((*args)[argIndex++], (NumRule*(*)(const std::string& s)) [](auto s){ return new NumRule(s); });
 
 	// TODO: Load targetting rules
 
@@ -147,6 +103,87 @@ const MoveDef* PieceDefLoader::getMoveFromString(const std::string& moveString) 
 	delete args;
 	return newMove;
 }
+
+/**
+ * Create a vector from a string
+ */
+const sf::Vector2i PieceDefLoader::getVectorFromString(const std::string& s) {
+	// Validate input
+	checkBracketEnclosed(s);
+	checkNumArgs(s.substr(1, s.length() - 2), 2);
+
+	// Load vector components
+	const std::vector<std::string>* strings = split(s.substr(1, s.length() - 2));
+	const int x = std::stoi((*strings)[0]);
+	const int y = std::stoi((*strings)[1]);
+
+	// Clean up and return
+	delete strings;
+	return sf::Vector2i(x, y);
+}
+
+/**
+ * Get a list of objects from a string
+ */
+template <typename T> std::vector<T>* PieceDefLoader::getListFromString(
+	const std::string& listString,
+	T(*objectFromString)(const std::string& s)
+) {
+	// Validate input
+	checkBracketEnclosed(listString);
+
+	// Instantiate the list
+	std::vector<T>* objectList = new std::vector<T>();
+	const std::vector<std::string>* objectStrings =	split(listString.substr(1, listString.length() - 2));
+
+	// Load objects
+	for (std::vector<std::string>::const_iterator i = objectStrings->begin(); i != objectStrings->end(); ++i) {
+		objectList->push_back(objectFromString(*i));
+	}
+
+	// Clean up and return
+	delete objectStrings;
+	return objectList;
+}
+
+/**
+ * Get a map of objects from a string
+ */
+template <typename K, typename V> std::map<K, V>* PieceDefLoader::getMapFromString(
+	const std::string& listString,
+	K(*keyFromObject)(V val),
+	V(*objectFromString)(const std::string& s)
+) {
+	// Validate input
+	checkBracketEnclosed(listString);
+
+	// Instantiate the map
+	std::map<K, V>* objectMap = new std::map<K, V>();
+	const std::vector<std::string>* objectStrings = split(listString.substr(1, listString.length() - 2));
+
+	// Load objects
+	for (std::vector<std::string>::const_iterator i = objectStrings->begin(); i != objectStrings->end(); ++i) {
+		// Create the key-value pair
+		V val = objectFromString(*i);
+		K key = keyFromObject(val);
+
+		// Validate the key
+		if (objectMap->find(key) != objectMap->end()) {
+			throw ResourceLoader::FileFormatException("Duplicate definition for key");
+		}
+
+		// Add the key-value pair
+		objectMap->insert(std::make_pair(key, val));
+	}
+
+	// Clean up and return
+	delete objectStrings;
+	return objectMap;
+}
+
+
+
+// Private helper methods
 
 /**
  * Determine the number of arguments in the string
@@ -174,64 +211,6 @@ const unsigned int PieceDefLoader::getNumArgs(const std::string& s) {
     }
 
     return argCount;
-}
-
-/**
- * Create a vector from a string
- */
-const sf::Vector2i PieceDefLoader::getVectorFromString(const std::string& s) {
-	// Validate input
-	checkBracketEnclosed(s);
-	checkNumArgs(s.substr(1, s.length() - 2), 2);
-
-	// Load vector components
-	const std::vector<std::string>* strings = split(s.substr(1, s.length() - 2));
-	const int x = std::stoi((*strings)[0]);
-	const int y = std::stoi((*strings)[1]);
-
-	// Clean up and return
-	delete strings;
-	return sf::Vector2i(x, y);
-}
-
-/**
- * Get a list of integers from a string
- */
-const std::vector<int>* PieceDefLoader::getChainedMovesFromString(const std::string& s) {
-	// Validate input
-	checkBracketEnclosed(s);
-
-	std::vector<int>* chainedMovesList = new std::vector<int>();
-	const std::vector<std::string>* strings = split(s.substr(1, s.length() - 2));
-
-	// Load integers
-	for (std::vector<std::string>::const_iterator i = strings->begin(); i != strings->end(); ++i) {
-		chainedMovesList->push_back(std::stoi(*i));
-	}
-
-	// Clean up and return
-	delete strings;
-	return chainedMovesList;
-}
-
-/**
- * Get a list of number rules from a string
- */
-const std::vector<NumRule*>* PieceDefLoader::getNumRulesFromString(const std::string& s) {
-	// Validate input
-	checkBracketEnclosed(s);
-
-	std::vector<NumRule*>* rulesList = new std::vector<NumRule*>();
-	const std::vector<std::string>* rulesStrings = split(s.substr(1, s.length() - 2));
-
-	// Load num rules
-	for (std::vector<std::string>::const_iterator i = rulesStrings->begin(); i != rulesStrings->end(); ++i) {
-		rulesList->push_back(new NumRule(*i));
-	}
-
-	// Clean up and return
-	delete rulesStrings;
-	return rulesList;
 }
 
 /**
@@ -324,28 +303,33 @@ const bool PieceDefLoader::isWhitespace(const char candidate) {
     return false;
 }
 
+
+
+// Private validation methods
+
 /**
- * Create the piece definition map from a list of piece strings
+ * Determine whether a file name is valid. A file name is valid if it ends with
+ * the correct extension
+ *
+ * @param fileName the candidate file name
+ *
+ * @return true if the file name is valid, false otherwise
  */
-std::map<std::string, const PieceDef*>* PieceDefLoader::getPieceDefsFromStrings(const std::vector<std::string>* pieceStrings) {
-	// Create the pieces from each of the piece strings
-	std::map<std::string, const PieceDef*>* pieceDefs = new std::map<std::string, const PieceDef*>();
-	for (std::string s : *pieceStrings) {
-		const PieceDef* pieceDef = pieceDefFromString(s);
-
-		// Check if the piece definition already exists
-		if (pieceDefs->find(pieceDef->name) != pieceDefs->end()) {
-			throw ResourceLoader::FileFormatException("Duplicate definition of " + pieceDef->name);
-		}
-
-        pieceDefs->insert(std::make_pair(pieceDef->name, pieceDef));
+const bool PieceDefLoader::isValidFileName(const std::string& fileName) {
+	// Check whether the filename has the required length
+	if (fileName.length() < EXTENSION.length()) {
+		return false;
 	}
 
-	return pieceDefs;
+	// Check whether the file ends with the correct extension
+	for (unsigned int i = 1; i <= EXTENSION.length(); i++) {
+		if (EXTENSION[EXTENSION.length() - i] != fileName[fileName.length() - i]) {
+			return false;
+		}
+	}
+
+	return true;
 }
-
-
-// Validation methods
 
 /**
  * Check whether the string is bracket enclosed
@@ -381,10 +365,11 @@ std::map<std::string, const PieceDef*>* PieceDefLoader::loadPieceDefs (const std
 	}
 
 	// Create the piece definitions
-	const std::vector<std::string>* pieceStrings = split(removeWhiteSpace(fileName));
-	std::map<std::string, const PieceDef*>* pieceDefs = getPieceDefsFromStrings(pieceStrings);
+	std::map<std::string, const PieceDef*>* pieceDefs = getMapFromString(
+		removeWhiteSpace(fileName),
+        (std::string(*)(const PieceDef*))[](auto val){ return val->name; },
+        (const PieceDef*(*)(const std::string&))[](auto s){ return getPieceDefFromString(s); }
+	);
 
-	// Clean up and return
-	delete pieceStrings;
 	return pieceDefs;
 }
