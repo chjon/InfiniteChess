@@ -5,6 +5,7 @@
 #include "numRule.h"
 #include "pieceDef.h"
 #include "resourceLoader.h"
+#include "targetingRule.h"
 
 // Initialize constants
 
@@ -92,12 +93,12 @@ const MoveDef* PieceDefLoader::getMoveFromString(const std::string& moveString) 
 		((*args)[argIndex++], (NumRule*(*)(const std::string& s)) [](auto s){ return new NumRule(s); });
 	const std::vector<NumRule*>* nthStepRules = getListFromString
 		((*args)[argIndex++], (NumRule*(*)(const std::string& s)) [](auto s){ return new NumRule(s); });
-
-	// TODO: Load targetting rules
+	const std::vector<const TargetingRule*>* targetingRules = getListFromString
+		((*args)[argIndex++], getTargetingRuleFromString);
 
 	MoveDef* newMove = new MoveDef(
 		moveIndex, baseVector, attacksFriendlies, attacksEnemies, movesEmpty, canLeap, endsTurn,
-		isXSymmetric, isYSymmetric, isXYSymmetric, chainedMoves, scalingRules, nthStepRules
+		isXSymmetric, isYSymmetric, isXYSymmetric, chainedMoves, scalingRules, nthStepRules, targetingRules
 	);
 
 	// Clean up and return
@@ -125,6 +126,63 @@ const sf::Vector2i PieceDefLoader::getVectorFromString(const std::string& s) {
 	// Clean up and return
 	delete strings;
 	return sf::Vector2i(x, y);
+}
+
+/**
+ * Create a targeting rule from a string
+ *
+ * @param s the string from which to generate the targeting rule
+ *
+ * @return the targeting rule represented by the string
+ */
+const TargetingRule* PieceDefLoader::getTargetingRuleFromString(const std::string& targetingRulesString) {
+	// Validate input
+	checkBracketEnclosed(targetingRulesString);
+	checkNumArgs(targetingRulesString.substr(1, targetingRulesString.length() - 2), NUM_TARGETTING_RULE_ARGS);
+
+	// Get all arguments
+	const std::vector<std::string>* args = split(targetingRulesString.substr(1, targetingRulesString.length() - 2));
+	unsigned int argIndex = 0;
+
+	// Get properties
+    const sf::Vector2i offsetVector = getVectorFromString((*args)[argIndex++]);
+    const std::string targetName = (*args)[argIndex++];
+
+    // Get data specifiers
+    const std::vector<std::pair<std::string, const NumRule*>>* dataSpecifierList = getListFromString(
+		(*args)[argIndex++],
+        (std::pair<std::string, const NumRule*>(*)(const std::string& s)) [](auto s){
+			// Validate input
+			checkBracketEnclosed(s);
+			checkNumArgs(s.substr(1, s.length() - 2), 2);
+
+			// Generate pair
+			const std::vector<std::string>* dataSpecArgs = split(s.substr(1, s.length() - 2));
+			std::pair<std::string, const NumRule*> result =
+				std::make_pair((*dataSpecArgs)[0], new NumRule((*dataSpecArgs)[1]));
+
+			// Clean up and return
+			delete dataSpecArgs;
+			return result;
+		}
+	);
+
+	// Create map from vector
+	std::map<std::string, const NumRule*>* dataSpecifiers = new std::map<std::string, const NumRule*>();
+    for (
+		std::vector<std::pair<std::string, const NumRule*>>::const_iterator i = dataSpecifierList->begin();
+		i != dataSpecifierList->end(); ++i
+	) {
+        dataSpecifiers->insert(*i);
+    }
+
+    // Create targetting rule
+    TargetingRule* targetingRule = new TargetingRule(offsetVector, targetName, dataSpecifiers);
+
+    // Clean up and return
+    delete args;
+    delete dataSpecifierList;
+    return targetingRule;
 }
 
 /**

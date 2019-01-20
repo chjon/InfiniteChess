@@ -7,6 +7,7 @@
 #include "piece.h"
 #include "pieceDef.h"
 #include "pieceTracker.h"
+#include "targetingRule.h"
 
 // Private helpers
 
@@ -47,6 +48,26 @@ bool MoveMarker::meetsNumRule(const std::vector<NumRule*>* numRules, unsigned in
 }
 
 /**
+ * Determine whether the move marker meets a targeting rule
+ */
+bool MoveMarker::meetsTargetingRule(PieceTracker* pieceTracker) const {
+    for (std::vector<const TargetingRule*>::const_iterator i = rootMove->targetingRules->begin();
+		i != rootMove->targetingRules->end(); ++i
+	) {
+        // Get position identified by targeting rule
+        const sf::Vector2i rotated = MoveDef::rotate((*i)->offsetVector, rootPiece->getDir());
+        const sf::Vector2i transformed = MoveDef::reflect(rotated, switchedX, switchedY, switchedXY);
+
+        // Check if the targeting rule is met
+        if ((*i)->matches(rootPiece, pieceTracker->getPiece(pos + transformed))) {
+			return true;
+        }
+    }
+
+    return false;
+}
+
+/**
  * Determine whether the position is being attacked
  */
 bool MoveMarker::isAttacked(PieceTracker* pieceTracker) const {
@@ -78,36 +99,23 @@ bool MoveMarker::isAttacked(PieceTracker* pieceTracker) const {
  * Constructor
  */
 MoveMarker::MoveMarker(
-	const Piece* rootPiece_, const MoveDef* rootMove, sf::Vector2i baseVector_,
-	sf::Vector2i pos_, unsigned int lambda_
+	const Piece* rootPiece_, const MoveDef* rootMove, sf::Vector2i baseVector_, sf::Vector2i pos_,
+	bool switchedX_, bool switchedY_, bool switchedXY_, unsigned int lambda_
 ) :
 	rootPiece{rootPiece_},
 	rootMove{rootMove},
 	baseVector{baseVector_},
 	pos{pos_},
-	lambda{lambda_},
 	next{nullptr},
 	prev{nullptr},
 	requiresLeap{false},
 	meetsAttackRequirements{false},
 	meetsScalingRule{false},
-	meetsNthStepRule{false}
-{
-}
-
-/**
- * Constructor
- */
-MoveMarker::MoveMarker(
-	const Piece* rootPiece_, const MoveDef* rootMove, sf::Vector2i baseVector_, sf::Vector2i pos_) :
-	rootPiece{rootPiece_},
-	rootMove{rootMove},
-	baseVector{baseVector_},
-	pos{pos_},
-	lambda{1},
-	next{nullptr},
-	prev{nullptr},
-	requiresLeap{false}
+	meetsNthStepRule{false},
+	switchedX{switchedX_},
+	switchedY{switchedY_},
+	switchedXY{switchedXY_},
+	lambda{lambda_}
 {
 }
 
@@ -202,13 +210,6 @@ sf::Vector2i MoveMarker::getNextPos() const {
 }
 
 /**
- * Get the move marker's scale factor
- */
-unsigned int MoveMarker::getLambda() const {
-	return lambda;
-}
-
-/**
  * Get the next move marker
  */
 MoveMarker* MoveMarker::getNext() const {
@@ -239,22 +240,19 @@ const bool MoveMarker::getRequiresLeap() const {
 /**
  * Determine whether the move marker is a valid move position
  */
-bool MoveMarker::canMove(PieceTracker* pieceTracker, const Piece* testPiece) const {
+bool MoveMarker::canMove(PieceTracker* pieceTracker) const {
 	// Check if the position meets the movement requirements
 	if ((!meetsAttackRequirements) ||
 		(!rootMove->canLeap && requiresLeap) ||
 		(!meetsScalingRule) ||
 		(!meetsNthStepRule) ||
+		(!meetsTargetingRule(pieceTracker)) ||
 		(rootPiece->getDef()->isCheckVulnerable && isAttacked(pieceTracker))
 	) {
 		return false;
 	}
 
 	return true;
-}
-
-bool MoveMarker::canMove(PieceTracker* pieceTracker) const {
-	return canMove(pieceTracker, nullptr);
 }
 
 // Mutators

@@ -8,6 +8,7 @@
 class MoveDef;
 class NumRule;
 class Piece;
+class TargetingRule;
 
 
 
@@ -37,11 +38,6 @@ private:
 	 * The position of the movement marker
 	 */
 	const sf::Vector2i pos;
-
-	/**
-	 * The scaling factor to get from the base move to this position
-	 */
-	const unsigned int lambda;
 
 	/**
 	 * The next move marker
@@ -86,6 +82,18 @@ private:
 	bool meetsNumRule(const std::vector<NumRule*>* numRules, unsigned int candidate, bool deleteList) const;
 
 	/**
+	 * Determine whether the move marker meets a targeting rule
+	 */
+	bool meetsTargetingRule(PieceTracker* pieceTracker) const;
+
+	/**
+	 * Determine whether the position is being attacked
+	 */
+    bool isAttacked(PieceTracker* pieceTracker) const;
+
+	// Event handlers
+
+	/**
 	 * Update the move marker chain when a piece leaves the tile
 	 */
 	void onPieceLeaveNext(Piece* piece, PieceTracker* pieceTracker);
@@ -95,19 +103,29 @@ private:
 	 */
 	void onPieceEnterNext(Piece* piece, PieceTracker* pieceTracker);
 
-	/**
-	 * Determine whether the position is being attacked
-	 */
-    bool isAttacked(PieceTracker* pieceTracker) const;
-
 	// Friends
 	friend Piece;
 	friend Renderer;
 
 public:
+	// Members
+	/**
+	 * The reflections that were done to produce this move marker
+	 */
+	const bool switchedX;
+	const bool switchedY;
+	const bool switchedXY;
+
+	/**
+	 * The scaling factor to get from the base move to this position
+	 */
+	const unsigned int lambda;
+
 	// Constructors / Destructor
-	MoveMarker(const Piece* rootPiece_, const MoveDef* rootMove_, sf::Vector2i baseVector, sf::Vector2i pos_, unsigned int lambda_);
-	MoveMarker(const Piece* rootPiece_, const MoveDef* rootMove_, sf::Vector2i baseVector, sf::Vector2i pos_);
+	MoveMarker(
+		const Piece* rootPiece_, const MoveDef* rootMove_, sf::Vector2i baseVector, sf::Vector2i pos_,
+		bool switchedX_, bool switchedY_, bool switchedXY_, unsigned int lambda_
+	);
 	~MoveMarker();
 
 	// Event handlers
@@ -140,11 +158,6 @@ public:
 	sf::Vector2i getNextPos() const;
 
 	/**
-	 * Get the move marker's scale factor
-	 */
-	unsigned int getLambda() const;
-
-	/**
 	 * Get the next move marker
 	 */
 	MoveMarker* getNext() const;
@@ -167,7 +180,6 @@ public:
 	/**
 	 * Determine whether the move marker is a valid move destination
 	 */
-	bool canMove(PieceTracker* pieceTracker, const Piece* testPiece) const;
 	bool canMove(PieceTracker* pieceTracker) const;
 
 	// Mutators

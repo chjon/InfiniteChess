@@ -72,6 +72,8 @@
 		<Unit filename="src/resourceLoader.cpp" />
 		<Unit filename="src/resourceLoader.h" />
 		<Unit filename="src/stringUtils.h" />
+		<Unit filename="src/targetingRule.cpp" />
+		<Unit filename="src/targetingRule.h" />
 		<Unit filename="src/vectorUtils.h" />
 		<Extensions>
 			<code_completion />
