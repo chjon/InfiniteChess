@@ -9,6 +9,7 @@ class Game;
 class PieceTracker;
 class Piece;
 class InputHandler;
+class MoveMarker;
 
 
 
@@ -25,7 +26,7 @@ private:
 	void onMousePress (sf::Vector2i pos);
 
 	// Methods
-	void movePiece (sf::Vector2i pos);
+	void movePiece (MoveMarker* dest);
 
 	// Friends
 	friend InputHandler;
