@@ -1,4 +1,7 @@
 #include "piece.h"
+
+#include "moveDef.h"
+#include "moveMarker.h"
 #include "moveTracker.h"
 
 // Constructors
@@ -9,6 +12,7 @@ Piece::Piece(const PieceDef* pieceDef_, const sf::Color team_, sf::Vector2i pos_
 	pos{pos_},
 	dir{dir_},
 	moveCount{0},
+	lastMove{-1},
 	moveTracker{new MoveTracker(this)}
 {
 }
@@ -46,9 +50,11 @@ const MoveTracker* Piece::getMoveTracker() const {
 
 // Mutators
 
-void Piece::setPos(sf::Vector2i newPos) {
-    pos = newPos;
-    onMove();
+void Piece::move(MoveMarker* dest) {
+    pos = dest->getPos();
+    lastMove = dest->getRootMove()->index;
+    moveCount++;
+    moveTracker->onMove();
 }
 
 
@@ -57,11 +63,6 @@ void Piece::setPos(sf::Vector2i newPos) {
 
 void Piece::onStartUp(PieceTracker* pieceTracker) {
 	moveTracker->onStartUp(pieceTracker);
-}
-
-void Piece::onMove() {
-	moveTracker->onMove();
-	moveCount++;
 }
 
 void Piece::onCameraChange(PieceTracker* pieceTracker) {

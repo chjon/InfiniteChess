@@ -168,7 +168,9 @@ Piece* PieceTracker::getPiece(sf::Vector2i pos) {
  *
  * @return false if there is no piece at pos1, true otherwise
  */
-bool PieceTracker::movePiece(sf::Vector2i pos1, sf::Vector2i pos2) {
+bool PieceTracker::movePiece(MoveMarker* dest) {
+	sf::Vector2i pos1 = dest->getRootPiece()->getPos();
+	sf::Vector2i pos2 = dest->getPos();
 	std::map<sf::Vector2i, Piece*>::iterator it1 = pieces.find(pos1);
 	std::map<sf::Vector2i, Piece*>::iterator it2 = pieces.find(pos2);
 
@@ -177,7 +179,7 @@ bool PieceTracker::movePiece(sf::Vector2i pos1, sf::Vector2i pos2) {
 		return false;
 	}
 
-	// Get the game piece at pos1
+	// Get the game piece to move
 	Piece* piece = it1->second;
 
 	// Remove the piece at the final destination
@@ -191,7 +193,7 @@ bool PieceTracker::movePiece(sf::Vector2i pos1, sf::Vector2i pos2) {
 	pieces.insert(std::make_pair(pos2, piece));
 
 	// Update the piece
-	piece->setPos(pos2);
+	piece->move(dest);
 	piece->onCameraChange(this);
 
 	// Update the move markers for leaving
@@ -216,15 +218,15 @@ bool PieceTracker::movePiece(sf::Vector2i pos1, sf::Vector2i pos2) {
 }
 
 /**
- * Determine whether the piece can move
+ * Get the first valid move marker for the position
  */
-bool PieceTracker::canMove (Piece* piece, sf::Vector2i dest) {
+MoveMarker* PieceTracker::getValidMove(Piece* piece, sf::Vector2i dest) {
 	const std::vector<MoveMarker*>* markers = piece->getMoveTracker()->getMoveMarkers(dest);
-	bool canMove = false;
+	MoveMarker* validMove = nullptr;
 
 	for (std::vector<MoveMarker*>::const_iterator i = markers->begin(); i != markers->end(); ++i) {
         if ((*i)->canMove(this)) {
-			canMove = true;
+			validMove = *i;
 			break;
         }
 	}
@@ -233,7 +235,7 @@ bool PieceTracker::canMove (Piece* piece, sf::Vector2i dest) {
 	delete markers;
 	markers = nullptr;
 
-    return canMove;
+    return validMove;
 }
 
 /**

@@ -54,8 +54,8 @@ public:
     bool addPiece(std::string name, sf::Color team, sf::Vector2i pos, PieceDef::Direction);
     bool removePiece(sf::Vector2i pos);
     Piece* getPiece(sf::Vector2i pos);
-    bool movePiece(sf::Vector2i pos1, sf::Vector2i pos2);
-    bool canMove(Piece* piece, sf::Vector2i dest);
+    bool movePiece(MoveMarker* dest);
+    MoveMarker* getValidMove(Piece* piece, sf::Vector2i dest);
     std::vector<MoveMarker*>* getMoveMarkers(sf::Vector2i pos) const;
 };
 

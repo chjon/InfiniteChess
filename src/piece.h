@@ -10,6 +10,7 @@ class Renderer;
 class MoveTracker;
 class PieceMove;
 class PieceTracker;
+class MoveMarker;
 
 
 
@@ -24,6 +25,7 @@ private:
     sf::Vector2i pos;
 	PieceDef::Direction dir;
 	unsigned int moveCount;
+	int lastMove;
 
 	// Move tracker
 	MoveTracker* moveTracker;
@@ -45,14 +47,16 @@ public:
 	const unsigned int getMoveCount() const;
 	const PieceDef* getDef() const;
 	const MoveTracker* getMoveTracker() const;
+	inline const int getLastMove() const {
+		return lastMove;
+	}
 
 	// Mutators
-	void setPos(sf::Vector2i newPos);
+	void move(MoveMarker* dest);
 
 	// Event handlers
 	void onStartUp(PieceTracker* pieceTracker);
 	void onCameraChange(PieceTracker* pieceTracker);
-	void onMove();
 };
 
 #endif // CHESS_PIECE_H

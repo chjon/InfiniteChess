@@ -16,8 +16,12 @@ void Controller::onMousePress(sf::Vector2i pos) {
     	selectedPiece = nullptr;
 
 	// Move piece
-	} else if (pieceTracker->canMove(selectedPiece, pos)) {
-		movePiece(pos);
+	} else {
+		MoveMarker* dest = pieceTracker->getValidMove(selectedPiece, pos);
+
+		if (dest != nullptr) {
+			movePiece(dest);
+		}
 	}
 
 	game->renderer->needsRedraw = true;
@@ -30,9 +34,9 @@ void Controller::onMousePress(sf::Vector2i pos) {
 /**
  * Move the selected piece to a new position
  */
-void Controller::movePiece(sf::Vector2i pos) {
+void Controller::movePiece(MoveMarker* dest) {
 	// Move the piece at the position
-	pieceTracker->movePiece(selectedPiece->getPos(), pos);
+	pieceTracker->movePiece(dest);
 
 	// Deselect the piece
 	selectedPiece = nullptr;

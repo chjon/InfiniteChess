@@ -77,6 +77,7 @@ bool TargetingRule::matches(const Piece* rootPiece, const Piece* candidate) cons
 	) {
 		switch (i->first) {
 		case DataSpecifier::LAST_MOVE:
+			if (!i->second->matches(candidate->getLastMove())) return false;
 			break;
 		case DataSpecifier::LAST_TURN:
 			break;

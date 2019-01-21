@@ -163,6 +163,13 @@ public:
 	MoveMarker* getNext() const;
 
 	/**
+	 * Get the root piece for the move marker
+	 */
+	inline const Piece* getRootPiece() const {
+		return rootPiece;
+	}
+
+	/**
 	 * Get the root move for the move marker
 	 */
 	const MoveDef* getRootMove() const;
