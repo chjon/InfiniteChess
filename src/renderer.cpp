@@ -246,6 +246,13 @@ void Renderer::onStartup() {
 	// Load resources
 	debugFont.loadFromFile(FONT_DIRECTORY + DEBUG_FONT_FILENAME);
 
+	// Set up window icon
+	std::map<std::string, sf::Texture*>::iterator iconIter = game->resourceLoader->textures->find(WINDOW_ICON);
+	if (iconIter != game->resourceLoader->textures->end()) {
+		sf::Texture* t = iconIter->second;
+		window->setIcon(t->getSize().x, t->getSize().y, t->copyToImage().getPixelsPtr());
+	}
+
 	onResize(window->getSize().x, window->getSize().y);
 }
 

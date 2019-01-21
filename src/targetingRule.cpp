@@ -64,7 +64,7 @@ bool TargetingRule::matches(const Piece* rootPiece, const Piece* candidate) cons
 		if (targetName != EMPTY_ONLY && targetName != ALL_PIECES) {
 			return false;
 		}
-	} else if (targetName != ALL_PIECES) {
+	} else if (targetName != ALL_PIECES && targetName != PIECE_ONLY) {
 		if (targetName != candidate->getDef()->name) {
 			return false;
 		}

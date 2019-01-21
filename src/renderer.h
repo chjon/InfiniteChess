@@ -18,13 +18,15 @@ private:
 	// Configuration constants
 	const unsigned int TILE_PADDING  = 3;
 	const unsigned int MAX_FRAMERATE = 60;
-	const float MIN_TILE_SIZE =  20.f;
-	const float MAX_TILE_SIZE = 120.f;
+	const float MIN_TILE_SIZE =  16.f;
+	const float MAX_TILE_SIZE = 256.f;
 
 	// Resources
 	const std::string FONT_DIRECTORY      = "res/font/";
 	const std::string DEBUG_FONT_FILENAME = "OpenSans-Regular.ttf";
 	sf::Font debugFont;
+
+	const std::string WINDOW_ICON = "King";
 
 	const sf::Color BACKGROUND_COLOR     = sf::Color(  0,   0,   0, 255);
 	const sf::Color FOREGROUND_COLOR     = sf::Color( 50,  50,  50, 255);
@@ -35,7 +37,7 @@ private:
 	const sf::Color MOVE_MARKER_COLOR    = sf::Color(  0, 255, 255, 100);
 
 	// Flags
-	bool displayDebugData = true;
+	bool displayDebugData = false;
 
 	// Members
 	Game* game;

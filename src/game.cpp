@@ -7,8 +7,8 @@
  * Constructor
  */
 Game::Game() {
-	const unsigned int WIDTH  = sf::VideoMode::getDesktopMode().width  * 2. / 3.;
-	const unsigned int HEIGHT = sf::VideoMode::getDesktopMode().height * 2. / 3.;
+	const unsigned int WIDTH  = sf::VideoMode::getDesktopMode().width * 3. / 4.;
+	const unsigned int HEIGHT = sf::VideoMode::getDesktopMode().height * 3. / 4.;
 
 	window = new sf::RenderWindow(
 		sf::VideoMode(WIDTH, HEIGHT),
