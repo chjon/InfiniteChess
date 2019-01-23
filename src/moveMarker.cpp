@@ -48,9 +48,11 @@ bool MoveMarker::meetsNumRule(const std::vector<NumRule*>* numRules, unsigned in
 }
 
 /**
- * Determine whether the move marker meets a targeting rule
+ * Get the first targeting rule that is met
  */
-bool MoveMarker::meetsTargetingRule(PieceTracker* pieceTracker) const {
+const TargetingRule* MoveMarker::getValidTargetingRule(PieceTracker* pieceTracker) const {
+	const TargetingRule* metRule = nullptr;
+
     for (std::vector<const TargetingRule*>::const_iterator i = rootMove->targetingRules->begin();
 		i != rootMove->targetingRules->end(); ++i
 	) {
@@ -60,11 +62,12 @@ bool MoveMarker::meetsTargetingRule(PieceTracker* pieceTracker) const {
 
         // Check if the targeting rule is met
         if ((*i)->matches(rootPiece, pieceTracker->getPiece(pos + transformed))) {
-			return true;
+			metRule = *i;
+			break;
         }
     }
 
-    return false;
+    return metRule;
 }
 
 /**
@@ -246,7 +249,7 @@ bool MoveMarker::canMove(PieceTracker* pieceTracker) const {
 		(!rootMove->canLeap && requiresLeap) ||
 		(!meetsScalingRule) ||
 		(!meetsNthStepRule) ||
-		(!meetsTargetingRule(pieceTracker)) ||
+		(getValidTargetingRule(pieceTracker) == nullptr) ||
 		(rootPiece->getDef()->isCheckVulnerable && isAttacked(pieceTracker))
 	) {
 		return false;

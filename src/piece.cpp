@@ -22,32 +22,6 @@ Piece::~Piece() {
 
 
 
-// Accessors
-
-const sf::Vector2i Piece::getPos() const {
-	return pos;
-}
-
-const sf::Color Piece::getTeam() const {
-	return team;
-}
-
-const PieceDef::Direction Piece::getDir() const {
-	return dir;
-}
-
-const unsigned int Piece::getMoveCount() const {
-	return moveCount;
-}
-
-const PieceDef* Piece::getDef() const {
-	return pieceDef;
-}
-
-const MoveTracker* Piece::getMoveTracker() const {
-	return moveTracker;
-}
-
 // Mutators
 
 void Piece::move(MoveMarker* dest) {
