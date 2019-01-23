@@ -179,6 +179,12 @@ bool PieceTracker::movePiece(MoveMarker* dest) {
 		return false;
 	}
 
+	// Get the first valid target rule
+    const TargetingRule* targetingRule = dest->getValidTargetingRule(this);
+    if (targetingRule == nullptr) {
+		return false;
+    }
+
 	// Get the game piece to move
 	Piece* piece = it1->second;
 

@@ -41,15 +41,13 @@ public:
 	~Piece();
 
 	// Accessors
-	const sf::Vector2i getPos() const;
-	const sf::Color getTeam() const;
-	const PieceDef::Direction getDir() const;
-	const unsigned int getMoveCount() const;
-	const PieceDef* getDef() const;
-	const MoveTracker* getMoveTracker() const;
-	inline const int getLastMove() const {
-		return lastMove;
-	}
+	inline const sf::Vector2i getPos() const { return pos; }
+	inline const sf::Color getTeam() const { return team; }
+	inline const PieceDef::Direction getDir() const { return dir; }
+	inline const unsigned int getMoveCount() const { return moveCount; }
+	inline const PieceDef* getDef() const { return pieceDef; }
+	inline const MoveTracker* getMoveTracker() const { return moveTracker; }
+	inline const int getLastMove() const { return lastMove; }
 
 	// Mutators
 	void move(MoveMarker* dest);

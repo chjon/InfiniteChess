@@ -82,11 +82,6 @@ private:
 	bool meetsNumRule(const std::vector<NumRule*>* numRules, unsigned int candidate, bool deleteList) const;
 
 	/**
-	 * Determine whether the move marker meets a targeting rule
-	 */
-	bool meetsTargetingRule(PieceTracker* pieceTracker) const;
-
-	/**
 	 * Determine whether the position is being attacked
 	 */
     bool isAttacked(PieceTracker* pieceTracker) const;
@@ -200,6 +195,13 @@ public:
 	 * Set whether the move marker requires a leap
 	 */
 	void setRequiresLeap(bool requiresLeap_);
+
+	// Helpers
+
+	/**
+	 * Get the first targeting rule that is met
+	 */
+	const TargetingRule* getValidTargetingRule(PieceTracker* pieceTracker) const;
 };
 
 #endif // CHESS_MOVE_MARKER_H
