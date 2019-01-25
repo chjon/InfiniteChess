@@ -1,4 +1,7 @@
 #include "controller.h"
+
+#include "actionListenerTracker.h"
+#include "event.h"
 #include "piece.h"
 
 // Private event handlers
@@ -16,12 +19,14 @@ void Controller::onMousePress(sf::Vector2i pos) {
     	selectedPiece = nullptr;
 
 	// Move piece
-	} else {
-		MoveMarker* dest = pieceTracker->getValidMove(selectedPiece, pos);
+	} else if (selectedPiece->canMove(pos)) {
+		actionListenerTracker.queueEvent(selectedPiece->getPos(), new Event(selectedPiece, "leave"));
+
+		/*MoveMarker* dest = pieceTracker->getValidMove(selectedPiece, pos);
 
 		if (dest != nullptr) {
 			movePiece(dest);
-		}
+		}*/
 	}
 
 	game->renderer->needsRedraw = true;

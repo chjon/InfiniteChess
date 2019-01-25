@@ -2,14 +2,16 @@
 #define CHESS_CONTROLLER_H
 
 #include <SFML/Graphics.hpp>
+#include "actionListenerTracker.h"
 #include "game.h"
 
 // Forward declarations
+class ActionListenerTracker;
 class Game;
-class PieceTracker;
-class Piece;
 class InputHandler;
 class MoveMarker;
+class PieceTracker;
+class Piece;
 
 
 
@@ -19,6 +21,7 @@ private:
 	// Members
 	Game* game;
 	PieceTracker* pieceTracker;
+	ActionListenerTracker actionListenerTracker;
 
 	Piece* selectedPiece;
 

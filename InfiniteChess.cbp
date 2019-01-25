@@ -56,8 +56,11 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="src/actionListenerTracker.cpp" />
+		<Unit filename="src/actionListenerTracker.h" />
 		<Unit filename="src/controller.cpp" />
 		<Unit filename="src/controller.h" />
+		<Unit filename="src/event.h" />
 		<Unit filename="src/game.cpp" />
 		<Unit filename="src/game.h" />
 		<Unit filename="src/inputHandler.cpp" />

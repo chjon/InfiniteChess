@@ -48,6 +48,7 @@ public:
 	inline const PieceDef* getDef() const { return pieceDef; }
 	inline const MoveTracker* getMoveTracker() const { return moveTracker; }
 	inline const int getLastMove() const { return lastMove; }
+	inline const bool canMove(sf::Vector2i pos) const { return true; }
 
 	// Mutators
 	void move(MoveMarker* dest);

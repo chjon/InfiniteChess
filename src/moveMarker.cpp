@@ -137,6 +137,15 @@ MoveMarker::~MoveMarker() {
 // Event handlers
 
 /**
+ * Handle an event
+ *
+ * @param event the event to handle
+ */
+void MoveMarker::handleEvent(Event* event) {
+
+}
+
+/**
  * Update the move marker when it is generated
  */
 void MoveMarker::onGeneration(PieceTracker* pieceTracker) {
@@ -199,45 +208,10 @@ void MoveMarker::onPieceEnter(Piece* piece, PieceTracker* pieceTracker) {
 // Accessors
 
 /**
- * Get the move marker's position
- */
-sf::Vector2i MoveMarker::getPos() const {
-	return pos;
-}
-
-/**
  * Iterate the move forward to get the position of the next move marker
  */
 sf::Vector2i MoveMarker::getNextPos() const {
 	return pos + baseVector;
-}
-
-/**
- * Get the next move marker
- */
-MoveMarker* MoveMarker::getNext() const {
-	return next;
-}
-
-/**
- * Get the root move for the move marker
- */
-const MoveDef* MoveMarker::getRootMove() const {
-	return rootMove;
-}
-
-/**
- * Get the base vector for the move marker
- */
-const sf::Vector2i MoveMarker::getBaseVector() const {
-	return baseVector;
-}
-
-/**
- * Get whether the move marker requires a leap
- */
-const bool MoveMarker::getRequiresLeap() const {
-	return requiresLeap;
 }
 
 /**
