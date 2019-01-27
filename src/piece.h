@@ -50,12 +50,13 @@ public:
 	inline const PieceDef* getDef() const { return pieceDef; }
 	inline const MoveTracker* getMoveTracker() const { return moveTracker; }
 	inline const int getLastMove() const { return lastMove; }
-	const bool canMove(sf::Vector2i pos) const;
+	const MoveMarker* getValidMove(sf::Vector2i pos) const;
 
 	const std::vector<std::tuple<MoveMarker*, Piece*, const TargetingRule*>>* getTargets(sf::Vector2i pos) const;
 
 	// Mutators
 	void setPos(sf::Vector2i dest);
+	inline void setLastMove(int index) { lastMove = index; }
 	void move(sf::Vector2i dest);
 
 	// Event handlers

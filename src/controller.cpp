@@ -4,6 +4,7 @@
 #include "actionListenerTracker.h"
 #include "event.h"
 #include "eventProcessor.h"
+#include "moveDef.h"
 #include "moveMarker.h"
 #include "piece.h"
 #include "targetingRule.h"
@@ -33,12 +34,19 @@ void Controller::onMousePress(sf::Vector2i pos) {
 		selectedPiece = game->pieceTracker->getPiece(pos);
 
 	// Deselect
-    } else if (selectedPiece->getPos() == pos || !selectedPiece->canMove(pos)) {
+    } else if (selectedPiece->getPos() == pos) {
     	selectedPiece = nullptr;
 
 	// Move piece
 	} else {
-		move(pos);
+		const MoveMarker* dest = selectedPiece->getValidMove(pos);
+
+		// Deselect
+		if (dest == nullptr) {
+			selectedPiece = nullptr;
+		}
+
+		move(dest);
 	}
 
 	game->renderer->needsRedraw = true;
@@ -48,10 +56,14 @@ void Controller::onMousePress(sf::Vector2i pos) {
 
 // Private helpers
 
-void Controller::move(sf::Vector2i pos) {
+void Controller::move(const MoveMarker* dest) {
+	sf::Vector2i pos = dest->getPos();
+
 	// Set up events for moving the piece
 	eventProcessor.insertInQueue(EventProcessor::START, new Event(selectedPiece, "leave", ""));
-	eventProcessor.insertInQueue(EventProcessor::EVENT, new Event(selectedPiece, "move", VectorUtils::toString(pos)));
+	eventProcessor.insertInQueue(EventProcessor::EVENT, new Event(
+		selectedPiece, "move", std::to_string(dest->getRootMove()->index) + "," + VectorUtils::toString(pos) + ","
+	));
 	eventProcessor.insertInQueue(EventProcessor::AFTER, new Event(selectedPiece, "enter", ""));
 
 	// Get the targets for moving to the position
@@ -75,7 +87,9 @@ void Controller::move(sf::Vector2i pos) {
 	if (targetPiece != nullptr) {
 		if ("move" == targetEvent->action) {
 			eventProcessor.insertInQueue(EventProcessor::START, new Event(targetPiece, "leave", ""));
-			eventProcessor.insertInQueue(EventProcessor::START, new Event(targetPiece, "move", targetEvent->args));
+			eventProcessor.insertInQueue(EventProcessor::START, new Event(
+				targetPiece, "move", "-1," + targetEvent->args + ","
+			));
 			eventProcessor.insertInQueue(EventProcessor::START, new Event(targetPiece, "enter", ""));
 		} else if ("destroy" == targetEvent->action && targetPiece != nullptr) {
 			eventProcessor.insertInQueue(EventProcessor::START, new Event(targetPiece, "leave", ""));

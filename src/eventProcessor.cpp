@@ -93,9 +93,13 @@ void EventProcessor::execute(Event* event) {
 		delete leavePos;
 
 	} else if ("move" == event->action) {
+		// Get the arguments
+		std::vector<std::string>* args = StringUtils::getList(event->args, ',', '[', ']');
+
 		// Move the piece
-        sf::Vector2i destPos = VectorUtils::fromString(event->args);
+        sf::Vector2i destPos = VectorUtils::fromString((*args)[1]);
         piece->setPos(destPos);
+        piece->setLastMove(std::stoi((*args)[0]));
         pieceTracker->addPiece(piece);
 
 	} else if ("destroy" == event->action) {

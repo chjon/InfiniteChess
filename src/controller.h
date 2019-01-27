@@ -34,7 +34,7 @@ private:
 	friend InputHandler;
 
 	// Helpers
-	void move(sf::Vector2i pos);
+	void move(const MoveMarker* dest);
 
 public:
 	// Constructors

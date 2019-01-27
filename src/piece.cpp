@@ -33,19 +33,22 @@ const std::vector<std::tuple<MoveMarker*, Piece*, const TargetingRule*>>* Piece:
 	return moveTracker->getTargets(pos);
 }
 
-const bool Piece::canMove(sf::Vector2i pos) const {
-	bool canMove = false;
+const MoveMarker* Piece::getValidMove(sf::Vector2i pos) const {
+	MoveMarker* validMove = nullptr;
 
 	const std::vector<MoveMarker*>* markers = moveTracker->getMoveMarkers(pos);
 	for (std::vector<MoveMarker*>::const_iterator i = markers->begin(); i != markers->end(); ++i) {
-        canMove |= (*i)->canMove();
+        if ((*i)->canMove()) {
+			validMove = *i;
+			break;
+        }
 	}
 
 	// Clean up
 	delete markers;
 	markers = nullptr;
 
-	return canMove;
+	return validMove;
 }
 
 
