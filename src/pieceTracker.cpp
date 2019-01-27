@@ -7,18 +7,6 @@
 #include "piece.h"
 #include <iostream>
 
-// Private utility methods
-
-/**
- * Create the move markers for each piece
- */
-void PieceTracker::generateMoveMarkers() {
-	// Generate and add the move markers for each piece
-	for (std::map<sf::Vector2i, Piece*>::iterator it = pieces.begin(); it != pieces.end(); ++it) {
-		it->second->onStartUp(this);
-	}
-}
-
 
 
 // Public constructors
@@ -83,9 +71,6 @@ void PieceTracker::onStartup() {
 	// Create queens
 	addPiece("Queen", TEAM_1, sf::Vector2i(-1, -4), PieceDef::Direction::DOWN);
 	addPiece("Queen", TEAM_2, sf::Vector2i(-1, 3), PieceDef::Direction::UP);
-
-	generateMoveMarkers();
-	onCameraChange();
 }
 
 /**
@@ -132,6 +117,14 @@ bool PieceTracker::addPiece(std::string pieceName, sf::Color team, sf::Vector2i 
 	return true;
 }
 
+void PieceTracker::addPiece(Piece* piece) {
+	// Check whether a piece is already at the desired location
+	if (pieces.find(piece->getPos()) != pieces.end()) return;
+
+	// Insert the piece
+	pieces.insert(std::make_pair(piece->getPos(), piece));
+}
+
 /**
  * Remove a piece from the piece tracker
  */
@@ -146,11 +139,11 @@ bool PieceTracker::removePiece(sf::Vector2i pos) {
 	return true;
 }
 
- /**
-  * Get the piece at a certain spot
-  */
-Piece* PieceTracker::getPiece(sf::Vector2i pos) {
-	std::map<sf::Vector2i, Piece*>::iterator it = pieces.find(pos);
+/**
+ * Get the piece at a certain spot
+ */
+Piece* PieceTracker::getPiece(sf::Vector2i pos) const {
+	const std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>::const_iterator it = pieces.find(pos);
 
 	// Return the null pointer if the piece is not in the map
 	if (it == pieces.end()) {
@@ -161,66 +154,15 @@ Piece* PieceTracker::getPiece(sf::Vector2i pos) {
 }
 
 /**
- * Move the piece from one position to another
- *
- * @param pos1 the position of the piece to move
- * @param pos2 the position to move the piece to
- *
- * @return false if there is no piece at pos1, true otherwise
+ * Get all the pieces
  */
-bool PieceTracker::movePiece(MoveMarker* dest) {
-	sf::Vector2i pos1 = dest->getRootPiece()->getPos();
-	sf::Vector2i pos2 = dest->getPos();
-	std::map<sf::Vector2i, Piece*>::iterator it1 = pieces.find(pos1);
-	std::map<sf::Vector2i, Piece*>::iterator it2 = pieces.find(pos2);
-
-	// Check if there is a piece to move
-	if (it1 == pieces.end()) {
-		return false;
+const std::vector<Piece*>* PieceTracker::getPieces() const {
+	std::vector<Piece*>* pieceList = new std::vector<Piece*>();
+	for (std::map<sf::Vector2i, Piece*>::const_iterator i = pieces.begin(); i != pieces.end(); ++i) {
+        pieceList->push_back(i->second);
 	}
 
-	// Get the first valid target rule
-    const TargetingRule* targetingRule = dest->getValidTargetingRule(this);
-    if (targetingRule == nullptr) {
-		return false;
-    }
-
-	// Get the game piece to move
-	Piece* piece = it1->second;
-
-	// Remove the piece at the final destination
-	if (it2 != pieces.end()) {
-		delete it2->second;
-		pieces.erase(it2);
-	}
-
-	// Update the position of the piece
-	pieces.erase(it1);
-	pieces.insert(std::make_pair(pos2, piece));
-
-	// Update the piece
-	piece->move(dest);
-	piece->onCameraChange(this);
-
-	// Update the move markers for leaving
-	std::vector<MoveMarker*>* leavePos = getMoveMarkers(pos1);
-	for (std::vector<MoveMarker*>::iterator i = leavePos->begin(); i != leavePos->end(); ++i) {
-		(*i)->onPieceLeave(piece, this);
-	}
-
-	// Update the move markers for entering
-	std::vector<MoveMarker*>* enterPos = getMoveMarkers(pos2);
-	for (std::vector<MoveMarker*>::iterator i = enterPos->begin(); i != enterPos->end(); ++i) {
-		(*i)->onPieceEnter(piece, this);
-	}
-
-	// Clean up
-	delete leavePos;
-	delete enterPos;
-	leavePos = nullptr;
-	enterPos = nullptr;
-
-	return true;
+	return pieceList;
 }
 
 /**
@@ -231,7 +173,7 @@ MoveMarker* PieceTracker::getValidMove(Piece* piece, sf::Vector2i dest) {
 	MoveMarker* validMove = nullptr;
 
 	for (std::vector<MoveMarker*>::const_iterator i = markers->begin(); i != markers->end(); ++i) {
-        if ((*i)->canMove(this)) {
+        if ((*i)->canMove()) {
 			validMove = *i;
 			break;
         }

@@ -14,17 +14,6 @@ class MoveMarker;
 class ActionListenerTracker {
 private:
     std::map<sf::Vector2i, std::vector<MoveMarker*>*, VectorUtils::cmpVectorLexicographically> actionListeners;
-    std::vector<std::pair<sf::Vector2i, Event*>> eventQueue;
-
-    // Helpers
-
-    /**
-     * Notify the action listeners that are listening to the given position
-     *
-     * @param positionToNotify the position to notify
-     * @param event the action that triggered the notification
-     */
-    void notify(sf::Vector2i positionToNotify, Event* event);
 
 public:
     // Constructors
@@ -42,24 +31,19 @@ public:
     void addListener(sf::Vector2i positionToNotify, MoveMarker* listener);
 
     /**
-     * Remove all the action listeners for a given move marker
-     *
-     * @param listener the move marker to remove move listeners for
-     */
-    void removeListeners(MoveMarker* listener);
+	* Remove all the action listeners for a given move marker
+	*
+	* @param listener the move marker to remove move listeners for
+	*/
+	void removeListeners(MoveMarker* listener);
 
     /**
-     * Add an event to the event queue
+     * Notify the action listeners that are listening to the given position
      *
-     * @param positionToNotify the position for the event
-     * @param event the event to add to the queue
+     * @param positionToNotify the position to notify
+     * @param event the action that triggered the notification
      */
-    void queueEvent(sf::Vector2i positionToNotify, Event* event);
-
-    /**
-     * Notify the listeners for each queued event
-     */
-    void notify();
+    void notify(sf::Vector2i positionToNotify, Event* event);
 };
 
 #endif // CHESS_ACTION_LISTENER_TRACKER_H

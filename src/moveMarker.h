@@ -2,6 +2,7 @@
 #define CHESS_MOVE_MARKER_H
 
 #include <SFML/Graphics.hpp>
+#include <tuple>
 #include "pieceTracker.h"
 
 // Forward definitions
@@ -69,6 +70,11 @@ private:
 	 * Whether the piece meets an nth step rule
 	 */
 	bool meetsNthStepRule;
+
+	/**
+	 * The move marker's targets
+	 */
+	std::map<sf::Vector2i, std::tuple<bool, Piece*, const TargetingRule*>, VectorUtils::cmpVectorLexicographically>* targets;
 
 	// Helpers
 
@@ -186,9 +192,19 @@ public:
 	inline const bool getRequiresLeap() const { return requiresLeap; }
 
 	/**
+	 * Get the targets for the move marker
+	 */
+	const std::vector<std::pair<Piece*, const TargetingRule*>>* getTargets() const;
+
+	/**
 	 * Determine whether the move marker is a valid move destination
 	 */
-	bool canMove(PieceTracker* pieceTracker) const;
+	bool canMove() const;
+
+	/**
+	 * Get a list of all the potential target positions that the move marker is tracking
+	 */
+	const std::vector<sf::Vector2i>* getTargetedPositions() const;
 
 	// Mutators
 
@@ -208,6 +224,11 @@ public:
 	 * Get the first targeting rule that is met
 	 */
 	const TargetingRule* getValidTargetingRule(PieceTracker* pieceTracker) const;
+
+	/**
+	 * Determine whether the move marker meets a targeting rule
+	 */
+	const bool meetsTargetingRule() const;
 };
 
 #endif // CHESS_MOVE_MARKER_H

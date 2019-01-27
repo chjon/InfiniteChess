@@ -23,36 +23,6 @@ ActionListenerTracker::~ActionListenerTracker() {
 	actionListeners.clear();
 }
 
-// Private helpers
-
-/**
- * Notify the action listeners that are listening to the given position
- *
- * @param positionToNotify the position to notify
- * @param event the action that triggered the notification
- */
-void ActionListenerTracker::notify(sf::Vector2i positionToNotify, Event* event) {
-	// Get the existing listeners for the trigger position
-    std::map<
-		sf::Vector2i,
-		std::vector<MoveMarker*>*,
-		VectorUtils::cmpVectorLexicographically
-	>::iterator triggerIter =
-		actionListeners.find(positionToNotify);
-
-	// Check if there are existing listeners for the trigger position
-    if (triggerIter != actionListeners.end()) {
-		std::vector<MoveMarker*>* positionListeners = triggerIter->second;
-
-		// Notify each of the listeners at the position
-		for (std::vector<MoveMarker*>::iterator i = positionListeners->begin();
-			i != positionListeners->end(); ++i
-		) {
-            (*i)->handleEvent(event);
-		}
-    }
-}
-
 
 
 // Public API
@@ -127,26 +97,31 @@ void ActionListenerTracker::removeListeners(MoveMarker* listener) {
 }
 
 /**
- * Add an event to the event queue
+ * Notify the action listeners that are listening to the given position
  *
- * @param positionToNotify the position for the event
- * @param event the event to add to the queue
+ * @param positionToNotify the position to notify
+ * @param event the action that triggered the notification
  */
-void ActionListenerTracker::queueEvent(sf::Vector2i positionToNotify, Event* event) {
-    eventQueue.push_back(std::make_pair(positionToNotify, event));
-}
+void ActionListenerTracker::notify(sf::Vector2i positionToNotify, Event* event) {
+	// Get the existing listeners for the trigger position
+    std::map<
+		sf::Vector2i,
+		std::vector<MoveMarker*>*,
+		VectorUtils::cmpVectorLexicographically
+	>::iterator triggerIter =
+		actionListeners.find(positionToNotify);
 
-/**
- * Notify the listeners for each queued event
- */
-void ActionListenerTracker::notify() {
-	// Iterate through each queued event
-    for (std::vector<std::pair<sf::Vector2i, Event*>>::iterator i = eventQueue.begin();
-		i != eventQueue.end(); ++i
-	) {
-        notify(i->first, i->second);
+
+
+	// Check if there are existing listeners for the trigger position
+    if (triggerIter != actionListeners.end()) {
+		std::vector<MoveMarker*>* positionListeners = triggerIter->second;
+
+		// Notify each of the listeners at the position
+		for (std::vector<MoveMarker*>::iterator i = positionListeners->begin();
+			i != positionListeners->end(); ++i
+		) {
+            (*i)->handleEvent(event);
+		}
     }
-
-    // Clear the event queue
-    eventQueue.clear();
 }

@@ -6,11 +6,13 @@
 #include "vectorUtils.h"
 
 // Forward declarations
-class Piece;
+class Event;
 class MoveDef;
 class MoveMarker;
-class Renderer;
+class Piece;
 class PieceTracker;
+class Renderer;
+class TargetingRule;
 
 
 
@@ -51,6 +53,8 @@ public:
 
     // Methods
     const std::vector<MoveMarker*>* getMoveMarkers(sf::Vector2i pos) const;
+    const std::vector<MoveMarker*>* getMoveMarkers() const;
+	const std::vector<std::tuple<MoveMarker*, Piece*, const TargetingRule*>>* getTargets(sf::Vector2i pos);
 };
 
 #endif // CHESS_MOVE_TRACKER_H

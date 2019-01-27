@@ -5,12 +5,14 @@
 #include "pieceDef.h"
 
 // Forward declarations
-class PieceDef;
-class Renderer;
+class Event;
+class MoveMarker;
 class MoveTracker;
+class PieceDef;
 class PieceMove;
 class PieceTracker;
-class MoveMarker;
+class Renderer;
+class TargetingRule;
 
 
 
@@ -48,14 +50,18 @@ public:
 	inline const PieceDef* getDef() const { return pieceDef; }
 	inline const MoveTracker* getMoveTracker() const { return moveTracker; }
 	inline const int getLastMove() const { return lastMove; }
-	inline const bool canMove(sf::Vector2i pos) const { return true; }
+	const bool canMove(sf::Vector2i pos) const;
+
+	const std::vector<std::tuple<MoveMarker*, Piece*, const TargetingRule*>>* getTargets(sf::Vector2i pos) const;
 
 	// Mutators
-	void move(MoveMarker* dest);
+	void setPos(sf::Vector2i dest);
+	void move(sf::Vector2i dest);
 
 	// Event handlers
 	void onStartUp(PieceTracker* pieceTracker);
 	void onCameraChange(PieceTracker* pieceTracker);
+	void onMove();
 };
 
 #endif // CHESS_PIECE_H

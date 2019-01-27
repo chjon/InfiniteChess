@@ -12,25 +12,31 @@ class Piece;
 class Event {
 public:
 	// Constructors
-	inline Event(const Piece* piece_, const std::string& action_) :
+	inline Event(Piece* piece_, const std::string& action_, const std::string& args_) :
 		piece{piece_},
-		action{action_}
+		action{action_},
+		args{args_}
 	{
 	}
 
-	~Event();
+	inline ~Event(){}
 
 	// Public API
 
 	/**
-	 * The piece that triggered the action
+	 * The piece for the action
 	 */
-	const Piece* piece;
+	Piece* piece;
 
 	/**
 	 * The action that this object represents
 	 */
 	const std::string action;
+
+	/**
+	 * The arguments for the event
+	 */
+	const std::string args;
 };
 
 #endif // CHESS_EVENT_H

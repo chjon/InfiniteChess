@@ -2,6 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <tuple>
+#include "event.h"
 #include "moveDef.h"
 #include "numRule.h"
 #include "piece.h"
@@ -71,6 +73,17 @@ const TargetingRule* MoveMarker::getValidTargetingRule(PieceTracker* pieceTracke
 }
 
 /**
+ * Determine whether the move marker meets a targeting rule
+ */
+const bool MoveMarker::meetsTargetingRule() const {
+    for (std::map<sf::Vector2i, std::tuple<bool, Piece*, const TargetingRule*>>::const_iterator i = targets->begin(); i != targets->end(); ++i) {
+        if (std::get<0>(i->second)) return true;
+    }
+
+    return false;
+}
+
+/**
  * Determine whether the position is being attacked
  */
 bool MoveMarker::isAttacked(PieceTracker* pieceTracker) const {
@@ -102,11 +115,11 @@ bool MoveMarker::isAttacked(PieceTracker* pieceTracker) const {
  * Constructor
  */
 MoveMarker::MoveMarker(
-	const Piece* rootPiece_, const MoveDef* rootMove, sf::Vector2i baseVector_, sf::Vector2i pos_,
+	const Piece* rootPiece_, const MoveDef* rootMove_, sf::Vector2i baseVector_, sf::Vector2i pos_,
 	bool switchedX_, bool switchedY_, bool switchedXY_, unsigned int lambda_
 ) :
 	rootPiece{rootPiece_},
-	rootMove{rootMove},
+	rootMove{rootMove_},
 	baseVector{baseVector_},
 	pos{pos_},
 	next{nullptr},
@@ -115,6 +128,7 @@ MoveMarker::MoveMarker(
 	meetsAttackRequirements{false},
 	meetsScalingRule{false},
 	meetsNthStepRule{false},
+	targets{new std::map<sf::Vector2i, std::tuple<bool, Piece*, const TargetingRule*>, VectorUtils::cmpVectorLexicographically>()},
 	switchedX{switchedX_},
 	switchedY{switchedY_},
 	switchedXY{switchedXY_},
@@ -142,7 +156,28 @@ MoveMarker::~MoveMarker() {
  * @param event the event to handle
  */
 void MoveMarker::handleEvent(Event* event) {
+	Piece* piece = event->piece;
+	sf::Vector2i pos = piece->getPos();
+	std::map<
+		sf::Vector2i,
+		std::tuple<bool, Piece*, const TargetingRule*>,
+		VectorUtils::cmpVectorLexicographically
+	>::iterator ruleIter = targets->find(pos);
 
+	// Check if the marker has a handler
+	if (ruleIter == targets->end()) {
+		return;
+	}
+
+	const TargetingRule* rule = std::get<2>(ruleIter->second);
+
+    if ("leave" == event->action) {
+        std::get<0>(ruleIter->second) = rule->matches(rootPiece, nullptr);
+		std::get<1>(ruleIter->second) = nullptr;
+    } else if ("enter" == event->action) {
+		std::get<0>(ruleIter->second) = rule->matches(rootPiece, piece);
+		std::get<1>(ruleIter->second) = piece;
+    }
 }
 
 /**
@@ -152,6 +187,20 @@ void MoveMarker::onGeneration(PieceTracker* pieceTracker) {
     updateMeetsAttackRequirements(pieceTracker);
     meetsScalingRule = meetsNumRule(rootMove->scalingRules, lambda, false);
     meetsNthStepRule = meetsNumRule(rootMove->nthStepRules, rootPiece->getMoveCount(), false);
+
+    // Generate map for targeting rules
+	for (std::vector<const TargetingRule*>::const_iterator i = rootMove->targetingRules->begin();
+		i != rootMove->targetingRules->end(); ++i
+	) {
+        // Get position identified by targeting rule
+        const sf::Vector2i rotated = MoveDef::rotate((*i)->offsetVector, rootPiece->getDir());
+        const sf::Vector2i transformed = MoveDef::reflect(rotated, switchedX, switchedY, switchedXY);
+		Piece* targetPiece = pieceTracker->getPiece(pos + transformed);
+		targets->insert(std::make_pair(
+			pos + transformed,
+			std::make_tuple((*i)->matches(rootPiece, targetPiece), targetPiece, *i)
+		));
+    }
 }
 
 /**
@@ -215,21 +264,62 @@ sf::Vector2i MoveMarker::getNextPos() const {
 }
 
 /**
+ * Get a list of all the move marker's targets
+ */
+const std::vector<std::pair<Piece*, const TargetingRule*>>* MoveMarker::getTargets() const {
+	std::vector<std::pair<Piece*, const TargetingRule*>>* targetList =
+		new std::vector<std::pair<Piece*, const TargetingRule*>>();
+
+	for (std::map<
+			sf::Vector2i,
+			std::tuple<bool, Piece*, const TargetingRule*>,
+			VectorUtils::cmpVectorLexicographically
+		>::iterator i = targets->begin(); i != targets->end(); ++i
+	) {
+        if (std::get<0>(i->second)) {
+			targetList->push_back(std::make_pair(std::get<1>(i->second), std::get<2>(i->second)));
+        }
+	}
+
+	return targetList;
+}
+
+/**
  * Determine whether the move marker is a valid move position
  */
-bool MoveMarker::canMove(PieceTracker* pieceTracker) const {
+bool MoveMarker::canMove() const {
 	// Check if the position meets the movement requirements
 	if ((!meetsAttackRequirements) ||
 		(!rootMove->canLeap && requiresLeap) ||
 		(!meetsScalingRule) ||
 		(!meetsNthStepRule) ||
-		(getValidTargetingRule(pieceTracker) == nullptr) ||
-		(rootPiece->getDef()->isCheckVulnerable && isAttacked(pieceTracker))
+		(!meetsTargetingRule())
+		//(getValidTargetingRule(pieceTracker) == nullptr) ||
+		//(rootPiece->getDef()->isCheckVulnerable && isAttacked(pieceTracker))
 	) {
 		return false;
 	}
 
 	return true;
+}
+
+/**
+ * Get a list of all the potential target positions that the move marker is tracking
+ */
+const std::vector<sf::Vector2i>* MoveMarker::getTargetedPositions() const {
+	// Iterate through each targeting rule for the move marker
+	std::vector<sf::Vector2i>* targetPositions = new std::vector<sf::Vector2i>();
+	for (std::vector<const TargetingRule*>::const_iterator i = rootMove->targetingRules->begin();
+		i != rootMove->targetingRules->end(); ++i
+	) {
+        // Get position identified by targeting rule
+        const sf::Vector2i rotated = MoveDef::rotate((*i)->offsetVector, rootPiece->getDir());
+        const sf::Vector2i transformed = MoveDef::reflect(rotated, switchedX, switchedY, switchedXY);
+
+		targetPositions->push_back(pos + transformed);
+    }
+
+    return targetPositions;
 }
 
 // Mutators

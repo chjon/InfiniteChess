@@ -6,8 +6,9 @@
 #include <vector>
 
 // Forward declarations
-class Piece;
+class Event;
 class NumRule;
+class Piece;
 
 
 
@@ -42,6 +43,7 @@ public:
 
     // Methods
     bool matches (const Piece* rootPiece, const Piece* candidate) const;
+    Event* getEvent() const;
 };
 
 #endif // CHESS_TARGETING_RULE_H

@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <vector>
+#include "event.h"
 #include "numRule.h"
 #include "piece.h"
 #include "resourceLoader.h"
@@ -93,4 +94,8 @@ bool TargetingRule::matches(const Piece* rootPiece, const Piece* candidate) cons
     }
 
 	return true;
+}
+
+Event* TargetingRule::getEvent() const {
+    return new Event(nullptr, "destroy", "");
 }

@@ -65,6 +65,7 @@ void Game::run() {
 
 	renderer->onStartup();
 	pieceTracker->onStartup();
+	controller->onStartup();
 
 	sf::Clock timer;
 	sf::Time delay = sf::seconds(0.01f);

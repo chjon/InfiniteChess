@@ -2,10 +2,14 @@
 #define VECTOR_UTILS_H
 
 #include <SFML/Graphics.hpp>
+#include <string>
+#include "stringUtils.h"
 
 class VectorUtils {
 public:
-	// Comparator
+	/**
+	 * Comparator
+	 */
 	struct cmpVectorLexicographically {
 		bool operator()(const sf::Vector2i a, const sf::Vector2i b) const {
 			return (a.x == b.x) ? (a.y < b.y) : (a.x < b.x);
@@ -52,6 +56,25 @@ public:
 			return base.y == candidate.y;
 		}
 	}
+
+	/**
+	 * Convert the vector to a string
+	 */
+    inline static std::string toString(const sf::Vector2i v) {
+        return "[" + std::to_string(v.x) + "," + std::to_string(v.y) + ",]";
+    }
+
+    /**
+     * Get a vector from a string
+     */
+    inline static sf::Vector2i fromString(const std::string& s) {
+        std::vector<int>* values = StringUtils::getIntList(s.substr(1, s.length() - 2), ',', '[', ']');
+        sf::Vector2i v((*values)[0], (*values)[1]);
+
+        // Clean up and return
+        delete values;
+        return v;
+    }
 };
 
 #endif // VECTOR_UTILS_H

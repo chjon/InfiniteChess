@@ -108,13 +108,6 @@ MoveTracker::~MoveTracker() {
 // Event handlers
 
 /**
- * Update the move markers when the game starts
- */
-void MoveTracker::onStartUp(PieceTracker* pieceTracker) {
-	onMove();
-}
-
-/**
  * Update the move markers when the camera changes
  */
 void MoveTracker::onCameraChange(PieceTracker* pieceTracker) {
@@ -196,4 +189,45 @@ const std::vector<MoveMarker*>* MoveTracker::getMoveMarkers(sf::Vector2i pos) co
     }
 
     return markers;
+}
+
+const std::vector<MoveMarker*>* MoveTracker::getMoveMarkers() const {
+	std::vector<MoveMarker*>* markers = new std::vector<MoveMarker*>();
+
+	// Add all of the move markers
+	for (std::map<
+			const MoveDef*,
+			std::map<sf::Vector2i, MoveMarker*, VectorUtils::cmpVectorLexicographically>*
+		>::iterator i = moveMarkers->begin(); i != moveMarkers->end(); ++i
+	) {
+        for (std::map<sf::Vector2i, MoveMarker*>::iterator j = i->second->begin();
+			j != i->second->end(); ++j
+		) {
+			markers->push_back(j->second);
+        }
+    }
+
+    return markers;
+}
+
+/**
+ * Get all the targets for the move markers at a given position
+ *
+ * @param pos the position of the move markers
+ */
+const std::vector<std::tuple<MoveMarker*, Piece*, const TargetingRule*>>* MoveTracker::getTargets(sf::Vector2i pos) {
+	std::vector<std::tuple<MoveMarker*, Piece*, const TargetingRule*>>* targets = new std::vector<std::tuple<MoveMarker*, Piece*, const TargetingRule*>>();
+
+	// Add the targets for each move marker
+	const std::vector<MoveMarker*>* markers = getMoveMarkers(pos);
+	for (std::vector<MoveMarker*>::const_iterator i = markers->begin(); i != markers->end(); ++i) {
+		const std::vector<std::pair<Piece*, const TargetingRule*>>* markerTargets = (*i)->getTargets();
+		for (std::vector<std::pair<Piece*, const TargetingRule*>>::const_iterator j = markerTargets->begin();
+			j != markerTargets->end(); ++j
+		) {
+            targets->push_back(std::make_tuple(*i, (*j).first, (*j).second));
+		}
+	}
+
+    return targets;
 }

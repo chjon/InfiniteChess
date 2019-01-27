@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "actionListenerTracker.h"
+#include "eventProcessor.h"
 #include "game.h"
 
 // Forward declarations
@@ -22,22 +23,26 @@ private:
 	Game* game;
 	PieceTracker* pieceTracker;
 	ActionListenerTracker actionListenerTracker;
+	EventProcessor eventProcessor;
 
 	Piece* selectedPiece;
 
 	// Event handlers
 	void onMousePress (sf::Vector2i pos);
 
-	// Methods
-	void movePiece (MoveMarker* dest);
-
 	// Friends
 	friend InputHandler;
+
+	// Helpers
+	void move(sf::Vector2i pos);
 
 public:
 	// Constructors
 	Controller(Game* g, PieceTracker* p);
 	~Controller();
+
+	// Event handlers
+	void onStartup();
 
 	// Accessors
 	Piece* getSelectedPiece() const;
