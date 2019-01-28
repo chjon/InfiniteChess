@@ -28,6 +28,7 @@ private:
 
 	// Members
 	std::map<DataSpecifier, const NumRule*>* dataSpecifiers;
+	const std::vector<Event*>* actions;
 
 public:
 	// Members
@@ -37,7 +38,7 @@ public:
     // Constructors
     TargetingRule(
 		const sf::Vector2i& offsetVector_, const std::string& targetName_,
-		const std::map<std::string, const NumRule*>* dataSpecifiers_
+		const std::map<std::string, const NumRule*>* dataSpecifiers_, const std::vector<Event*>* actions_
 	);
     ~TargetingRule();
 

@@ -75,6 +75,17 @@ public:
         delete values;
         return v;
     }
+
+    /**
+	 * Apply reflections to a vector
+	 */
+	inline static sf::Vector2i reflect(const sf::Vector2i original, bool reflectX, bool reflectY, bool reflectXY) {
+		sf::Vector2i reflected = original;
+		if (reflectX) reflected.x = -reflected.x;
+		if (reflectY) reflected.y = -reflected.y;
+		if (reflectXY) std::swap(reflected.x, reflected.y);
+		return reflected;
+	}
 };
 
 #endif // VECTOR_UTILS_H

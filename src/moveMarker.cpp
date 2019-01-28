@@ -60,7 +60,7 @@ const TargetingRule* MoveMarker::getValidTargetingRule(PieceTracker* pieceTracke
 	) {
         // Get position identified by targeting rule
         const sf::Vector2i rotated = MoveDef::rotate((*i)->offsetVector, rootPiece->getDir());
-        const sf::Vector2i transformed = MoveDef::reflect(rotated, switchedX, switchedY, switchedXY);
+        const sf::Vector2i transformed = VectorUtils::reflect(rotated, switchedX, switchedY, switchedXY);
 
         // Check if the targeting rule is met
         if ((*i)->matches(rootPiece, pieceTracker->getPiece(pos + transformed))) {
@@ -194,7 +194,7 @@ void MoveMarker::onGeneration(PieceTracker* pieceTracker) {
 	) {
         // Get position identified by targeting rule
         const sf::Vector2i rotated = MoveDef::rotate((*i)->offsetVector, rootPiece->getDir());
-        const sf::Vector2i transformed = MoveDef::reflect(rotated, switchedX, switchedY, switchedXY);
+        const sf::Vector2i transformed = VectorUtils::reflect(rotated, switchedX, switchedY, switchedXY);
 		Piece* targetPiece = pieceTracker->getPiece(pos + transformed);
 		targets->insert(std::make_pair(
 			pos + transformed,
@@ -314,7 +314,7 @@ const std::vector<sf::Vector2i>* MoveMarker::getTargetedPositions() const {
 	) {
         // Get position identified by targeting rule
         const sf::Vector2i rotated = MoveDef::rotate((*i)->offsetVector, rootPiece->getDir());
-        const sf::Vector2i transformed = MoveDef::reflect(rotated, switchedX, switchedY, switchedXY);
+        const sf::Vector2i transformed = VectorUtils::reflect(rotated, switchedX, switchedY, switchedXY);
 
 		targetPositions->push_back(pos + transformed);
     }

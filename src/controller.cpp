@@ -44,9 +44,9 @@ void Controller::onMousePress(sf::Vector2i pos) {
 		// Deselect
 		if (dest == nullptr) {
 			selectedPiece = nullptr;
+		} else {
+			move(dest);
 		}
-
-		move(dest);
 	}
 
 	game->renderer->needsRedraw = true;
@@ -87,8 +87,11 @@ void Controller::move(const MoveMarker* dest) {
 	if (targetPiece != nullptr) {
 		if ("move" == targetEvent->action) {
 			eventProcessor.insertInQueue(EventProcessor::START, new Event(targetPiece, "leave", ""));
+			sf::Vector2i targetVector = VectorUtils::fromString(targetEvent->args);
+			targetVector = MoveDef::rotate(targetVector, dest->getRootPiece()->getDir());
+			targetVector = VectorUtils::reflect(targetVector, dest->switchedX, dest->switchedY, dest->switchedXY);
 			eventProcessor.insertInQueue(EventProcessor::START, new Event(
-				targetPiece, "move", "-1," + targetEvent->args + ","
+				targetPiece, "move", "-1," + VectorUtils::toString(targetVector + targetPiece->getPos()) + ","
 			));
 			eventProcessor.insertInQueue(EventProcessor::START, new Event(targetPiece, "enter", ""));
 		} else if ("destroy" == targetEvent->action && targetPiece != nullptr) {

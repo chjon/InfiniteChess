@@ -1,6 +1,7 @@
 #include "pieceDefLoader.h"
 
 #include <fstream>
+#include "event.h"
 #include "moveDef.h"
 #include "numRule.h"
 #include "pieceDef.h"
@@ -176,8 +177,26 @@ const TargetingRule* PieceDefLoader::getTargetingRuleFromString(const std::strin
         dataSpecifiers->insert(*i);
     }
 
-    // Create targetting rule
-    TargetingRule* targetingRule = new TargetingRule(offsetVector, targetName, dataSpecifiers);
+    // Get action to perform
+    std::vector<Event*>* actions = getListFromString(
+		(*args)[argIndex++],
+		(Event*(*)(const std::string& s)) [](auto s){
+			// Validate input
+			checkBracketEnclosed(s);
+			checkNumArgs(s.substr(1, s.length() - 2), 2);
+
+			// Generate event
+			const std::vector<std::string>* eventArgs = split(s.substr(1, s.length() - 2));
+			Event* result =	new Event(nullptr, (*eventArgs)[0], (*eventArgs)[1]);
+
+			// Clean up and return
+			delete eventArgs;
+			return result;
+		}
+	);
+
+    // Create targeting rule
+    TargetingRule* targetingRule = new TargetingRule(offsetVector, targetName, dataSpecifiers, actions);
 
     // Clean up and return
     delete args;
