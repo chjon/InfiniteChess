@@ -1,6 +1,5 @@
 #include "controller.h"
 
-#include <iostream>
 #include "actionListenerTracker.h"
 #include "event.h"
 #include "eventProcessor.h"

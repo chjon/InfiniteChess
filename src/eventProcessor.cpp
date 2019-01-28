@@ -1,7 +1,6 @@
 #include "eventProcessor.h"
 
 #include <SFML/Graphics.hpp>
-#include <iostream>
 #include "actionListenerTracker.h"
 #include "event.h"
 #include "moveMarker.h"

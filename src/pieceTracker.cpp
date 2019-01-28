@@ -5,7 +5,6 @@
 #include "moveMarker.h"
 #include "moveTracker.h"
 #include "piece.h"
-#include <iostream>
 
 
 
