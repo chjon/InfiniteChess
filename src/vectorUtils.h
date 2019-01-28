@@ -2,10 +2,14 @@
 #define VECTOR_UTILS_H
 
 #include <SFML/Graphics.hpp>
+#include <string>
+#include "stringUtils.h"
 
 class VectorUtils {
 public:
-	// Comparator
+	/**
+	 * Comparator
+	 */
 	struct cmpVectorLexicographically {
 		bool operator()(const sf::Vector2i a, const sf::Vector2i b) const {
 			return (a.x == b.x) ? (a.y < b.y) : (a.x < b.x);
@@ -51,6 +55,36 @@ public:
 		} else {
 			return base.y == candidate.y;
 		}
+	}
+
+	/**
+	 * Convert the vector to a string
+	 */
+    inline static std::string toString(const sf::Vector2i v) {
+        return "[" + std::to_string(v.x) + "," + std::to_string(v.y) + ",]";
+    }
+
+    /**
+     * Get a vector from a string
+     */
+    inline static sf::Vector2i fromString(const std::string& s) {
+        std::vector<int>* values = StringUtils::getIntList(s.substr(1, s.length() - 2), ',', '[', ']');
+        sf::Vector2i v((*values)[0], (*values)[1]);
+
+        // Clean up and return
+        delete values;
+        return v;
+    }
+
+    /**
+	 * Apply reflections to a vector
+	 */
+	inline static sf::Vector2i reflect(const sf::Vector2i original, bool reflectX, bool reflectY, bool reflectXY) {
+		sf::Vector2i reflected = original;
+		if (reflectX) reflected.x = -reflected.x;
+		if (reflectY) reflected.y = -reflected.y;
+		if (reflectXY) std::swap(reflected.x, reflected.y);
+		return reflected;
 	}
 };
 

@@ -22,11 +22,46 @@ Piece::~Piece() {
 
 
 
+// Accessors
+
+/**
+ * Get all the targets for the move markers at a given position
+ *
+ * @param pos the position of the move markers
+ */
+const std::vector<std::tuple<MoveMarker*, Piece*, const TargetingRule*>>* Piece::getTargets(sf::Vector2i pos) const {
+	return moveTracker->getTargets(pos);
+}
+
+const MoveMarker* Piece::getValidMove(sf::Vector2i pos) const {
+	MoveMarker* validMove = nullptr;
+
+	const std::vector<MoveMarker*>* markers = moveTracker->getMoveMarkers(pos);
+	for (std::vector<MoveMarker*>::const_iterator i = markers->begin(); i != markers->end(); ++i) {
+        if ((*i)->canMove()) {
+			validMove = *i;
+			break;
+        }
+	}
+
+	// Clean up
+	delete markers;
+	markers = nullptr;
+
+	return validMove;
+}
+
+
 // Mutators
 
-void Piece::move(MoveMarker* dest) {
-    pos = dest->getPos();
-    lastMove = dest->getRootMove()->index;
+void Piece::setPos(sf::Vector2i dest) {
+	pos = dest;
+	moveCount++;
+}
+
+void Piece::move(sf::Vector2i dest) {
+    pos = dest;
+    //lastMove = dest->getRootMove()->index;
     moveCount++;
     moveTracker->onMove();
 }
@@ -35,10 +70,10 @@ void Piece::move(MoveMarker* dest) {
 
 // Event handlers
 
-void Piece::onStartUp(PieceTracker* pieceTracker) {
-	moveTracker->onStartUp(pieceTracker);
-}
-
 void Piece::onCameraChange(PieceTracker* pieceTracker) {
 	moveTracker->onCameraChange(pieceTracker);
+}
+
+void Piece::onMove() {
+	moveTracker->onMove();
 }

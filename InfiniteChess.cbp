@@ -14,6 +14,7 @@
 				<Option use_console_runner="0" />
 				<Compiler>
 					<Add option="-std=c++14" />
+					<Add option="-g" />
 					<Add option="-DSFML_STATIC" />
 					<Add directory="../SFML-2.5.1/include" />
 				</Compiler>
@@ -56,8 +57,13 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="src/actionListenerTracker.cpp" />
+		<Unit filename="src/actionListenerTracker.h" />
 		<Unit filename="src/controller.cpp" />
 		<Unit filename="src/controller.h" />
+		<Unit filename="src/event.h" />
+		<Unit filename="src/eventProcessor.cpp" />
+		<Unit filename="src/eventProcessor.h" />
 		<Unit filename="src/game.cpp" />
 		<Unit filename="src/game.h" />
 		<Unit filename="src/inputHandler.cpp" />

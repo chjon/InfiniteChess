@@ -2,9 +2,11 @@
 #define CHESS_MOVE_MARKER_H
 
 #include <SFML/Graphics.hpp>
+#include <tuple>
 #include "pieceTracker.h"
 
 // Forward definitions
+class Event;
 class MoveDef;
 class NumRule;
 class Piece;
@@ -69,6 +71,11 @@ private:
 	 */
 	bool meetsNthStepRule;
 
+	/**
+	 * The move marker's targets
+	 */
+	std::map<sf::Vector2i, std::tuple<bool, Piece*, const TargetingRule*>, VectorUtils::cmpVectorLexicographically>* targets;
+
 	// Helpers
 
 	/**
@@ -126,6 +133,13 @@ public:
 	// Event handlers
 
 	/**
+	 * Handle an event
+	 *
+	 * @param event the event to handle
+	 */
+	void handleEvent(Event* event);
+
+	/**
 	 * Update the move marker when it is generated
 	 */
 	void onGeneration(PieceTracker* pieceTracker);
@@ -145,7 +159,7 @@ public:
 	/**
 	 * Get the move marker's position
 	 */
-	sf::Vector2i getPos() const;
+	inline const sf::Vector2i getPos() const { return pos; }
 
 	/**
 	 * Iterate the move forward to get the position of the next move marker
@@ -155,34 +169,42 @@ public:
 	/**
 	 * Get the next move marker
 	 */
-	MoveMarker* getNext() const;
+	const inline MoveMarker* getNext() const { return next; }
 
 	/**
 	 * Get the root piece for the move marker
 	 */
-	inline const Piece* getRootPiece() const {
-		return rootPiece;
-	}
+	inline const Piece* getRootPiece() const { return rootPiece; }
 
 	/**
 	 * Get the root move for the move marker
 	 */
-	const MoveDef* getRootMove() const;
+	inline const MoveDef* getRootMove() const { return rootMove; }
 
 	/**
 	 * Get the base vector for the move marker
 	 */
-	const sf::Vector2i getBaseVector() const;
+	inline const sf::Vector2i getBaseVector() const { return baseVector; }
 
 	/**
 	 * Get whether the move marker requires a leap
 	 */
-	const bool getRequiresLeap() const;
+	inline const bool getRequiresLeap() const { return requiresLeap; }
+
+	/**
+	 * Get the targets for the move marker
+	 */
+	const std::vector<std::pair<Piece*, const TargetingRule*>>* getTargets() const;
 
 	/**
 	 * Determine whether the move marker is a valid move destination
 	 */
-	bool canMove(PieceTracker* pieceTracker) const;
+	bool canMove() const;
+
+	/**
+	 * Get a list of all the potential target positions that the move marker is tracking
+	 */
+	const std::vector<sf::Vector2i>* getTargetedPositions() const;
 
 	// Mutators
 
@@ -202,6 +224,11 @@ public:
 	 * Get the first targeting rule that is met
 	 */
 	const TargetingRule* getValidTargetingRule(PieceTracker* pieceTracker) const;
+
+	/**
+	 * Determine whether the move marker meets a targeting rule
+	 */
+	const bool meetsTargetingRule() const;
 };
 
 #endif // CHESS_MOVE_MARKER_H

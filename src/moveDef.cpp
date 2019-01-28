@@ -23,16 +23,7 @@ sf::Vector2i MoveDef::rotate(const sf::Vector2i original, const PieceDef::Direct
 	return rotated;
 }
 
-/**
- * Apply reflections to a vector
- */
-sf::Vector2i MoveDef::reflect(const sf::Vector2i original, bool reflectX, bool reflectY, bool reflectXY) {
-    sf::Vector2i reflected = original;
-    if (reflectX) reflected.x = -reflected.x;
-    if (reflectY) reflected.y = -reflected.y;
-    if (reflectXY) std::swap(reflected.x, reflected.y);
-    return reflected;
-}
+
 
 // Public constructors
 
@@ -87,7 +78,7 @@ const std::vector<MoveMarker*>* MoveDef::generateMarkers(const Piece* piece) con
 	for (int x = (isXSymmetric ? 0 : 1); x < 2; x++) {
 		for (int y = (isYSymmetric ? 0 : 1); y < 2; y++) {
 			for (int xy = (isXYSymmetric ? 0 : 1); xy < 2; xy++) {
-                sf::Vector2i reflected = reflect(rotated, !x, !y, !xy);
+                sf::Vector2i reflected = VectorUtils::reflect(rotated, !x, !y, !xy);
 
 				// Add move markers for the current set of transformations
 				sf::Vector2i nextPos = piece->pos + reflected;

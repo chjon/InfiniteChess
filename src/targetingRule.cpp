@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <vector>
+#include "event.h"
 #include "numRule.h"
 #include "piece.h"
 #include "resourceLoader.h"
@@ -26,9 +27,10 @@ const std::map<std::string, TargetingRule::DataSpecifier> TargetingRule::DATA_SP
  */
 TargetingRule::TargetingRule(
 	const sf::Vector2i& offsetVector_, const std::string& targetName_,
-	const std::map<std::string, const NumRule*>* dataSpecifiers_
+	const std::map<std::string, const NumRule*>* dataSpecifiers_, const std::vector<Event*>* actions_
 ) :
 	dataSpecifiers{new std::map<DataSpecifier, const NumRule*>()},
+	actions{actions_},
 	offsetVector{offsetVector_},
 	targetName{targetName_}
 {
@@ -93,4 +95,8 @@ bool TargetingRule::matches(const Piece* rootPiece, const Piece* candidate) cons
     }
 
 	return true;
+}
+
+Event* TargetingRule::getEvent() const {
+    return (*actions)[0];
 }

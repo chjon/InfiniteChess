@@ -2,14 +2,17 @@
 #define CHESS_CONTROLLER_H
 
 #include <SFML/Graphics.hpp>
+#include "actionListenerTracker.h"
+#include "eventProcessor.h"
 #include "game.h"
 
 // Forward declarations
+class ActionListenerTracker;
 class Game;
-class PieceTracker;
-class Piece;
 class InputHandler;
 class MoveMarker;
+class PieceTracker;
+class Piece;
 
 
 
@@ -19,22 +22,27 @@ private:
 	// Members
 	Game* game;
 	PieceTracker* pieceTracker;
+	ActionListenerTracker actionListenerTracker;
+	EventProcessor eventProcessor;
 
 	Piece* selectedPiece;
 
 	// Event handlers
 	void onMousePress (sf::Vector2i pos);
 
-	// Methods
-	void movePiece (MoveMarker* dest);
-
 	// Friends
 	friend InputHandler;
+
+	// Helpers
+	void move(const MoveMarker* dest);
 
 public:
 	// Constructors
 	Controller(Game* g, PieceTracker* p);
 	~Controller();
+
+	// Event handlers
+	void onStartup();
 
 	// Accessors
 	Piece* getSelectedPiece() const;

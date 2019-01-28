@@ -24,13 +24,6 @@ private:
     std::map<std::string, PieceDef*>* pieceDefs;
     std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically> pieces;
 
-    // Utility methods
-
-    /**
-     * Create the move markers for each piece
-     */
-    void generateMoveMarkers();
-
     // Friends
     friend Renderer;
 
@@ -45,6 +38,9 @@ public:
 
     // Accessors
 
+    const std::vector<Piece*>* getPieces() const;
+    Piece* getPiece(sf::Vector2i pos) const;
+
     /**
      * Determine whether a certain position is within the bounds of the screen
      */
@@ -52,9 +48,8 @@ public:
 
     // Methods
     bool addPiece(std::string name, sf::Color team, sf::Vector2i pos, PieceDef::Direction);
+    void addPiece(Piece* piece);
     bool removePiece(sf::Vector2i pos);
-    Piece* getPiece(sf::Vector2i pos);
-    bool movePiece(MoveMarker* dest);
     MoveMarker* getValidMove(Piece* piece, sf::Vector2i dest);
     std::vector<MoveMarker*>* getMoveMarkers(sf::Vector2i pos) const;
 };

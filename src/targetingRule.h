@@ -6,8 +6,9 @@
 #include <vector>
 
 // Forward declarations
-class Piece;
+class Event;
 class NumRule;
+class Piece;
 
 
 
@@ -27,6 +28,7 @@ private:
 
 	// Members
 	std::map<DataSpecifier, const NumRule*>* dataSpecifiers;
+	const std::vector<Event*>* actions;
 
 public:
 	// Members
@@ -36,12 +38,13 @@ public:
     // Constructors
     TargetingRule(
 		const sf::Vector2i& offsetVector_, const std::string& targetName_,
-		const std::map<std::string, const NumRule*>* dataSpecifiers_
+		const std::map<std::string, const NumRule*>* dataSpecifiers_, const std::vector<Event*>* actions_
 	);
     ~TargetingRule();
 
     // Methods
     bool matches (const Piece* rootPiece, const Piece* candidate) const;
+    Event* getEvent() const;
 };
 
 #endif // CHESS_TARGETING_RULE_H

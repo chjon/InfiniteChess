@@ -46,7 +46,6 @@ public:
 
 	// Helper methods
 	static sf::Vector2i rotate(const sf::Vector2i original, const PieceDef::Direction dir);
-	static sf::Vector2i reflect(const sf::Vector2i original, bool reflectX, bool reflectY, bool reflectXY);
 
 	// Methods
 	const std::vector<MoveMarker*>* generateMarkers(const Piece* piece) const;
