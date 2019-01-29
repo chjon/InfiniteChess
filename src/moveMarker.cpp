@@ -1,7 +1,6 @@
 #include "moveMarker.h"
 
 #include <SFML/Graphics.hpp>
-#include <iostream>
 #include <tuple>
 #include "event.h"
 #include "moveDef.h"
@@ -12,22 +11,6 @@
 #include "targetingRule.h"
 
 // Private helpers
-
-/**
- * Determine whether a piece meets the attack requirements
- */
-void MoveMarker::updateMeetsAttackRequirements(PieceTracker* pieceTracker) {
-	// Check whether the new position meets the attack requirements
-	Piece* piece = pieceTracker->getPiece(pos);
-	meetsAttackRequirements = true;
-	if (piece == nullptr) {
-		if (!rootMove->movesEmpty) meetsAttackRequirements = false;
-	} else if (piece->getTeam() == rootPiece->getTeam()) {
-		if (!rootMove->attacksFriendlies) meetsAttackRequirements = false;
-	} else {
-		if (!rootMove->attacksEnemies) meetsAttackRequirements = false;
-	}
-}
 
 /**
  * Determine whether the move marker meets a NumRule
@@ -50,37 +33,14 @@ bool MoveMarker::meetsNumRule(const std::vector<NumRule*>* numRules, unsigned in
 }
 
 /**
- * Get the first targeting rule that is met
+ * Determine whether the move marker meets all of its targeting rules
  */
-const TargetingRule* MoveMarker::getValidTargetingRule(PieceTracker* pieceTracker) const {
-	const TargetingRule* metRule = nullptr;
-
-    for (std::vector<const TargetingRule*>::const_iterator i = rootMove->targetingRules->begin();
-		i != rootMove->targetingRules->end(); ++i
-	) {
-        // Get position identified by targeting rule
-        const sf::Vector2i rotated = MoveDef::rotate((*i)->offsetVector, rootPiece->getDir());
-        const sf::Vector2i transformed = VectorUtils::reflect(rotated, switchedX, switchedY, switchedXY);
-
-        // Check if the targeting rule is met
-        if ((*i)->matches(rootPiece, pieceTracker->getPiece(pos + transformed))) {
-			metRule = *i;
-			break;
-        }
-    }
-
-    return metRule;
-}
-
-/**
- * Determine whether the move marker meets a targeting rule
- */
-const bool MoveMarker::meetsTargetingRule() const {
+const bool MoveMarker::meetsTargetingRules() const {
     for (std::map<sf::Vector2i, std::tuple<bool, Piece*, const TargetingRule*>>::const_iterator i = targets->begin(); i != targets->end(); ++i) {
-        if (std::get<0>(i->second)) return true;
+        if (!std::get<0>(i->second)) return false;
     }
 
-    return false;
+    return true;
 }
 
 /**
@@ -92,7 +52,6 @@ bool MoveMarker::isAttacked(PieceTracker* pieceTracker) const {
 	bool positionIsAttacked = false;
 	for (std::vector<MoveMarker*>::iterator i = markers->begin(); i != markers->end(); ++i) {
 		if (((*i)->rootPiece->getTeam() == rootPiece->getTeam()) ||
-			(!(*i)->rootMove->attacksEnemies) ||
 			(!(*i)->rootMove->canLeap && (*i)->requiresLeap) ||
 			(!(*i)->meetsScalingRule) ||
 			(!(*i)->meetsNthStepRule)
@@ -125,7 +84,6 @@ MoveMarker::MoveMarker(
 	next{nullptr},
 	prev{nullptr},
 	requiresLeap{false},
-	meetsAttackRequirements{false},
 	meetsScalingRule{false},
 	meetsNthStepRule{false},
 	targets{new std::map<sf::Vector2i, std::tuple<bool, Piece*, const TargetingRule*>, VectorUtils::cmpVectorLexicographically>()},
@@ -184,7 +142,6 @@ void MoveMarker::handleEvent(Event* event) {
  * Update the move marker when it is generated
  */
 void MoveMarker::onGeneration(PieceTracker* pieceTracker) {
-    updateMeetsAttackRequirements(pieceTracker);
     meetsScalingRule = meetsNumRule(rootMove->scalingRules, lambda, false);
     meetsNthStepRule = meetsNumRule(rootMove->nthStepRules, rootPiece->getMoveCount(), false);
 
@@ -196,6 +153,7 @@ void MoveMarker::onGeneration(PieceTracker* pieceTracker) {
         const sf::Vector2i rotated = MoveDef::rotate((*i)->offsetVector, rootPiece->getDir());
         const sf::Vector2i transformed = VectorUtils::reflect(rotated, switchedX, switchedY, switchedXY);
 		Piece* targetPiece = pieceTracker->getPiece(pos + transformed);
+
 		targets->insert(std::make_pair(
 			pos + transformed,
 			std::make_tuple((*i)->matches(rootPiece, targetPiece), targetPiece, *i)
@@ -234,8 +192,6 @@ void MoveMarker::onPieceEnterNext(Piece* piece, PieceTracker* pieceTracker) {
  * Update the move marker when a piece leaves the tile
  */
 void MoveMarker::onPieceLeave(Piece* piece, PieceTracker* pieceTracker) {
-	updateMeetsAttackRequirements(pieceTracker);
-
 	if (!requiresLeap && next != nullptr) {
 		next->onPieceLeaveNext(piece, pieceTracker);
 	}
@@ -245,8 +201,6 @@ void MoveMarker::onPieceLeave(Piece* piece, PieceTracker* pieceTracker) {
  * Update the move marker when a piece enters the tile
  */
 void MoveMarker::onPieceEnter(Piece* piece, PieceTracker* pieceTracker) {
-	updateMeetsAttackRequirements(pieceTracker);
-
 	if (next != nullptr) {
 		next->onPieceEnterNext(piece, pieceTracker);
 	}
@@ -289,12 +243,10 @@ const std::vector<std::pair<Piece*, const TargetingRule*>>* MoveMarker::getTarge
  */
 bool MoveMarker::canMove() const {
 	// Check if the position meets the movement requirements
-	if ((!meetsAttackRequirements) ||
-		(!rootMove->canLeap && requiresLeap) ||
+	if ((!rootMove->canLeap && requiresLeap) ||
 		(!meetsScalingRule) ||
 		(!meetsNthStepRule) ||
-		(!meetsTargetingRule())
-		//(getValidTargetingRule(pieceTracker) == nullptr) ||
+		(!meetsTargetingRules())
 		//(rootPiece->getDef()->isCheckVulnerable && isAttacked(pieceTracker))
 	) {
 		return false;

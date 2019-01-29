@@ -44,7 +44,7 @@ public:
 
     // Methods
     bool matches (const Piece* rootPiece, const Piece* candidate) const;
-    Event* getEvent() const;
+    const std::vector<Event*>* getEvents() const;
 };
 
 #endif // CHESS_TARGETING_RULE_H
