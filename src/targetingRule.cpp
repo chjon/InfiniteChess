@@ -72,6 +72,11 @@ bool TargetingRule::matches(const Piece* rootPiece, const Piece* candidate) cons
 		}
 	}
 
+	// Skip null candidates
+	if (candidate == nullptr) {
+		return true;
+	}
+
 	// Check whether the target piece matches all the data specifiers
     for (
 		std::map<DataSpecifier, const NumRule*>::const_iterator i = dataSpecifiers->begin();
