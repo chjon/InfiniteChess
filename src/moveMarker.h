@@ -221,14 +221,9 @@ public:
 	// Helpers
 
 	/**
-	 * Get the first targeting rule that is met
+	 * Determine whether the move marker meets all of its targeting rules
 	 */
-	const TargetingRule* getValidTargetingRule(PieceTracker* pieceTracker) const;
-
-	/**
-	 * Determine whether the move marker meets a targeting rule
-	 */
-	const bool meetsTargetingRule() const;
+	const bool meetsTargetingRules() const;
 };
 
 #endif // CHESS_MOVE_MARKER_H

@@ -97,6 +97,6 @@ bool TargetingRule::matches(const Piece* rootPiece, const Piece* candidate) cons
 	return true;
 }
 
-Event* TargetingRule::getEvent() const {
-    return (*actions)[0];
+const std::vector<Event*>* TargetingRule::getEvents() const {
+    return actions;
 }

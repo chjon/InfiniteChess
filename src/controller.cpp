@@ -65,45 +65,47 @@ void Controller::move(const MoveMarker* dest) {
 	));
 	eventProcessor.insertInQueue(EventProcessor::AFTER, new Event(selectedPiece, "enter", ""));
 
+	// Remove the piece that is at the destination position
+	Piece* destPiece = pieceTracker->getPiece(pos);
+	if (destPiece != nullptr) {
+		eventProcessor.insertInQueue(EventProcessor::START, new Event(destPiece, "leave", ""));
+		eventProcessor.insertInQueue(EventProcessor::EVENT, new Event(destPiece, "destroy", ""));
+	}
+
 	// Get the targets for moving to the position
 	const std::vector<std::tuple<MoveMarker*, Piece*, const TargetingRule*>>* targets = selectedPiece->getTargets(pos);
 
-	// Take the first valid target piece
-	Piece* targetPiece = nullptr;
-	Event* targetEvent = nullptr;
-
+	// Take all of the targets
 	for (std::vector<std::tuple<MoveMarker*, Piece*, const TargetingRule*>>::const_iterator i = targets->begin();
 		i != targets->end(); ++i
 	) {
+		// Check whether the target is valid
 		MoveMarker* marker = std::get<0>(*i);
-        if (marker->canMove()) {
-			targetPiece = std::get<1>(*i);
-			targetEvent = std::get<2>(*i)->getEvent();
-			break;
-        }
-	}
+        if (!marker->canMove()) continue;
 
-	if (targetPiece != nullptr) {
-		if ("move" == targetEvent->action) {
-			eventProcessor.insertInQueue(EventProcessor::START, new Event(targetPiece, "leave", ""));
-			sf::Vector2i targetVector = VectorUtils::fromString(targetEvent->args);
-			targetVector = MoveDef::rotate(targetVector, dest->getRootPiece()->getDir());
-			targetVector = VectorUtils::reflect(targetVector, dest->switchedX, dest->switchedY, dest->switchedXY);
-			eventProcessor.insertInQueue(EventProcessor::START, new Event(
-				targetPiece, "move", "-1," + VectorUtils::toString(targetVector + targetPiece->getPos()) + ","
-			));
-			eventProcessor.insertInQueue(EventProcessor::START, new Event(targetPiece, "enter", ""));
-		} else if ("destroy" == targetEvent->action && targetPiece != nullptr) {
-			eventProcessor.insertInQueue(EventProcessor::START, new Event(targetPiece, "leave", ""));
-			eventProcessor.insertInQueue(EventProcessor::START, new Event(targetPiece, "destroy", ""));
+		Piece* targetPiece = std::get<1>(*i);
+		const std::vector<Event*>* targetEvents = std::get<2>(*i)->getEvents();
+
+		// Check whether there is a target piece
+		if (targetPiece == nullptr || targetPiece == destPiece) continue;
+
+		// Handle the different actions
+		for (std::vector<Event*>::const_iterator j = targetEvents->begin(); j != targetEvents->end(); ++j) {
+			if ("move" == (*j)->action) {
+				eventProcessor.insertInQueue(EventProcessor::START, new Event(targetPiece, "leave", ""));
+				sf::Vector2i targetVector = VectorUtils::fromString((*j)->args);
+				targetVector = MoveDef::rotate(targetVector, dest->getRootPiece()->getDir());
+				targetVector = VectorUtils::reflect(targetVector, dest->switchedX, dest->switchedY, dest->switchedXY);
+				eventProcessor.insertInQueue(EventProcessor::START, new Event(
+					targetPiece, "move", "-1," + VectorUtils::toString(targetVector + targetPiece->getPos()) + ","
+				));
+				eventProcessor.insertInQueue(EventProcessor::START, new Event(targetPiece, "enter", ""));
+
+			} else if ("destroy" == (*j)->action && targetPiece != nullptr) {
+				eventProcessor.insertInQueue(EventProcessor::START, new Event(targetPiece, "leave", ""));
+				eventProcessor.insertInQueue(EventProcessor::START, new Event(targetPiece, "destroy", ""));
+			}
 		}
-	}
-
-	// Remove the piece that is at the destination position
-	Piece* destPiece = pieceTracker->getPiece(pos);
-	if (destPiece != nullptr && destPiece != targetPiece) {
-		eventProcessor.insertInQueue(EventProcessor::START, new Event(destPiece, "leave", ""));
-		eventProcessor.insertInQueue(EventProcessor::EVENT, new Event(destPiece, "destroy", ""));
 	}
 
 	// Execute all the queued events
