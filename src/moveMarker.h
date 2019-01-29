@@ -57,11 +57,6 @@ private:
 	bool requiresLeap;
 
 	/**
-	 * Whether the move marker meets the attack requirements
-	 */
-	bool meetsAttackRequirements;
-
-	/**
 	 * Whether the move marker meets a scaling rule
 	 */
 	bool meetsScalingRule;
@@ -77,11 +72,6 @@ private:
 	std::map<sf::Vector2i, std::tuple<bool, Piece*, const TargetingRule*>, VectorUtils::cmpVectorLexicographically>* targets;
 
 	// Helpers
-
-	/**
-	 * Determine whether a move meets the attack requirements
-	 */
-	void updateMeetsAttackRequirements(PieceTracker* pieceTracker);
 
 	/**
 	 * Determine whether the move marker meets a NumRule

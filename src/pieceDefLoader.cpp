@@ -77,14 +77,11 @@ const MoveDef* PieceDefLoader::getMoveFromString(const std::string& moveString) 
 
     // Get the move properties
     unsigned int index = 0;
-    const bool attacksFriendlies = (*args)[argIndex][index++] - '0';
-    const bool attacksEnemies    = (*args)[argIndex][index++] - '0';
-    const bool movesEmpty        = (*args)[argIndex][index++] - '0';
-    const bool canLeap           = (*args)[argIndex][index++] - '0';
-    const bool endsTurn          = (*args)[argIndex][index++] - '0';
-    const bool isXSymmetric      = (*args)[argIndex][index++] - '0';
-    const bool isYSymmetric      = (*args)[argIndex][index++] - '0';
-    const bool isXYSymmetric     = (*args)[argIndex][index++] - '0';
+    const bool canLeap       = (*args)[argIndex][index++] - '0';
+    const bool endsTurn      = (*args)[argIndex][index++] - '0';
+    const bool isXSymmetric  = (*args)[argIndex][index++] - '0';
+    const bool isYSymmetric  = (*args)[argIndex][index++] - '0';
+    const bool isXYSymmetric = (*args)[argIndex][index++] - '0';
     argIndex++;
 
     // Load chained moves and movement rules
@@ -98,8 +95,8 @@ const MoveDef* PieceDefLoader::getMoveFromString(const std::string& moveString) 
 		((*args)[argIndex++], getTargetingRuleFromString);
 
 	MoveDef* newMove = new MoveDef(
-		moveIndex, baseVector, attacksFriendlies, attacksEnemies, movesEmpty, canLeap, endsTurn,
-		isXSymmetric, isYSymmetric, isXYSymmetric, chainedMoves, scalingRules, nthStepRules, targetingRules
+		moveIndex, baseVector, canLeap, endsTurn, isXSymmetric, isYSymmetric, isXYSymmetric,
+		chainedMoves, scalingRules, nthStepRules, targetingRules
 	);
 
 	// Clean up and return

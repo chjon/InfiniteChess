@@ -20,9 +20,6 @@ public:
 
 	const sf::Vector2i baseVector;
 
-	const bool attacksFriendlies;
-	const bool attacksEnemies;
-	const bool movesEmpty;
 	const bool canLeap;
 	const bool endsTurn;
 	const bool isXSymmetric;
@@ -36,8 +33,8 @@ public:
 
 	// Constructors
 	MoveDef(
-		int index_, sf::Vector2i baseVector_, bool attacksFriendlies_, bool attacksEnemies_,
-		bool movesEmpty_, bool canLeap, bool endsTurn, bool isXSymmetric, bool isYSymmetric, bool isXYSymmetric,
+		int index_, sf::Vector2i baseVector_, bool canLeap, bool endsTurn,
+		bool isXSymmetric, bool isYSymmetric, bool isXYSymmetric,
 		const std::vector<int>* chainedMoves, const std::vector<NumRule*>* scalingRules,
 		const std::vector<NumRule*>* nthStepRules, const std::vector<const TargetingRule*>* targetingRules_
 	);
