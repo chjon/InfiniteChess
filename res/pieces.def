@@ -18,7 +18,7 @@
 #
 # DataSpecifiers: <[LastMove,LastTurn,NumMoves,SameTeam]><NumRule>
 #
-# TransformationRules: [[move,"[<x,y>]"], [destroy,""], [change_color,""]]
+# TransformationRules: [[move,"[<x,y>]"], [destroy,""]]
 
 [
 	[Pawn,00,[

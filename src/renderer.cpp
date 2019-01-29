@@ -28,14 +28,14 @@ void Renderer::drawBoard() const {
 	for (unsigned int x = 0; x < dimensionsInTiles.x; x++) {
 		for (unsigned int y = 0; y < dimensionsInTiles.y; y++) {
 			// Determine whether the tile needs to be colored
-			if ((x + y) % 2 == parity) continue;
+			if ((x + y) % 2 == parity) {
+				tile.setPosition(
+					tileStartPos.x + cameraShift.x + tileSize * x,
+					tileStartPos.y + cameraShift.y + tileSize * y
+				);
 
-			tile.setPosition(
-				tileStartPos.x + cameraShift.x + tileSize * x,
-				tileStartPos.y + cameraShift.y + tileSize * y
-			);
-
-			window->draw(tile);
+				window->draw(tile);
+			}
 		}
 	}
 }
