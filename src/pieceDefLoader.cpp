@@ -5,6 +5,7 @@
 #include "moveDef.h"
 #include "numRule.h"
 #include "pieceDef.h"
+#include "stringUtils.h"
 #include "resourceLoader.h"
 #include "targetingRule.h"
 
@@ -32,7 +33,9 @@ const PieceDef* PieceDefLoader::getPieceDefFromString(const std::string& pieceSt
 	checkBracketEnclosed(pieceString);
     checkNumArgs(pieceString.substr(1, pieceString.length() - 2), 3);
 
-	const std::vector<std::string>* properties = split(pieceString.substr(1, pieceString.length() - 2));
+	const std::vector<std::string>* properties = StringUtils::getList(
+		pieceString.substr(1, pieceString.length() - 2), SEPARATOR, BRACKET_OPEN, BRACKET_CLOSE
+	);
 
 	// Get the name
 	unsigned int propertyIndex = 0;
@@ -69,7 +72,9 @@ const MoveDef* PieceDefLoader::getMoveFromString(const std::string& moveString) 
 	checkNumArgs(moveString.substr(1, moveString.length() - 2), NUM_MOVE_ARGS);
 
 	// Get all arguments
-	const std::vector<std::string>* args = split(moveString.substr(1, moveString.length() - 2));
+	const std::vector<std::string>* args = StringUtils::getList(
+		moveString.substr(1, moveString.length() - 2), SEPARATOR, BRACKET_OPEN, BRACKET_CLOSE
+	);
 	unsigned int argIndex = 0;
 
 	const int moveIndex = std::stoi((*args)[argIndex++]);
@@ -117,7 +122,9 @@ const sf::Vector2i PieceDefLoader::getVectorFromString(const std::string& s) {
 	checkNumArgs(s.substr(1, s.length() - 2), 2);
 
 	// Load vector components
-	const std::vector<std::string>* strings = split(s.substr(1, s.length() - 2));
+	const std::vector<std::string>* strings = StringUtils::getList(
+		s.substr(1, s.length() - 2), SEPARATOR, BRACKET_OPEN, BRACKET_CLOSE
+	);
 	const int x = std::stoi((*strings)[0]);
 	const int y = std::stoi((*strings)[1]);
 
@@ -139,7 +146,9 @@ const TargetingRule* PieceDefLoader::getTargetingRuleFromString(const std::strin
 	checkNumArgs(targetingRulesString.substr(1, targetingRulesString.length() - 2), NUM_TARGETTING_RULE_ARGS);
 
 	// Get all arguments
-	const std::vector<std::string>* args = split(targetingRulesString.substr(1, targetingRulesString.length() - 2));
+	const std::vector<std::string>* args = StringUtils::getList(
+		targetingRulesString.substr(1, targetingRulesString.length() - 2), SEPARATOR, BRACKET_OPEN, BRACKET_CLOSE
+	);
 	unsigned int argIndex = 0;
 
 	// Get properties
@@ -155,7 +164,9 @@ const TargetingRule* PieceDefLoader::getTargetingRuleFromString(const std::strin
 			checkNumArgs(s.substr(1, s.length() - 2), 2);
 
 			// Generate pair
-			const std::vector<std::string>* dataSpecArgs = split(s.substr(1, s.length() - 2));
+			const std::vector<std::string>* dataSpecArgs = StringUtils::getList(
+				s.substr(1, s.length() - 2), SEPARATOR, BRACKET_OPEN, BRACKET_CLOSE
+			);
 			std::pair<std::string, const NumRule*> result =
 				std::make_pair((*dataSpecArgs)[0], new NumRule((*dataSpecArgs)[1]));
 
@@ -183,7 +194,9 @@ const TargetingRule* PieceDefLoader::getTargetingRuleFromString(const std::strin
 			checkNumArgs(s.substr(1, s.length() - 2), 2);
 
 			// Generate event
-			const std::vector<std::string>* eventArgs = split(s.substr(1, s.length() - 2));
+			const std::vector<std::string>* eventArgs = StringUtils::getList(
+				s.substr(1, s.length() - 2), SEPARATOR, BRACKET_OPEN, BRACKET_CLOSE
+			);
 			Event* result =	new Event(nullptr, (*eventArgs)[0], (*eventArgs)[1]);
 
 			// Clean up and return
@@ -219,7 +232,9 @@ template <typename T> std::vector<T>* PieceDefLoader::getListFromString(
 
 	// Instantiate the list
 	std::vector<T>* objectList = new std::vector<T>();
-	const std::vector<std::string>* objectStrings =	split(listString.substr(1, listString.length() - 2));
+	const std::vector<std::string>* objectStrings =	StringUtils::getList(
+		listString.substr(1, listString.length() - 2), SEPARATOR, BRACKET_OPEN, BRACKET_CLOSE
+	);
 
 	// Load objects
 	for (std::vector<std::string>::const_iterator i = objectStrings->begin(); i != objectStrings->end(); ++i) {
@@ -252,7 +267,9 @@ template <typename K, typename V> std::map<K, V>* PieceDefLoader::getMapFromStri
 
 	// Instantiate the map
 	std::map<K, V>* objectMap = new std::map<K, V>();
-	const std::vector<std::string>* objectStrings = split(listString.substr(1, listString.length() - 2));
+	const std::vector<std::string>* objectStrings = StringUtils::getList(
+		listString.substr(1, listString.length() - 2), SEPARATOR, BRACKET_OPEN, BRACKET_CLOSE
+	);
 
 	// Load objects
 	for (std::vector<std::string>::const_iterator i = objectStrings->begin(); i != objectStrings->end(); ++i) {
@@ -304,42 +321,6 @@ const unsigned int PieceDefLoader::getNumArgs(const std::string& s) {
     }
 
     return argCount;
-}
-
-/**
- * Split the string on the separator while leaving bracket-enclosed groups intact
- */
-const std::vector<std::string>* PieceDefLoader::split(const std::string& s) {
-	// Read each line of the file
-	std::vector<std::string>* splitStrings = new std::vector<std::string>();
-	std::string stringSoFar = "";
-	int nestLevel = 0;
-
-	// Split the string on the separator
-	int lineBegin = 0;
-	for (unsigned int i = 0; i < s.length(); i++) {
-		const char curChar = s[i];
-		if (curChar == BRACKET_OPEN) {
-			nestLevel++;
-		} else if (curChar == BRACKET_CLOSE) {
-			// Check if a bracket was expected
-			if (nestLevel == 0) {
-				throw ResourceLoader::FileFormatException(
-					"Unexpected token '" + std::to_string(BRACKET_CLOSE) + "'"
-				);
-			}
-
-			nestLevel--;
-		} else if (curChar == SEPARATOR && nestLevel == 0) {
-			// Split
-			stringSoFar += s.substr(lineBegin, i - lineBegin);
-			lineBegin = i + 1;
-			splitStrings->push_back(stringSoFar);
-			stringSoFar = "";
-		}
-	}
-
-	return splitStrings;
 }
 
 /**

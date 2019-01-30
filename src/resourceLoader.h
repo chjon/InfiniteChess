@@ -62,6 +62,17 @@ public:
 		}
 	};
 
+	// Object generation
+	template <typename T> static std::vector<T>* getListFromString(
+		const std::string& listString,
+		T(*objectFromString)(const std::string& s)
+	);
+	template <typename K, typename V> static std::map<K, V>* getMapFromString(
+		const std::string& listString,
+		K(*keyFromObject)(V),
+		V(*objectFromString)(const std::string&)
+	);
+
 	// Constructors
 	ResourceLoader(PieceTracker* p);
 	~ResourceLoader();

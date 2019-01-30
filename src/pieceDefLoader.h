@@ -45,7 +45,6 @@ private:
 
 	// Helper methods
 	static const unsigned int getNumArgs(const std::string& s);
-	static const std::vector<std::string>* split(const std::string& s);
 	static const std::string removeWhiteSpace(const std::string& fileName);
 	static const bool isWhitespace(const char candidate);
 

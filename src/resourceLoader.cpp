@@ -27,6 +27,85 @@ void ResourceLoader::loadTextures() {
     }
 }
 
+// Object generation
+
+/**
+ * Get a list of objects from a string
+ *
+ * @param listString the string from which to generate the list of objects
+ * @param objectFromString a function for generating an object from a string
+ * @param T the type of object to stored in the returned list
+ *
+ * @return the list of objects represented by the string
+ */
+template <typename T> std::vector<T>* ResourceLoader::getListFromString(
+	const std::string& listString,
+	T(*objectFromString)(const std::string& s)
+) {
+	// Validate input
+	// checkBracketEnclosed(listString);
+
+	// Instantiate the list
+	std::vector<T>* objectList = new std::vector<T>();
+	const std::vector<std::string>* objectStrings =	StringUtils::getList(
+		listString.substr(1, listString.length() - 2), ',', '[', ']'
+	);
+
+	// Load objects
+	for (std::vector<std::string>::const_iterator i = objectStrings->begin(); i != objectStrings->end(); ++i) {
+		objectList->push_back(objectFromString(*i));
+	}
+
+	// Clean up and return
+	delete objectStrings;
+	return objectList;
+}
+
+/**
+ * Get a map of objects from a string
+ *
+ * @param listString the string from which to generate the map of objects
+ * @param keyFromObject a function for generating a key from an object
+ * @param objectFromString a function for generating an object from a string
+ * @param K the key type by which to index the objects
+ * @param V the type of object to be stored in the map
+ *
+ * @return the map of objects represented by the string
+ */
+template <typename K, typename V> std::map<K, V>* ResourceLoader::getMapFromString(
+	const std::string& listString,
+	K(*keyFromObject)(V val),
+	V(*objectFromString)(const std::string& s)
+) {
+	// Validate input
+	// checkBracketEnclosed(listString);
+
+	// Instantiate the map
+	std::map<K, V>* objectMap = new std::map<K, V>();
+	const std::vector<std::string>* objectStrings = StringUtils::getList(
+		listString.substr(1, listString.length() - 2), ',', '[', ']'
+	);
+
+	// Load objects
+	for (std::vector<std::string>::const_iterator i = objectStrings->begin(); i != objectStrings->end(); ++i) {
+		// Create the key-value pair
+		V val = objectFromString(*i);
+		K key = keyFromObject(val);
+
+		// Validate the key
+		if (objectMap->find(key) != objectMap->end()) {
+			throw ResourceLoader::FileFormatException("Duplicate definition for key");
+		}
+
+		// Add the key-value pair
+		objectMap->insert(std::make_pair(key, val));
+	}
+
+	// Clean up and return
+	delete objectStrings;
+	return objectMap;
+}
+
 // Public constructors
 
 /**
