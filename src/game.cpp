@@ -1,5 +1,6 @@
 #include <iostream>
 #include "game.h"
+#include "stringUtils.h"
 
 // Public constructors
 
@@ -60,6 +61,9 @@ void Game::run() {
         return;
 	} catch (ResourceLoader::IOException ex) {
         std::cout << "IOException: " << ex.what() << std::endl;
+        return;
+	} catch (StringUtils::ParseException ex) {
+        std::cout << "ParseException: " << ex.what() << std::endl;
         return;
 	}
 
