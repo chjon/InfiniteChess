@@ -1,5 +1,7 @@
 #include <iostream>
 #include "game.h"
+#include "pieceDefLoader.h"
+#include "resourceLoader.h"
 #include "stringUtils.h"
 
 // Public constructors
@@ -21,21 +23,41 @@ Game::Game() {
 	inputHandler   = new InputHandler(this, window, renderer);
 	pieceTracker   = new PieceTracker(this);
 	controller     = new Controller(this, pieceTracker);
-	resourceLoader = new ResourceLoader(pieceTracker);
 }
 
 /**
  * Destructor
  */
 Game::~Game() {
-	delete resourceLoader;
+	// Delete all the textures
+	if (textures != nullptr) {
+		for (std::map<std::string, sf::Texture*>::iterator it = textures->begin(); it != textures->end(); it++) {
+			if (it->second != nullptr) {
+				delete it->second;
+			}
+		}
+
+		delete textures;
+		textures = nullptr;
+	}
+
+
+	// Delete all the definitions
+	if (pieceDefs != nullptr) {
+		for (std::map<std::string, const PieceDef*>::iterator it = pieceDefs->begin(); it != pieceDefs->end(); it++) {
+			delete it->second;
+		}
+
+		delete pieceDefs;
+		pieceDefs = nullptr;
+	}
+
 	delete controller;
     delete pieceTracker;
 	delete inputHandler;
 	delete renderer;
 	delete window;
 
-	resourceLoader = nullptr;
 	controller     = nullptr;
 	pieceTracker   = nullptr;
 	inputHandler   = nullptr;
@@ -51,11 +73,14 @@ Game::~Game() {
  * Run the game
  */
 void Game::run() {
-	// Initialize everything
-
 	// Try loading resources
 	try {
-		resourceLoader->onStartUp();
+		pieceDefs = PieceDefLoader::loadPieceDefs("res/pieces.def", ".def");
+		textures  = ResourceLoader::loadTextures(ResourceLoader::getListFromMap(pieceDefs,
+			(std::string(*)(const std::string, const PieceDef*)) [](auto name, auto pieceDef){
+				return name;
+			}
+		), "res/textures/", ".png");
 	} catch (ResourceLoader::FileFormatException ex) {
         std::cout << "FileFormatException: " << ex.what() << std::endl;
         return;
@@ -67,6 +92,7 @@ void Game::run() {
         return;
 	}
 
+	// Initialize everything
 	renderer->onStartup();
 	pieceTracker->onStartup();
 	controller->onStartup();

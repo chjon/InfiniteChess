@@ -144,6 +144,17 @@ public:
         delete stringList;
         return intList;
 	}
+
+	/**
+	 * Check whether a character is in a list
+	 */
+	inline static const bool isInList(const char candidate, const std::vector<char>* list) {
+		for (std::vector<char>::const_iterator i = list->begin(); i != list->end(); ++i) {
+			if (*i == candidate) return true;
+		}
+
+		return false;
+	}
 };
 
 #endif // STRING_UTILS_H

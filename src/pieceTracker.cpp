@@ -104,7 +104,7 @@ bool PieceTracker::addPiece(std::string pieceName, sf::Color team, sf::Vector2i 
 	// Check whether a piece is already at the desired location
 	if (pieces.find(pos) != pieces.end()) return false;
 
-	std::map<std::string, const PieceDef*>* pieceDefs = game->resourceLoader->pieceDefs;
+	std::map<std::string, const PieceDef*>* pieceDefs = game->pieceDefs;
 
 	// Check whether a piece with the desired name exists
 	std::map<std::string, const PieceDef*>::iterator it = pieceDefs->find(pieceName);

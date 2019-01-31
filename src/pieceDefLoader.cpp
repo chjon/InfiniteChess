@@ -8,11 +8,7 @@
 #include "stringUtils.h"
 #include "resourceLoader.h"
 #include "targetingRule.h"
-
-// Initialize constants
-
-const std::string PieceDefLoader::EXTENSION = ".def";
-const std::vector<char>* PieceDefLoader::WHITESPACE = new std::vector<char>(' ', '\t');
+#include "vectorUtils.h"
 
 
 
@@ -30,11 +26,12 @@ const std::vector<char>* PieceDefLoader::WHITESPACE = new std::vector<char>(' ',
  */
 const PieceDef* PieceDefLoader::getPieceDefFromString(const std::string& pieceString) {
 	// Validate input
-	checkBracketEnclosed(pieceString);
-    checkNumArgs(pieceString.substr(1, pieceString.length() - 2), 3);
+	ResourceLoader::checkBracketEnclosed(pieceString);
+    ResourceLoader::checkNumArgs(pieceString.substr(1, pieceString.length() - 2), 3);
 
 	const std::vector<std::string>* properties = StringUtils::getList(
-		pieceString.substr(1, pieceString.length() - 2), SEPARATOR, BRACKET_OPEN, BRACKET_CLOSE
+		pieceString.substr(1, pieceString.length() - 2),
+		ResourceLoader::SEPARATOR, ResourceLoader::BRACKET_OPEN, ResourceLoader::BRACKET_CLOSE
 	);
 
 	// Get the name
@@ -48,7 +45,7 @@ const PieceDef* PieceDefLoader::getPieceDefFromString(const std::string& pieceSt
 	propertyIndex++;
 
 	// Get move set
-	const std::map<int, const MoveDef*>* moveSet = getMapFromString(
+	const std::map<int, const MoveDef*>* moveSet = ResourceLoader::getMapFromString(
 		(*properties)[propertyIndex++],
         (int(*)(const MoveDef*)) [](auto val){ return val->index; },
         (const MoveDef*(*)(const std::string&)) [](auto s){ return getMoveFromString(s); }
@@ -68,17 +65,18 @@ const PieceDef* PieceDefLoader::getPieceDefFromString(const std::string& pieceSt
  */
 const MoveDef* PieceDefLoader::getMoveFromString(const std::string& moveString) {
 	// Validate input
-	checkBracketEnclosed(moveString);
-	checkNumArgs(moveString.substr(1, moveString.length() - 2), NUM_MOVE_ARGS);
+	ResourceLoader::checkBracketEnclosed(moveString);
+	ResourceLoader::checkNumArgs(moveString.substr(1, moveString.length() - 2), NUM_MOVE_ARGS);
 
 	// Get all arguments
 	const std::vector<std::string>* args = StringUtils::getList(
-		moveString.substr(1, moveString.length() - 2), SEPARATOR, BRACKET_OPEN, BRACKET_CLOSE
+		moveString.substr(1, moveString.length() - 2),
+		ResourceLoader::SEPARATOR, ResourceLoader::BRACKET_OPEN, ResourceLoader::BRACKET_CLOSE
 	);
 	unsigned int argIndex = 0;
 
 	const int moveIndex = std::stoi((*args)[argIndex++]);
-	const sf::Vector2i baseVector = getVectorFromString((*args)[argIndex++]);
+	const sf::Vector2i baseVector = VectorUtils::fromString((*args)[argIndex++]);
 
     // Get the move properties
     unsigned int index = 0;
@@ -90,13 +88,13 @@ const MoveDef* PieceDefLoader::getMoveFromString(const std::string& moveString) 
     argIndex++;
 
     // Load chained moves and movement rules
-	const std::vector<int>* chainedMoves = getListFromString
+	const std::vector<int>* chainedMoves = ResourceLoader::getListFromString
 		((*args)[argIndex++], (int(*)(const std::string&)) [](auto s){ return std::stoi(s); });
-	const std::vector<NumRule*>* scalingRules = getListFromString
+	const std::vector<NumRule*>* scalingRules = ResourceLoader::getListFromString
 		((*args)[argIndex++], (NumRule*(*)(const std::string& s)) [](auto s){ return new NumRule(s); });
-	const std::vector<NumRule*>* nthStepRules = getListFromString
+	const std::vector<NumRule*>* nthStepRules = ResourceLoader::getListFromString
 		((*args)[argIndex++], (NumRule*(*)(const std::string& s)) [](auto s){ return new NumRule(s); });
-	const std::vector<const TargetingRule*>* targetingRules = getListFromString
+	const std::vector<const TargetingRule*>* targetingRules = ResourceLoader::getListFromString
 		((*args)[argIndex++], getTargetingRuleFromString);
 
 	MoveDef* newMove = new MoveDef(
@@ -110,30 +108,6 @@ const MoveDef* PieceDefLoader::getMoveFromString(const std::string& moveString) 
 }
 
 /**
- * Create a vector from a string
- *
- * @param s the string from which to generate the vector
- *
- * @return a vector generated from the string
- */
-const sf::Vector2i PieceDefLoader::getVectorFromString(const std::string& s) {
-	// Validate input
-	checkBracketEnclosed(s);
-	checkNumArgs(s.substr(1, s.length() - 2), 2);
-
-	// Load vector components
-	const std::vector<std::string>* strings = StringUtils::getList(
-		s.substr(1, s.length() - 2), SEPARATOR, BRACKET_OPEN, BRACKET_CLOSE
-	);
-	const int x = std::stoi((*strings)[0]);
-	const int y = std::stoi((*strings)[1]);
-
-	// Clean up and return
-	delete strings;
-	return sf::Vector2i(x, y);
-}
-
-/**
  * Create a targeting rule from a string
  *
  * @param s the string from which to generate the targeting rule
@@ -142,30 +116,32 @@ const sf::Vector2i PieceDefLoader::getVectorFromString(const std::string& s) {
  */
 const TargetingRule* PieceDefLoader::getTargetingRuleFromString(const std::string& targetingRulesString) {
 	// Validate input
-	checkBracketEnclosed(targetingRulesString);
-	checkNumArgs(targetingRulesString.substr(1, targetingRulesString.length() - 2), NUM_TARGETTING_RULE_ARGS);
+	ResourceLoader::checkBracketEnclosed(targetingRulesString);
+	ResourceLoader::checkNumArgs(targetingRulesString.substr(1, targetingRulesString.length() - 2), NUM_TARGETTING_RULE_ARGS);
 
 	// Get all arguments
 	const std::vector<std::string>* args = StringUtils::getList(
-		targetingRulesString.substr(1, targetingRulesString.length() - 2), SEPARATOR, BRACKET_OPEN, BRACKET_CLOSE
+		targetingRulesString.substr(1, targetingRulesString.length() - 2),
+		ResourceLoader::SEPARATOR, ResourceLoader::BRACKET_OPEN, ResourceLoader::BRACKET_CLOSE
 	);
 	unsigned int argIndex = 0;
 
 	// Get properties
-    const sf::Vector2i offsetVector = getVectorFromString((*args)[argIndex++]);
+    const sf::Vector2i offsetVector = VectorUtils::fromString((*args)[argIndex++]);
     const std::string targetName = (*args)[argIndex++];
 
     // Get data specifiers
-    const std::vector<std::pair<std::string, const NumRule*>>* dataSpecifierList = getListFromString(
+    const std::vector<std::pair<std::string, const NumRule*>>* dataSpecifierList = ResourceLoader::getListFromString(
 		(*args)[argIndex++],
         (std::pair<std::string, const NumRule*>(*)(const std::string& s)) [](auto s){
 			// Validate input
-			checkBracketEnclosed(s);
-			checkNumArgs(s.substr(1, s.length() - 2), 2);
+			ResourceLoader::checkBracketEnclosed(s);
+			ResourceLoader::checkNumArgs(s.substr(1, s.length() - 2), 2);
 
 			// Generate pair
 			const std::vector<std::string>* dataSpecArgs = StringUtils::getList(
-				s.substr(1, s.length() - 2), SEPARATOR, BRACKET_OPEN, BRACKET_CLOSE
+				s.substr(1, s.length() - 2),
+				ResourceLoader::SEPARATOR, ResourceLoader::BRACKET_OPEN, ResourceLoader::BRACKET_CLOSE
 			);
 			std::pair<std::string, const NumRule*> result =
 				std::make_pair((*dataSpecArgs)[0], new NumRule((*dataSpecArgs)[1]));
@@ -186,16 +162,17 @@ const TargetingRule* PieceDefLoader::getTargetingRuleFromString(const std::strin
     }
 
     // Get action to perform
-    std::vector<Event*>* actions = getListFromString(
+    std::vector<Event*>* actions = ResourceLoader::getListFromString(
 		(*args)[argIndex++],
 		(Event*(*)(const std::string& s)) [](auto s){
 			// Validate input
-			checkBracketEnclosed(s);
-			checkNumArgs(s.substr(1, s.length() - 2), 2);
+			ResourceLoader::checkBracketEnclosed(s);
+			ResourceLoader::checkNumArgs(s.substr(1, s.length() - 2), 2);
 
 			// Generate event
 			const std::vector<std::string>* eventArgs = StringUtils::getList(
-				s.substr(1, s.length() - 2), SEPARATOR, BRACKET_OPEN, BRACKET_CLOSE
+				s.substr(1, s.length() - 2),
+				ResourceLoader::SEPARATOR, ResourceLoader::BRACKET_OPEN, ResourceLoader::BRACKET_CLOSE
 			);
 			Event* result =	new Event(nullptr, (*eventArgs)[0], (*eventArgs)[1]);
 
@@ -214,114 +191,9 @@ const TargetingRule* PieceDefLoader::getTargetingRuleFromString(const std::strin
     return targetingRule;
 }
 
-/**
- * Get a list of objects from a string
- *
- * @param listString the string from which to generate the list of objects
- * @param objectFromString a function for generating an object from a string
- * @param T the type of object to stored in the returned list
- *
- * @return the list of objects represented by the string
- */
-template <typename T> std::vector<T>* PieceDefLoader::getListFromString(
-	const std::string& listString,
-	T(*objectFromString)(const std::string& s)
-) {
-	// Validate input
-	checkBracketEnclosed(listString);
-
-	// Instantiate the list
-	std::vector<T>* objectList = new std::vector<T>();
-	const std::vector<std::string>* objectStrings =	StringUtils::getList(
-		listString.substr(1, listString.length() - 2), SEPARATOR, BRACKET_OPEN, BRACKET_CLOSE
-	);
-
-	// Load objects
-	for (std::vector<std::string>::const_iterator i = objectStrings->begin(); i != objectStrings->end(); ++i) {
-		objectList->push_back(objectFromString(*i));
-	}
-
-	// Clean up and return
-	delete objectStrings;
-	return objectList;
-}
-
-/**
- * Get a map of objects from a string
- *
- * @param listString the string from which to generate the map of objects
- * @param keyFromObject a function for generating a key from an object
- * @param objectFromString a function for generating an object from a string
- * @param K the key type by which to index the objects
- * @param V the type of object to be stored in the map
- *
- * @return the map of objects represented by the string
- */
-template <typename K, typename V> std::map<K, V>* PieceDefLoader::getMapFromString(
-	const std::string& listString,
-	K(*keyFromObject)(V val),
-	V(*objectFromString)(const std::string& s)
-) {
-	// Validate input
-	checkBracketEnclosed(listString);
-
-	// Instantiate the map
-	std::map<K, V>* objectMap = new std::map<K, V>();
-	const std::vector<std::string>* objectStrings = StringUtils::getList(
-		listString.substr(1, listString.length() - 2), SEPARATOR, BRACKET_OPEN, BRACKET_CLOSE
-	);
-
-	// Load objects
-	for (std::vector<std::string>::const_iterator i = objectStrings->begin(); i != objectStrings->end(); ++i) {
-		// Create the key-value pair
-		V val = objectFromString(*i);
-		K key = keyFromObject(val);
-
-		// Validate the key
-		if (objectMap->find(key) != objectMap->end()) {
-			throw ResourceLoader::FileFormatException("Duplicate definition for key");
-		}
-
-		// Add the key-value pair
-		objectMap->insert(std::make_pair(key, val));
-	}
-
-	// Clean up and return
-	delete objectStrings;
-	return objectMap;
-}
-
 
 
 // Private helper methods
-
-/**
- * Determine the number of arguments in the string
- */
-const unsigned int PieceDefLoader::getNumArgs(const std::string& s) {
-	// Check whether the string is empty
-	if (s.empty()) {
-		return 0;
-	}
-
-	// Count the number of arguments
-	unsigned int nestLevel = 0;
-	unsigned int argCount = 0;
-
-    for (unsigned int i = 0; i < s.length(); ++i) {
-		char curChar = s[i];
-
-		if (curChar == BRACKET_OPEN) {
-			nestLevel++;
-		} else if (curChar == BRACKET_CLOSE) {
-			nestLevel--;
-		} else if (nestLevel == 0 && curChar == SEPARATOR) {
-			argCount++;
-		}
-    }
-
-    return argCount;
-}
 
 /**
  * Read a file into a single string, removing whitespace
@@ -341,14 +213,14 @@ const std::string PieceDefLoader::removeWhiteSpace(const std::string& fileName) 
 		unsigned int beginIndex = 0;
         for (unsigned int i = 0; i < line.length(); i++) {
 			// Skip the rest of the line if it is commented out
-			if (line[i] == COMMENT_MARKER) {
+			if (line[i] == ResourceLoader::COMMENT_MARKER) {
 				compressedString += line.substr(beginIndex, i - beginIndex);
 				beginIndex = line.length();
 				break;
 			}
 
 			// Skip whitespace
-            if (isWhitespace(line[i])) {
+            if (line[i] == ' ' || line[i] == '\t') {
 				if (beginIndex != i) {
 					compressedString += line.substr(beginIndex, i - beginIndex);
 				}
@@ -366,80 +238,21 @@ const std::string PieceDefLoader::removeWhiteSpace(const std::string& fileName) 
 	return compressedString;
 }
 
-/**
- * Check whether a character is a whitespace character
- */
-const bool PieceDefLoader::isWhitespace(const char candidate) {
-    for (std::vector<char>::const_iterator i = WHITESPACE->begin(); i != WHITESPACE->end(); ++i) {
-        if (*i == candidate) return true;
-    }
-
-    return false;
-}
-
-
-
-// Private validation methods
-
-/**
- * Determine whether a file name is valid. A file name is valid if it ends with
- * the correct extension
- *
- * @param fileName the candidate file name
- *
- * @return true if the file name is valid, false otherwise
- */
-const bool PieceDefLoader::isValidFileName(const std::string& fileName) {
-	// Check whether the filename has the required length
-	if (fileName.length() < EXTENSION.length()) {
-		return false;
-	}
-
-	// Check whether the file ends with the correct extension
-	for (unsigned int i = 1; i <= EXTENSION.length(); i++) {
-		if (EXTENSION[EXTENSION.length() - i] != fileName[fileName.length() - i]) {
-			return false;
-		}
-	}
-
-	return true;
-}
-
-/**
- * Check whether the string is bracket enclosed
- */
-const void PieceDefLoader::checkBracketEnclosed(const std::string& s) {
-	// Check whether the string is bracket-enclosed
-	if (s[0] != BRACKET_OPEN || s[s.length() - 1] != BRACKET_CLOSE) {
-		throw ResourceLoader::FileFormatException("Expected bracket-enclosed string");
-	}
-}
-
-/**
- * Check whether the string contains the expected number of arguments
- */
-const void PieceDefLoader::checkNumArgs(const std::string& s, unsigned int expected) {
-	unsigned int numMoveArgs = getNumArgs(s);
-	if (numMoveArgs != expected) {
-		throw ResourceLoader::FileFormatException(
-			"Expecting " + std::to_string(expected) + " arguments, received " + std::to_string(numMoveArgs)
-		);
-	}
-}
-
 // Public methods
 
 /**
  * Load piece definitions from file
  */
-std::map<std::string, const PieceDef*>* PieceDefLoader::loadPieceDefs (const std::string& fileName) {
+std::map<std::string, const PieceDef*>* PieceDefLoader::loadPieceDefs (
+	const std::string& fileName, const std::string& extension
+) {
 	// Check whether filename is valid
-	if (!isValidFileName(fileName)) {
+	if (!ResourceLoader::isValidFileName(fileName, extension)) {
 		throw ResourceLoader::FileFormatException("Invalid file name");
 	}
 
 	// Create the piece definitions
-	return getMapFromString(
+	return ResourceLoader::getMapFromString(
 		removeWhiteSpace(fileName),
         (std::string(*)(const PieceDef*))[](auto val){ return val->name; },
         (const PieceDef*(*)(const std::string&))[](auto s){ return getPieceDefFromString(s); }

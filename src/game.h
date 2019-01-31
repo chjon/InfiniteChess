@@ -26,7 +26,9 @@ private:
 	InputHandler*     inputHandler;
 	PieceTracker*     pieceTracker;
 	Controller*       controller;
-	ResourceLoader*   resourceLoader;
+
+	std::map<std::string, const PieceDef*>* pieceDefs;
+	std::map<std::string, sf::Texture*>* textures;
 
 	// Friends
 	friend Renderer;

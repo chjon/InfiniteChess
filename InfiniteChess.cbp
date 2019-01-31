@@ -87,7 +87,6 @@
 		<Unit filename="src/pieceTracker.h" />
 		<Unit filename="src/renderer.cpp" />
 		<Unit filename="src/renderer.h" />
-		<Unit filename="src/resourceLoader.cpp" />
 		<Unit filename="src/resourceLoader.h" />
 		<Unit filename="src/stringUtils.h" />
 		<Unit filename="src/targetingRule.cpp" />

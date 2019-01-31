@@ -2,36 +2,180 @@
 #define CHESS_RESOURCE_LOADER_H
 
 #include <SFML/Graphics.hpp>
-#include <map>
-#include <string>
-#include <exception>
+#include "stringUtils.h"
 
 // Forward declarations
-class PieceDef;
-class PieceTracker;
-class Renderer;
-class PieceDef;
-
-
+class PieceDefLoader;
 
 // Class declaration
 class ResourceLoader {
 private:
-	// Constants
-    const std::string PIECE_DEFS_FILE = "res/pieces.def";
-    const std::string TEXTURES_DIRECTORY = "res/textures/";
-    const std::string TEXTURES_EXTENSION = ".png";
-
-	// Members
-	PieceTracker* pieceTracker;
-	std::map<std::string, const PieceDef*>* pieceDefs;
-	std::map<std::string, sf::Texture*>* textures;
-
 	// Utility methods
-    void loadPieceDefs(std::string fileName);
-    void loadTextures();
+
+    /**
+	 * Determine the number of arguments in the string
+	 */
+	inline static const unsigned int getNumArgs(const std::string& s) {
+		// Check whether the string is empty
+		if (s.empty()) {
+			return 0;
+		}
+
+		// Count the number of arguments
+		unsigned int nestLevel = 0;
+		unsigned int argCount = 0;
+
+		for (unsigned int i = 0; i < s.length(); ++i) {
+			char curChar = s[i];
+
+			if (curChar == BRACKET_OPEN) {
+				nestLevel++;
+			} else if (curChar == BRACKET_CLOSE) {
+				nestLevel--;
+			} else if (nestLevel == 0 && curChar == SEPARATOR) {
+				argCount++;
+			}
+		}
+
+		return argCount;
+	}
+
+	// Validation methods
+    /**
+	 * Determine whether a file name is valid. A file name is valid if it ends with
+	 * the correct extension
+	 *
+	 * @param fileName the candidate file name
+	 *
+	 * @return true if the file name is valid, false otherwise
+	 */
+	inline static const bool isValidFileName(const std::string& fileName, const std::string& extension) {
+		// Check whether the filename has the required length
+		if (fileName.length() < extension.length()) {
+			return false;
+		}
+
+		// Check whether the file ends with the correct extension
+		for (unsigned int i = 1; i <= extension.length(); i++) {
+			if (extension[extension.length() - i] != fileName[fileName.length() - i]) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+    /**
+	 * Check whether the string is bracket enclosed
+	 */
+	inline static const void checkBracketEnclosed(const std::string& s) {
+		// Check whether the string is bracket-enclosed
+		if (s[0] != BRACKET_OPEN || s[s.length() - 1] != BRACKET_CLOSE) {
+			throw FileFormatException("Expected bracket-enclosed string");
+		}
+	}
+
+    /**
+	 * Check whether the string contains the expected number of arguments
+	 */
+	inline static const void checkNumArgs(const std::string& s, unsigned int expected) {
+		unsigned int numMoveArgs = getNumArgs(s);
+		if (numMoveArgs != expected) {
+			throw FileFormatException(
+				"Expecting " + std::to_string(expected) + " arguments, received " + std::to_string(numMoveArgs)
+			);
+		}
+	}
+
+	// Object generation
+
+	/**
+	 * Get a list of objects from a string
+	 *
+	 * @param listString the string from which to generate the list of objects
+	 * @param objectFromString a function for generating an object from a string
+	 * @param T the type of object to stored in the returned list
+	 *
+	 * @return the list of objects represented by the string
+	 */
+	template <typename T> inline static std::vector<T>* getListFromString(
+		const std::string& listString,
+		T(*objectFromString)(const std::string&)
+	) {
+		// Validate input
+		checkBracketEnclosed(listString);
+
+		// Instantiate the list
+		std::vector<T>* objectList = new std::vector<T>();
+		const std::vector<std::string>* objectStrings =	StringUtils::getList(
+			listString.substr(1, listString.length() - 2), SEPARATOR, BRACKET_OPEN, BRACKET_CLOSE
+		);
+
+		// Load objects
+		for (std::vector<std::string>::const_iterator i = objectStrings->begin(); i != objectStrings->end(); ++i) {
+			objectList->push_back(objectFromString(*i));
+		}
+
+		// Clean up and return
+		delete objectStrings;
+		return objectList;
+	}
+
+	/**
+	 * Get a map of objects from a string
+	 *
+	 * @param listString the string from which to generate the map of objects
+	 * @param keyFromObject a function for generating a key from an object
+	 * @param objectFromString a function for generating an object from a string
+	 * @param K the key type by which to index the objects
+	 * @param V the type of object to be stored in the map
+	 *
+	 * @return the map of objects represented by the string
+	 */
+	template <typename K, typename V> inline static std::map<K, V>* getMapFromString(
+		const std::string& listString,
+		K(*keyFromObject)(V),
+		V(*objectFromString)(const std::string&)
+	) {
+		// Validate input
+		checkBracketEnclosed(listString);
+
+		// Instantiate the map
+		std::map<K, V>* objectMap = new std::map<K, V>();
+		const std::vector<std::string>* objectStrings = StringUtils::getList(
+			listString.substr(1, listString.length() - 2), SEPARATOR, BRACKET_OPEN, BRACKET_CLOSE
+		);
+
+		// Load objects
+		for (std::vector<std::string>::const_iterator i = objectStrings->begin(); i != objectStrings->end(); ++i) {
+			// Create the key-value pair
+			V val = objectFromString(*i);
+			K key = keyFromObject(val);
+
+			// Validate the key
+			if (objectMap->find(key) != objectMap->end()) {
+				throw ResourceLoader::FileFormatException("Duplicate definition for key");
+			}
+
+			// Add the key-value pair
+			objectMap->insert(std::make_pair(key, val));
+		}
+
+		// Clean up and return
+		delete objectStrings;
+		return objectMap;
+	}
+
+	// Friends
+	friend PieceDefLoader;
 
 public:
+	// Constants
+	static const char BRACKET_OPEN   = '[';
+	static const char BRACKET_CLOSE  = ']';
+	static const char SEPARATOR      = ',';
+	static const char COMMENT_MARKER = '#';
+
 	// Exceptions
 
 	class FileFormatException : public std::exception {
@@ -62,27 +206,40 @@ public:
 		}
 	};
 
-	// Object generation
-	template <typename T> static std::vector<T>* getListFromString(
-		const std::string& listString,
-		T(*objectFromString)(const std::string& s)
-	);
-	template <typename K, typename V> static std::map<K, V>* getMapFromString(
-		const std::string& listString,
-		K(*keyFromObject)(V),
-		V(*objectFromString)(const std::string&)
-	);
+	/**
+	 * Get a list of objects from the entries of a map
+	 *
+	 * @param originMap the map from which to generate the list
+	 * @param typeFromPair a function for generating list elements from map entries
+	 *
+	 * @return the list of objects generated from the map
+	 */
+	template <typename T, typename K, typename V> inline static const std::vector<T>* getListFromMap(
+        const std::map<K, V>* originMap,
+        T(*typeFromPair)(K, V)
+	) {
+		std::vector<T>* outputList = new std::vector<T>();
+		for (typename std::map<K, V>::const_iterator i = originMap->begin(); i != originMap->end(); ++i) {
+            outputList->push_back(typeFromPair(i->first, i->second));
+		}
 
-	// Constructors
-	ResourceLoader(PieceTracker* p);
-	~ResourceLoader();
+		return outputList;
+	}
 
-	// Event handlers
-	void onStartUp();
-
-    // Friends
-    friend PieceTracker;
-    friend Renderer;
+	/**
+	 * Load all the textures
+	 */
+    inline static std::map<std::string, sf::Texture*>* loadTextures(
+		const std::vector<std::string>* fileNames, const std::string& texturesDirectory, const std::string& texturesExtension
+	) {
+		std::map<std::string, sf::Texture*>* textures = new std::map<std::string, sf::Texture*>();
+		for (std::vector<std::string>::const_iterator i = fileNames->begin(); i != fileNames->end(); ++i) {
+			sf::Texture* texture = new sf::Texture();
+			texture->loadFromFile(texturesDirectory + *i + texturesExtension);
+			textures->insert(std::make_pair(*i, texture));
+		}
+		return textures;
+    }
 };
 
 #endif // CHESS_RESOURCE_LOADER_H

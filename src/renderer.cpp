@@ -132,8 +132,8 @@ void Renderer::drawDebugText(const std::string& s, const unsigned int row) const
  * @param c the color to fill with
  */
 void Renderer::drawPiece(Piece* p) const {
-	std::map<std::string, sf::Texture*>::iterator it = game->resourceLoader->textures->find(p->pieceDef->name);
-	if (it == game->resourceLoader->textures->end() || it->second == nullptr) {
+	std::map<std::string, sf::Texture*>::iterator it = game->textures->find(p->pieceDef->name);
+	if (it == game->textures->end() || it->second == nullptr) {
 		sf::CircleShape s(tileSize / 2);
 		s.setFillColor(p->team);
 
@@ -247,8 +247,8 @@ void Renderer::onStartup() {
 	debugFont.loadFromFile(FONT_DIRECTORY + DEBUG_FONT_FILENAME);
 
 	// Set up window icon
-	std::map<std::string, sf::Texture*>::iterator iconIter = game->resourceLoader->textures->find(WINDOW_ICON);
-	if (iconIter != game->resourceLoader->textures->end()) {
+	std::map<std::string, sf::Texture*>::iterator iconIter = game->textures->find(WINDOW_ICON);
+	if (iconIter != game->textures->end()) {
 		sf::Texture* t = iconIter->second;
 		window->setIcon(t->getSize().x, t->getSize().y, t->copyToImage().getPixelsPtr());
 	}
