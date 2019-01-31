@@ -59,6 +59,7 @@
 		</Compiler>
 		<Unit filename="src/actionListenerTracker.cpp" />
 		<Unit filename="src/actionListenerTracker.h" />
+		<Unit filename="src/boardLoader.h" />
 		<Unit filename="src/controller.cpp" />
 		<Unit filename="src/controller.h" />
 		<Unit filename="src/event.h" />
@@ -81,7 +82,6 @@
 		<Unit filename="src/piece.h" />
 		<Unit filename="src/pieceDef.cpp" />
 		<Unit filename="src/pieceDef.h" />
-		<Unit filename="src/pieceDefLoader.cpp" />
 		<Unit filename="src/pieceDefLoader.h" />
 		<Unit filename="src/pieceTracker.cpp" />
 		<Unit filename="src/pieceTracker.h" />

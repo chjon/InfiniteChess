@@ -1,7 +1,6 @@
 #ifndef CHESS_BOARD_LOADER_H
 #define CHESS_BOARD_LOADER_H
 
-#include <iostream>
 #include <SFML/Graphics.hpp>
 #include "piece.h"
 #include "stringUtils.h"

@@ -84,7 +84,7 @@ void Game::run() {
 			}
 		), "res/textures/", ".png");
 
-		board = BoardLoader::loadBoard("res/initial.chess", pieceDefs);
+		board = BoardLoader::loadBoard("saves/initial.chess", pieceDefs);
 	} catch (ResourceLoader::FileFormatException ex) {
         std::cout << "FileFormatException: " << ex.what() << std::endl;
         return;
