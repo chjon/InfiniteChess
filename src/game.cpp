@@ -1,5 +1,7 @@
-#include <iostream>
 #include "game.h"
+
+#include <iostream>
+#include "boardLoader.h"
 #include "pieceDefLoader.h"
 #include "resourceLoader.h"
 #include "stringUtils.h"
@@ -81,6 +83,8 @@ void Game::run() {
 				return name;
 			}
 		), "res/textures/", ".png");
+
+		board = BoardLoader::loadBoard("res/initial.chess", pieceDefs);
 	} catch (ResourceLoader::FileFormatException ex) {
         std::cout << "FileFormatException: " << ex.what() << std::endl;
         return;
@@ -93,8 +97,8 @@ void Game::run() {
 	}
 
 	// Initialize everything
+	pieceTracker->onStartup(std::get<2>(board));
 	renderer->onStartup();
-	pieceTracker->onStartup();
 	controller->onStartup();
 
 	sf::Clock timer;

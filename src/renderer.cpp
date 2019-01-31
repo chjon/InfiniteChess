@@ -44,7 +44,7 @@ void Renderer::drawBoard() const {
  * Draw the pieces
  */
 void Renderer::drawPieces() const {
-	std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>* pieces = &(game->pieceTracker->pieces);
+	std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>* pieces = game->pieceTracker->pieces;
 
 	// Draw the pieces
     for (std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>::iterator it = pieces->begin();

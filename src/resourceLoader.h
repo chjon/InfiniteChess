@@ -6,6 +6,7 @@
 #include "stringUtils.h"
 
 // Forward declarations
+class BoardLoader;
 class PieceDefLoader;
 
 // Class declaration
@@ -212,6 +213,7 @@ private:
 	}
 
 	// Friends
+	friend BoardLoader;
 	friend PieceDefLoader;
 
 public:

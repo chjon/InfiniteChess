@@ -197,7 +197,6 @@ private:
 	}
 
 public:
-	// Methods
 	/**
 	 * Load piece definitions from file
 	 */

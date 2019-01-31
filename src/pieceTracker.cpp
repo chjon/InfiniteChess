@@ -14,7 +14,8 @@
  * Constructor
  */
 PieceTracker::PieceTracker(Game* g) :
-	game{g}
+	game{g},
+	pieces{nullptr}
 {
 }
 
@@ -23,7 +24,7 @@ PieceTracker::PieceTracker(Game* g) :
  */
 PieceTracker::~PieceTracker() {
 	// Delete all the stored pieces
-	for (std::map<sf::Vector2i, Piece*>::iterator it = pieces.begin(); it != pieces.end(); it++) {
+	for (std::map<sf::Vector2i, Piece*>::iterator it = pieces->begin(); it != pieces->end(); it++) {
 		delete it->second;
 	}
 
@@ -35,8 +36,10 @@ PieceTracker::~PieceTracker() {
 /**
  * Handle the initial loading of pieces
  */
-void PieceTracker::onStartup() {
-	sf::Color TEAM_1(255, 255, 255, 255);
+void PieceTracker::onStartup(std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>* startPieces) {
+	pieces = startPieces;
+
+	/*sf::Color TEAM_1(255, 255, 255, 255);
 	sf::Color TEAM_2( 32,  32,  32, 255);
 
 	// Create pawns
@@ -69,14 +72,14 @@ void PieceTracker::onStartup() {
 
 	// Create queens
 	addPiece("Queen", TEAM_2, sf::Vector2i(-1, -4), PieceDef::Direction::DOWN);
-	addPiece("Queen", TEAM_1, sf::Vector2i(-1, 3), PieceDef::Direction::UP);
+	addPiece("Queen", TEAM_1, sf::Vector2i(-1, 3), PieceDef::Direction::UP);*/
 }
 
 /**
  * Update the pieces when the camera changes
  */
 void PieceTracker::onCameraChange() {
-	for (std::map<sf::Vector2i, Piece*>::iterator i = pieces.begin(); i != pieces.end(); ++i) {
+	for (std::map<sf::Vector2i, Piece*>::iterator i = pieces->begin(); i != pieces->end(); ++i) {
 		Piece* piece = i->second;
 		piece->onCameraChange(this);
 	}
@@ -102,7 +105,7 @@ bool PieceTracker::isRenderable(sf::Vector2i pos) const {
  */
 bool PieceTracker::addPiece(std::string pieceName, sf::Color team, sf::Vector2i pos, PieceDef::Direction dir) {
 	// Check whether a piece is already at the desired location
-	if (pieces.find(pos) != pieces.end()) return false;
+	if (pieces->find(pos) != pieces->end()) return false;
 
 	std::map<std::string, const PieceDef*>* pieceDefs = game->pieceDefs;
 
@@ -111,17 +114,17 @@ bool PieceTracker::addPiece(std::string pieceName, sf::Color team, sf::Vector2i 
 	if (it == pieceDefs->end()) return false;
 
 	// Create a copy from the definition
-	pieces.insert(std::make_pair(pos, new Piece(it->second, team, pos, dir)));
+	pieces->insert(std::make_pair(pos, new Piece(it->second, team, pos, dir)));
 
 	return true;
 }
 
 void PieceTracker::addPiece(Piece* piece) {
 	// Check whether a piece is already at the desired location
-	if (pieces.find(piece->getPos()) != pieces.end()) return;
+	if (pieces->find(piece->getPos()) != pieces->end()) return;
 
 	// Insert the piece
-	pieces.insert(std::make_pair(piece->getPos(), piece));
+	pieces->insert(std::make_pair(piece->getPos(), piece));
 }
 
 /**
@@ -134,7 +137,7 @@ bool PieceTracker::removePiece(sf::Vector2i pos) {
 		return false;
 	}
 
-	pieces.erase(pieces.find(pos));
+	pieces->erase(pieces->find(pos));
 	return true;
 }
 
@@ -142,10 +145,10 @@ bool PieceTracker::removePiece(sf::Vector2i pos) {
  * Get the piece at a certain spot
  */
 Piece* PieceTracker::getPiece(sf::Vector2i pos) const {
-	const std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>::const_iterator it = pieces.find(pos);
+	const std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>::const_iterator it = pieces->find(pos);
 
 	// Return the null pointer if the piece is not in the map
-	if (it == pieces.end()) {
+	if (it == pieces->end()) {
 		return nullptr;
 	}
 
@@ -157,7 +160,7 @@ Piece* PieceTracker::getPiece(sf::Vector2i pos) const {
  */
 const std::vector<Piece*>* PieceTracker::getPieces() const {
 	std::vector<Piece*>* pieceList = new std::vector<Piece*>();
-	for (std::map<sf::Vector2i, Piece*>::const_iterator i = pieces.begin(); i != pieces.end(); ++i) {
+	for (std::map<sf::Vector2i, Piece*>::const_iterator i = pieces->begin(); i != pieces->end(); ++i) {
         pieceList->push_back(i->second);
 	}
 
@@ -194,7 +197,7 @@ std::vector<MoveMarker*>* PieceTracker::getMoveMarkers(sf::Vector2i pos) const {
 	// Iterate through each piece
 	for (std::map<
 			sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically
-		>::const_iterator i = pieces.begin(); i != pieces.end(); ++i
+		>::const_iterator i = pieces->begin(); i != pieces->end(); ++i
 	) {
         const std::vector<MoveMarker*>* markersForPiece = i->second->getMoveTracker()->getMoveMarkers(pos);
 

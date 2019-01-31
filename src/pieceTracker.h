@@ -22,7 +22,7 @@ private:
 	Game* game;
 
     std::map<std::string, PieceDef*>* pieceDefs;
-    std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically> pieces;
+    std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>* pieces;
 
     // Friends
     friend Renderer;
@@ -33,7 +33,7 @@ public:
     ~PieceTracker();
 
     // Event handlers
-    void onStartup();
+    void onStartup(std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>* startPieces);
     void onCameraChange();
 
     // Accessors
