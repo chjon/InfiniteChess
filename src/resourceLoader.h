@@ -1,6 +1,7 @@
 #ifndef CHESS_RESOURCE_LOADER_H
 #define CHESS_RESOURCE_LOADER_H
 
+#include <fstream>
 #include <SFML/Graphics.hpp>
 #include "stringUtils.h"
 
@@ -164,6 +165,50 @@ private:
 		// Clean up and return
 		delete objectStrings;
 		return objectMap;
+	}
+
+	// I/O Methods
+	/**
+	 * Read a file into a single string, removing whitespace
+	 */
+	inline static const std::string removeWhiteSpace(const std::string& fileName) {
+		std::ifstream file(fileName, std::ios::in);
+		std::string line;
+
+		// Check whether the file is open
+		if (!file.is_open()) {
+			throw ResourceLoader::IOException("Unable to open file: " + fileName);
+		}
+
+		// Read each line of the file into a single string
+		std::string compressedString = "";
+		while (std::getline(file, line)) {
+			unsigned int beginIndex = 0;
+			for (unsigned int i = 0; i < line.length(); i++) {
+				// Skip the rest of the line if it is commented out
+				if (line[i] == ResourceLoader::COMMENT_MARKER) {
+					compressedString += line.substr(beginIndex, i - beginIndex);
+					beginIndex = line.length();
+					break;
+				}
+
+				// Skip whitespace
+				if (line[i] == ' ' || line[i] == '\t') {
+					if (beginIndex != i) {
+						compressedString += line.substr(beginIndex, i - beginIndex);
+					}
+
+					beginIndex = i + 1;
+				}
+			}
+
+			compressedString += line.substr(beginIndex);
+		}
+
+		// Close the file
+		file.close();
+
+		return compressedString;
 	}
 
 	// Friends

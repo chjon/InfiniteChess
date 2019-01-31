@@ -75,7 +75,7 @@ Game::~Game() {
 void Game::run() {
 	// Try loading resources
 	try {
-		pieceDefs = PieceDefLoader::loadPieceDefs("res/pieces.def", ".def");
+		pieceDefs = PieceDefLoader::loadPieceDefs("res/pieces.def");
 		textures  = ResourceLoader::loadTextures(ResourceLoader::getListFromMap(pieceDefs,
 			(std::string(*)(const std::string, const PieceDef*)) [](auto name, auto pieceDef){
 				return name;
