@@ -31,29 +31,6 @@ Game::Game() {
  * Destructor
  */
 Game::~Game() {
-	// Delete all the textures
-	if (textures != nullptr) {
-		for (std::map<std::string, sf::Texture*>::iterator it = textures->begin(); it != textures->end(); it++) {
-			if (it->second != nullptr) {
-				delete it->second;
-			}
-		}
-
-		delete textures;
-		textures = nullptr;
-	}
-
-
-	// Delete all the definitions
-	if (pieceDefs != nullptr) {
-		for (std::map<std::string, const PieceDef*>::iterator it = pieceDefs->begin(); it != pieceDefs->end(); it++) {
-			delete it->second;
-		}
-
-		delete pieceDefs;
-		pieceDefs = nullptr;
-	}
-
 	delete controller;
     delete pieceTracker;
 	delete inputHandler;
@@ -77,14 +54,30 @@ Game::~Game() {
 void Game::run() {
 	// Try loading resources
 	try {
-		pieceDefs = PieceDefLoader::loadPieceDefs("res/pieces.def");
-		textures  = ResourceLoader::loadTextures(ResourceLoader::getListFromMap(pieceDefs,
-			(std::string(*)(const std::string, const PieceDef*)) [](auto name, auto pieceDef){
-				return name;
-			}
-		), "res/textures/", ".png");
+		std::map<std::string, const PieceDef*>* pieceDefs = PieceDefLoader::loadPieceDefs("res/pieces.def");
+		std::map<std::string, sf::Texture*>* textures = ResourceLoader::loadTextures(
+			ResourceLoader::getListFromMap(pieceDefs,
+				(std::string(*)(const std::string, const PieceDef*)) [](auto name, auto pieceDef){
+					return name;
+				}
+			), "res/textures/", ".png"
+		);
 
-		board = BoardLoader::loadBoard("saves/initial.chess", pieceDefs);
+		std::tuple<
+			std::map<const unsigned int, std::pair<const std::string, sf::Color>>*,
+			unsigned int,
+			std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>*
+		> board = BoardLoader::loadBoard("saves/initial.chess", pieceDefs);
+
+		// Initialize everything
+		pieceTracker->onStartup(pieceDefs, std::get<2>(board));
+		renderer->onStartup(textures, std::get<0>(board));
+		controller->onStartup(std::get<0>(board), std::get<1>(board));
+
+		// Clean up
+		pieceDefs = nullptr;
+		textures = nullptr;
+
 	} catch (ResourceLoader::FileFormatException ex) {
         std::cout << "FileFormatException: " << ex.what() << std::endl;
         return;
@@ -95,11 +88,6 @@ void Game::run() {
         std::cout << "ParseException: " << ex.what() << std::endl;
         return;
 	}
-
-	// Initialize everything
-	pieceTracker->onStartup(std::get<2>(board));
-	renderer->onStartup();
-	controller->onStartup();
 
 	sf::Clock timer;
 	sf::Time delay = sf::seconds(0.01f);

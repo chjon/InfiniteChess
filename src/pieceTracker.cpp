@@ -15,6 +15,7 @@
  */
 PieceTracker::PieceTracker(Game* g) :
 	game{g},
+	pieceDefs{nullptr},
 	pieces{nullptr}
 {
 }
@@ -24,11 +25,26 @@ PieceTracker::PieceTracker(Game* g) :
  */
 PieceTracker::~PieceTracker() {
 	// Delete all the stored pieces
-	for (std::map<sf::Vector2i, Piece*>::iterator it = pieces->begin(); it != pieces->end(); it++) {
-		delete it->second;
+	if (pieces != nullptr) {
+		for (std::map<sf::Vector2i, Piece*>::iterator it = pieces->begin(); it != pieces->end(); it++) {
+			delete it->second;
+		}
+
+		// Clean up
+		delete pieces;
+		pieces = nullptr;
 	}
 
-	pieceDefs = nullptr;
+	// Delete all the piece definitions
+	if (pieceDefs != nullptr) {
+		for (std::map<std::string, const PieceDef*>::iterator it = pieceDefs->begin(); it != pieceDefs->end(); it++) {
+			delete it->second;
+		}
+
+		// Clean up
+		delete pieceDefs;
+		pieceDefs = nullptr;
+	}
 }
 
 // Public event handlers
@@ -36,43 +52,12 @@ PieceTracker::~PieceTracker() {
 /**
  * Handle the initial loading of pieces
  */
-void PieceTracker::onStartup(std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>* startPieces) {
+void PieceTracker::onStartup(
+	std::map<std::string, const PieceDef*>* defs,
+	std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>* startPieces
+) {
+	pieceDefs = defs;
 	pieces = startPieces;
-
-	/*sf::Color TEAM_1(255, 255, 255, 255);
-	sf::Color TEAM_2( 32,  32,  32, 255);
-
-	// Create pawns
-	for (int i = -4; i < 4; i++) {
-		addPiece("Pawn", TEAM_2, sf::Vector2i(i, -3), PieceDef::Direction::DOWN);
-		addPiece("Pawn", TEAM_1, sf::Vector2i(i, 2), PieceDef::Direction::UP);
-	}
-
-	// Create rooks
-	addPiece("Rook", TEAM_2, sf::Vector2i(-4, -4), PieceDef::Direction::DOWN);
-	addPiece("Rook", TEAM_2, sf::Vector2i(3, -4), PieceDef::Direction::DOWN);
-	addPiece("Rook", TEAM_1, sf::Vector2i(-4, 3), PieceDef::Direction::UP);
-	addPiece("Rook", TEAM_1, sf::Vector2i(3, 3), PieceDef::Direction::UP);
-
-	// Create knights
-	addPiece("Knight", TEAM_2, sf::Vector2i(-3, -4), PieceDef::Direction::DOWN);
-	addPiece("Knight", TEAM_2, sf::Vector2i(2, -4), PieceDef::Direction::DOWN);
-	addPiece("Knight", TEAM_1, sf::Vector2i(-3, 3), PieceDef::Direction::UP);
-	addPiece("Knight", TEAM_1, sf::Vector2i(2, 3), PieceDef::Direction::UP);
-
-	// Create bishops
-	addPiece("Bishop", TEAM_2, sf::Vector2i(-2, -4), PieceDef::Direction::DOWN);
-	addPiece("Bishop", TEAM_2, sf::Vector2i(1, -4), PieceDef::Direction::DOWN);
-	addPiece("Bishop", TEAM_1, sf::Vector2i(-2, 3), PieceDef::Direction::UP);
-	addPiece("Bishop", TEAM_1, sf::Vector2i(1, 3), PieceDef::Direction::UP);
-
-	// Create kings
-	addPiece("King", TEAM_2, sf::Vector2i(0, -4), PieceDef::Direction::DOWN);
-	addPiece("King", TEAM_1, sf::Vector2i(0, 3), PieceDef::Direction::UP);
-
-	// Create queens
-	addPiece("Queen", TEAM_2, sf::Vector2i(-1, -4), PieceDef::Direction::DOWN);
-	addPiece("Queen", TEAM_1, sf::Vector2i(-1, 3), PieceDef::Direction::UP);*/
 }
 
 /**
@@ -103,22 +88,6 @@ bool PieceTracker::isRenderable(sf::Vector2i pos) const {
 /**
  * Add a piece to the piece tracker
  */
-bool PieceTracker::addPiece(std::string pieceName, sf::Color team, sf::Vector2i pos, PieceDef::Direction dir) {
-	// Check whether a piece is already at the desired location
-	if (pieces->find(pos) != pieces->end()) return false;
-
-	std::map<std::string, const PieceDef*>* pieceDefs = game->pieceDefs;
-
-	// Check whether a piece with the desired name exists
-	std::map<std::string, const PieceDef*>::iterator it = pieceDefs->find(pieceName);
-	if (it == pieceDefs->end()) return false;
-
-	// Create a copy from the definition
-	pieces->insert(std::make_pair(pos, new Piece(it->second, team, pos, dir)));
-
-	return true;
-}
-
 void PieceTracker::addPiece(Piece* piece) {
 	// Check whether a piece is already at the desired location
 	if (pieces->find(piece->getPos()) != pieces->end()) return;

@@ -100,7 +100,7 @@ private:
 
 		// Clean up and return
 		delete args;
-		return new Piece(defIter->second, teamIter->second.second, pos, (PieceDef::Direction) dir);
+		return new Piece(defIter->second, teamIter->first, pos, (PieceDef::Direction) dir);
 	}
 
     /**

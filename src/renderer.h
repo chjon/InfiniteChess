@@ -43,6 +43,9 @@ private:
 	Game* game;
 	sf::RenderWindow* window;
 
+	std::map<std::string, sf::Texture*>* textures;
+	std::map<const unsigned int, std::pair<const std::string, sf::Color>>* teams;
+
 	unsigned int parity;
 	float tileSize = 50;
 
@@ -71,7 +74,10 @@ public:
 	~Renderer();
 
 	// Event handlers
-	void onStartup();
+	void onStartup(
+		std::map<std::string, sf::Texture*>* textures_,
+		std::map<const unsigned int, std::pair<const std::string, sf::Color>>* teams_
+	);
 	void onResize(const unsigned int width, const unsigned int height);
 	void onCameraMove();
 	void onZoom(const float delta);

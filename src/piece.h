@@ -23,7 +23,7 @@ private:
     const PieceDef* pieceDef;
 
     // Piece properties
-    sf::Color team;
+    unsigned int team;
     sf::Vector2i pos;
 	PieceDef::Direction dir;
 	unsigned int moveCount;
@@ -39,12 +39,12 @@ private:
 
 public:
 	// Constructors
-	Piece(const PieceDef* pieceDef_, const sf::Color team_, sf::Vector2i pos_, PieceDef::Direction dir_);
+	Piece(const PieceDef* pieceDef_, const unsigned int team_, sf::Vector2i pos_, PieceDef::Direction dir_);
 	~Piece();
 
 	// Accessors
 	inline const sf::Vector2i getPos() const { return pos; }
-	inline const sf::Color getTeam() const { return team; }
+	inline const unsigned int getTeam() const { return team; }
 	inline const PieceDef::Direction getDir() const { return dir; }
 	inline const unsigned int getMoveCount() const { return moveCount; }
 	inline const PieceDef* getDef() const { return pieceDef; }

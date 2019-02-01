@@ -27,15 +27,6 @@ private:
 	PieceTracker*     pieceTracker;
 	Controller*       controller;
 
-	std::map<std::string, const PieceDef*>* pieceDefs;
-	std::map<std::string, sf::Texture*>* textures;
-
-	std::tuple<
-		std::map<const unsigned int, std::pair<const std::string, sf::Color>>*,
-        unsigned int,
-		std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>*
-	> board;
-
 	// Friends
 	friend Renderer;
 	friend InputHandler;
