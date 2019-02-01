@@ -21,8 +21,8 @@ private:
     // Members
 	Game* game;
 
-    std::map<std::string, PieceDef*>* pieceDefs;
-    std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically> pieces;
+    std::map<std::string, const PieceDef*>* pieceDefs;
+    std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>* pieces;
 
     // Friends
     friend Renderer;
@@ -33,7 +33,10 @@ public:
     ~PieceTracker();
 
     // Event handlers
-    void onStartup();
+    void onStartup(
+		std::map<std::string, const PieceDef*>* defs,
+		std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>* startPieces
+	);
     void onCameraChange();
 
     // Accessors
@@ -47,7 +50,6 @@ public:
 	bool isRenderable(sf::Vector2i pos) const;
 
     // Methods
-    bool addPiece(std::string name, sf::Color team, sf::Vector2i pos, PieceDef::Direction);
     void addPiece(Piece* piece);
     bool removePiece(sf::Vector2i pos);
     MoveMarker* getValidMove(Piece* piece, sf::Vector2i dest);

@@ -26,7 +26,6 @@ private:
 	InputHandler*     inputHandler;
 	PieceTracker*     pieceTracker;
 	Controller*       controller;
-	ResourceLoader*   resourceLoader;
 
 	// Friends
 	friend Renderer;

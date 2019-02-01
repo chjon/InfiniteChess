@@ -1,5 +1,9 @@
-#include <iostream>
 #include "game.h"
+
+#include <iostream>
+#include "boardLoader.h"
+#include "pieceDefLoader.h"
+#include "resourceLoader.h"
 #include "stringUtils.h"
 
 // Public constructors
@@ -21,21 +25,18 @@ Game::Game() {
 	inputHandler   = new InputHandler(this, window, renderer);
 	pieceTracker   = new PieceTracker(this);
 	controller     = new Controller(this, pieceTracker);
-	resourceLoader = new ResourceLoader(pieceTracker);
 }
 
 /**
  * Destructor
  */
 Game::~Game() {
-	delete resourceLoader;
 	delete controller;
     delete pieceTracker;
 	delete inputHandler;
 	delete renderer;
 	delete window;
 
-	resourceLoader = nullptr;
 	controller     = nullptr;
 	pieceTracker   = nullptr;
 	inputHandler   = nullptr;
@@ -51,11 +52,32 @@ Game::~Game() {
  * Run the game
  */
 void Game::run() {
-	// Initialize everything
-
 	// Try loading resources
 	try {
-		resourceLoader->onStartUp();
+		std::map<std::string, const PieceDef*>* pieceDefs = PieceDefLoader::loadPieceDefs("res/pieces.def");
+		std::map<std::string, sf::Texture*>* textures = ResourceLoader::loadTextures(
+			ResourceLoader::getListFromMap(pieceDefs,
+				(std::string(*)(const std::string, const PieceDef*)) [](auto name, auto pieceDef){
+					return name;
+				}
+			), "res/textures/", ".png"
+		);
+
+		std::tuple<
+			std::map<const unsigned int, std::pair<const std::string, sf::Color>>*,
+			unsigned int,
+			std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>*
+		> board = BoardLoader::loadBoard("saves/initial.chess", pieceDefs);
+
+		// Initialize everything
+		pieceTracker->onStartup(pieceDefs, std::get<2>(board));
+		renderer->onStartup(textures, std::get<0>(board));
+		controller->onStartup(std::get<0>(board), std::get<1>(board));
+
+		// Clean up
+		pieceDefs = nullptr;
+		textures = nullptr;
+
 	} catch (ResourceLoader::FileFormatException ex) {
         std::cout << "FileFormatException: " << ex.what() << std::endl;
         return;
@@ -66,10 +88,6 @@ void Game::run() {
         std::cout << "ParseException: " << ex.what() << std::endl;
         return;
 	}
-
-	renderer->onStartup();
-	pieceTracker->onStartup();
-	controller->onStartup();
 
 	sf::Clock timer;
 	sf::Time delay = sf::seconds(0.01f);

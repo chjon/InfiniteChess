@@ -6,7 +6,7 @@
 
 // Constructors
 
-Piece::Piece(const PieceDef* pieceDef_, const sf::Color team_, sf::Vector2i pos_, PieceDef::Direction dir_) :
+Piece::Piece(const PieceDef* pieceDef_, const unsigned int team_, sf::Vector2i pos_, PieceDef::Direction dir_) :
 	pieceDef{pieceDef_},
 	team{team_},
 	pos{pos_},

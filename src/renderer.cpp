@@ -44,7 +44,7 @@ void Renderer::drawBoard() const {
  * Draw the pieces
  */
 void Renderer::drawPieces() const {
-	std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>* pieces = &(game->pieceTracker->pieces);
+	std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>* pieces = game->pieceTracker->pieces;
 
 	// Draw the pieces
     for (std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>::iterator it = pieces->begin();
@@ -89,7 +89,10 @@ void Renderer::drawOverlays() const {
 
 	// If no piece is selected, only pieces should be selectable
     if (selectedPiece == nullptr) {
-		if (game->pieceTracker->getPiece(mousePos) == nullptr) {
+		Piece* hoveredPiece = game->pieceTracker->getPiece(mousePos);
+
+		// Only the piece on the current turn's team is selectable
+		if (hoveredPiece == nullptr || !game->controller->canMove(hoveredPiece->team)) {
 			drawTile(mousePos.x, mousePos.y, MOUSE_INVALID_COLOR);
 		} else {
 			drawTile(mousePos.x, mousePos.y, MOUSE_VALID_COLOR);
@@ -132,10 +135,21 @@ void Renderer::drawDebugText(const std::string& s, const unsigned int row) const
  * @param c the color to fill with
  */
 void Renderer::drawPiece(Piece* p) const {
-	std::map<std::string, sf::Texture*>::iterator it = game->resourceLoader->textures->find(p->pieceDef->name);
-	if (it == game->resourceLoader->textures->end() || it->second == nullptr) {
+	// Get the team color
+	sf::Color teamColor = sf::Color::White;
+	std::map<
+		const unsigned int,
+		std::pair<const std::string,
+		sf::Color>
+	>::iterator teamIter = teams->find(p->team);
+	if (teamIter != teams->end()) {
+		teamColor = teamIter->second.second;
+	}
+
+	std::map<std::string, sf::Texture*>::iterator it = textures->find(p->pieceDef->name);
+	if (it == textures->end() || it->second == nullptr) {
 		sf::CircleShape s(tileSize / 2);
-		s.setFillColor(p->team);
+		s.setFillColor(teamColor);
 
 		s.setPosition(
 			tileStartPos.x + tileSize * (p->pos.x - cameraPos.x + dimensionsInTiles.x / 2),
@@ -146,7 +160,7 @@ void Renderer::drawPiece(Piece* p) const {
 	} else {
         sf::Sprite s;
         s.setTexture(*(it->second));
-        s.setColor(p->team);
+        s.setColor(teamColor);
         s.setScale(sf::Vector2f(tileSize / 16, tileSize / 16));
         s.setPosition(
 			tileStartPos.x + tileSize * (p->pos.x - cameraPos.x + dimensionsInTiles.x / 2),
@@ -202,11 +216,7 @@ void Renderer::drawDebug() const {
 		drawDebugText(s, row++);
 		s = "Selected piece pos: (" + std::to_string(selectedPiece->pos.x) + ", " + std::to_string(selectedPiece->pos.y) + ")";
 		drawDebugText(s, row++);
-		s = "Selected piece team: rgba(" +
-			std::to_string(selectedPiece->team.r) + "," +
-			std::to_string(selectedPiece->team.g) + "," +
-			std::to_string(selectedPiece->team.b) + "," +
-			std::to_string(selectedPiece->team.a) + ")";
+		s = "Selected piece team: " + teams->find(selectedPiece->team)->second.first;
 		drawDebugText(s, row++);
 	}
 }
@@ -222,7 +232,9 @@ void Renderer::drawDebug() const {
  */
 Renderer::Renderer(Game* g, sf::RenderWindow* w) :
 	game{g},
-	window{w}
+	window{w},
+	textures{nullptr},
+	teams{nullptr}
 {
 	window->setFramerateLimit(MAX_FRAMERATE);
 }
@@ -231,6 +243,25 @@ Renderer::Renderer(Game* g, sf::RenderWindow* w) :
  * Destructor
  */
 Renderer::~Renderer() {
+	// Delete all the textures
+	if (textures != nullptr) {
+		for (std::map<std::string, sf::Texture*>::iterator i = textures->begin(); i != textures->end(); ++i) {
+			if (i->second != nullptr) {
+				delete i->second;
+			}
+		}
+
+		// Clean up
+		delete textures;
+		textures = nullptr;
+	}
+
+	// Delete the teams
+    if (teams != nullptr) {
+        delete teams;
+		teams = nullptr;
+    }
+
 	game   = nullptr;
 	window = nullptr;
 }
@@ -242,13 +273,19 @@ Renderer::~Renderer() {
 /**
  * Handle initialization
  */
-void Renderer::onStartup() {
+void Renderer::onStartup(
+	std::map<std::string, sf::Texture*>* textures_,
+	std::map<const unsigned int, std::pair<const std::string, sf::Color>>* teams_
+) {
+	textures = textures_;
+	teams = teams_;
+
 	// Load resources
 	debugFont.loadFromFile(FONT_DIRECTORY + DEBUG_FONT_FILENAME);
 
 	// Set up window icon
-	std::map<std::string, sf::Texture*>::iterator iconIter = game->resourceLoader->textures->find(WINDOW_ICON);
-	if (iconIter != game->resourceLoader->textures->end()) {
+	std::map<std::string, sf::Texture*>::iterator iconIter = textures->find(WINDOW_ICON);
+	if (iconIter != textures->end()) {
 		sf::Texture* t = iconIter->second;
 		window->setIcon(t->getSize().x, t->getSize().y, t->copyToImage().getPixelsPtr());
 	}

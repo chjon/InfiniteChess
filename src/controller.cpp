@@ -10,7 +10,29 @@
 
 // Private event handlers
 
-void Controller::onStartup() {
+void Controller::onStartup(
+	std::map<const unsigned int, std::pair<const std::string, sf::Color>>* teams_,
+	unsigned int curTeam_
+) {
+	NUM_TEAMS = teams_->size();
+	teams = new unsigned int[NUM_TEAMS];
+
+	// Create a list of all the teams
+	unsigned int index = 0;
+	std::map<const unsigned int, std::pair<const std::string, sf::Color>>::iterator i = teams_->begin();
+	while (i != teams_->end()) {
+		// Save the team index
+		teams[index] = i->first;
+
+		// Get the index of the team to go first
+        if (i->first == curTeam_) {
+			curTurn = index;
+        }
+
+        ++i;
+        ++index;
+	}
+
 	// Update all of the pieces in the piece tracker
 	const std::vector<Piece*>* pieces = pieceTracker->getPieces();
 	for (std::vector<Piece*>::const_iterator i = pieces->begin(); i != pieces->end(); ++i) {
@@ -31,6 +53,11 @@ void Controller::onMousePress(sf::Vector2i pos) {
 	// Select piece
     if (selectedPiece == nullptr) {
 		selectedPiece = game->pieceTracker->getPiece(pos);
+
+		// Check whether the piece can be selected this turn
+		if (selectedPiece != nullptr && teams[curTurn] != selectedPiece->getTeam()) {
+			selectedPiece = nullptr;
+		}
 
 	// Deselect
     } else if (selectedPiece->getPos() == pos) {
@@ -111,6 +138,11 @@ void Controller::move(const MoveMarker* dest) {
 	// Execute all the queued events
 	eventProcessor.executeEvents();
 
+	// Progress to the next turn
+	if (dest->getRootMove()->endsTurn) {
+		curTurn = (curTurn + 1) % NUM_TEAMS;
+	}
+
 	// Deselect the piece
 	selectedPiece = nullptr;
 
@@ -129,6 +161,8 @@ Controller::Controller(Game* g, PieceTracker* p) :
 	game{g},
 	pieceTracker{p},
 	eventProcessor{p, actionListenerTracker},
+	teams{nullptr},
+	curTurn{0},
 	selectedPiece{nullptr}
 {
 }
@@ -137,6 +171,8 @@ Controller::Controller(Game* g, PieceTracker* p) :
  * Destructor
  */
 Controller::~Controller() {
+	delete[] teams;
+	teams = nullptr;
 	selectedPiece = nullptr;
 }
 
@@ -149,4 +185,11 @@ Controller::~Controller() {
  */
 Piece* Controller::getSelectedPiece() const {
 	return selectedPiece;
+}
+
+/**
+ * Determine whether it is this team's turn to move
+ */
+bool Controller::canMove(unsigned int team) const {
+	return teams[curTurn] == team;
 }

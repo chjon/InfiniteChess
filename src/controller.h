@@ -25,6 +25,10 @@ private:
 	ActionListenerTracker actionListenerTracker;
 	EventProcessor eventProcessor;
 
+	unsigned int NUM_TEAMS = 1;
+	unsigned int* teams;
+	unsigned int curTurn;
+
 	Piece* selectedPiece;
 
 	// Event handlers
@@ -42,10 +46,14 @@ public:
 	~Controller();
 
 	// Event handlers
-	void onStartup();
+	void onStartup(
+		std::map<const unsigned int, std::pair<const std::string, sf::Color>>* teams,
+		unsigned int curTeam
+	);
 
 	// Accessors
 	Piece* getSelectedPiece() const;
+	bool canMove(unsigned int team) const;
 };
 
 #endif // CHESS_CONTROLLER_H

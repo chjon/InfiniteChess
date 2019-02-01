@@ -11,7 +11,6 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option use_console_runner="0" />
 				<Compiler>
 					<Add option="-std=c++14" />
 					<Add option="-g" />
@@ -59,6 +58,7 @@
 		</Compiler>
 		<Unit filename="src/actionListenerTracker.cpp" />
 		<Unit filename="src/actionListenerTracker.h" />
+		<Unit filename="src/boardLoader.h" />
 		<Unit filename="src/controller.cpp" />
 		<Unit filename="src/controller.h" />
 		<Unit filename="src/event.h" />
@@ -81,13 +81,11 @@
 		<Unit filename="src/piece.h" />
 		<Unit filename="src/pieceDef.cpp" />
 		<Unit filename="src/pieceDef.h" />
-		<Unit filename="src/pieceDefLoader.cpp" />
 		<Unit filename="src/pieceDefLoader.h" />
 		<Unit filename="src/pieceTracker.cpp" />
 		<Unit filename="src/pieceTracker.h" />
 		<Unit filename="src/renderer.cpp" />
 		<Unit filename="src/renderer.h" />
-		<Unit filename="src/resourceLoader.cpp" />
 		<Unit filename="src/resourceLoader.h" />
 		<Unit filename="src/stringUtils.h" />
 		<Unit filename="src/targetingRule.cpp" />
