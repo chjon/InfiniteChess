@@ -135,11 +135,13 @@ void Controller::move(const MoveMarker* dest) {
 		}
 	}
 
+	bool endsTurn = dest->getRootMove()->endsTurn;
+
 	// Execute all the queued events
 	eventProcessor.executeEvents();
 
 	// Progress to the next turn
-	if (dest->getRootMove()->endsTurn) {
+	if (endsTurn) {
 		curTurn = (curTurn + 1) % NUM_TEAMS;
 	}
 
