@@ -1,5 +1,6 @@
 #include "eventProcessor.h"
 
+#include <iostream>
 #include <SFML/Graphics.hpp>
 #include "actionListenerTracker.h"
 #include "event.h"
@@ -39,6 +40,8 @@ EventProcessor::~EventProcessor() {
 void EventProcessor::execute(Event* event) {
 	Piece* piece = event->piece;
 
+	std::cout << '\t' << piece->getDef()->name << VectorUtils::toString(piece->getPos()) << event->action << ':' << event->args << std::endl;
+
 	if ("enter" == event->action) {
 		// Update the piece
         piece->onMove();
@@ -53,7 +56,14 @@ void EventProcessor::execute(Event* event) {
 		// Alert action listeners
         actionListenerTracker.notify(piece->getPos(), event);
 
+        // Register action listeners
+        const std::vector<MoveMarker*>* moveMarkers = piece->getMoveTracker()->getMoveMarkers();
+        for (std::vector<MoveMarker*>::const_iterator i = moveMarkers->begin(); i != moveMarkers->end(); ++i) {
+            actionListenerTracker.addListeners(*i);
+        }
+
 		// Clean up
+		delete moveMarkers;
 		delete enterPos;
 
 	} else if ("leave" == event->action) {
@@ -114,6 +124,8 @@ void EventProcessor::insertInQueue(int queueIndex, Event* event) {
  * Execute all of the events
  */
 void EventProcessor::executeEvents() {
+	std::cout << "EXECUTING EVENTS" << std::endl;
+
 	// Execute the events in each event queue
 	for (std::vector<std::vector<Event*>*>::const_iterator i = eventQueues.begin(); i != eventQueues.end(); ++i) {
 		// Delete each stored event
