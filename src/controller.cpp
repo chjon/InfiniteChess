@@ -47,6 +47,13 @@ void Controller::onStartup(
 }
 
 /**
+ * Add a move marker as a listener when it is generated
+ */
+void Controller::onGeneration(MoveMarker* marker) {
+	actionListenerTracker.addListeners(marker);
+}
+
+/**
  * Select/deselect a square
  */
 void Controller::onMousePress(sf::Vector2i pos) {

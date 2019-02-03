@@ -53,20 +53,7 @@ void EventProcessor::execute(Event* event) {
 		// Alert action listeners
         actionListenerTracker.notify(piece->getPos(), event);
 
-        // Register action listeners
-        const std::vector<MoveMarker*>* moveMarkers = piece->getMoveTracker()->getMoveMarkers();
-        for (std::vector<MoveMarker*>::const_iterator i = moveMarkers->begin(); i != moveMarkers->end(); ++i) {
-			const std::vector<sf::Vector2i>* targetPositions = (*i)->getTargetedPositions();
-			for (std::vector<sf::Vector2i>::const_iterator j = targetPositions->begin(); j != targetPositions->end(); ++j) {
-                actionListenerTracker.addListener(*j, *i);
-			}
-
-			// Clean up
-			delete targetPositions;
-        }
-
 		// Clean up
-		delete moveMarkers;
 		delete enterPos;
 
 	} else if ("leave" == event->action) {

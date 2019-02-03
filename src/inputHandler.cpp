@@ -17,6 +17,7 @@ void InputHandler::checkKeyboard() {
 	// Only move the camera if there is a non-zero displacement
 	if (translationVec.x != 0 || translationVec.y != 0) {
 		renderer->moveCamera(translationVec);
+		game->onCameraChange();
 	}
 }
 

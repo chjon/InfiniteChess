@@ -70,6 +70,13 @@ void PieceTracker::onCameraChange() {
 	}
 }
 
+/**
+ * Notify the game that a new move marker was generated
+ */
+void PieceTracker::onGeneration(MoveMarker* generated) {
+    game->onGeneration(generated);
+}
+
 
 
 // Accessors

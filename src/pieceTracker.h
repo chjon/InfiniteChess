@@ -38,6 +38,7 @@ public:
 		std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>* startPieces
 	);
     void onCameraChange();
+	void onGeneration(MoveMarker* generated);
 
     // Accessors
 

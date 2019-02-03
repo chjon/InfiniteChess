@@ -23,9 +23,7 @@ ActionListenerTracker::~ActionListenerTracker() {
 	actionListeners.clear();
 }
 
-
-
-// Public API
+// Helpers
 
 /**
  * Add a move listener
@@ -54,6 +52,24 @@ void ActionListenerTracker::addListener(sf::Vector2i positionToNotify, MoveMarke
 
     // Add the listener
     positionListeners->push_back(listener);
+}
+
+
+// Public API
+
+/**
+ * Add a move listener
+ *
+ * @param marker the move marker to notify upon update of the trigger position
+ */
+void ActionListenerTracker::addListeners(MoveMarker* marker) {
+    const std::vector<sf::Vector2i>* targetPositions = marker->getTargetedPositions();
+	for (std::vector<sf::Vector2i>::const_iterator i = targetPositions->begin(); i != targetPositions->end(); ++i) {
+		addListener(*i, marker);
+	}
+
+	// Clean up
+	delete targetPositions;
 }
 
 /**

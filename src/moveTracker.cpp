@@ -141,6 +141,7 @@ void MoveTracker::onCameraChange(PieceTracker* pieceTracker) {
 
             // Update the move marker on generation
             terminal->onGeneration(pieceTracker);
+            pieceTracker->onGeneration(terminal);
         }
 
         // Add the new terminal move marker to a temporary list

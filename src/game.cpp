@@ -105,3 +105,13 @@ void Game::run() {
 		renderer->draw();
 	}
 }
+
+// Event processors
+
+void Game::onCameraChange() {
+	pieceTracker->onCameraChange();
+}
+
+void Game::onGeneration(MoveMarker* marker) {
+    controller->onGeneration(marker);
+}

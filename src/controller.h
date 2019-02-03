@@ -50,6 +50,7 @@ public:
 		std::map<const unsigned int, std::pair<const std::string, sf::Color>>* teams,
 		unsigned int curTeam
 	);
+	void onGeneration(MoveMarker* marker);
 
 	// Accessors
 	Piece* getSelectedPiece() const;
