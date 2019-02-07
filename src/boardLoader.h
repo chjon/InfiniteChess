@@ -12,6 +12,7 @@ private:
 	// Constants
 	static const unsigned int COLOR_NUM_ARGS = 4;
 	static const unsigned int BOARD_NUM_ARGS = 3;
+	static const unsigned int PIECE_NUM_ARGS = 6;
 
     // Object generation methods
 
@@ -71,6 +72,7 @@ private:
 	) {
 		// Validate input
 		ResourceLoader::checkBracketEnclosed(pieceString);
+		ResourceLoader::checkNumArgs(pieceString.substr(1, pieceString.length() - 2), PIECE_NUM_ARGS);
 
 		unsigned int argIndex = 0;
 		std::vector<std::string>* args = StringUtils::getList(
@@ -95,12 +97,22 @@ private:
 			);
 		}
 
+		// Get other piece properties
         sf::Vector2i pos = VectorUtils::fromString((*args)[argIndex++]);
-        const unsigned int dir = std::stoi((*args)[argIndex++]);
+        const unsigned int dir = std::stoi((*args)[argIndex++]) % 4;
+        const unsigned int moveCount = std::stoi((*args)[argIndex++]);
+        const int lastMove = std::stoi((*args)[argIndex++]);
 
 		// Clean up and return
 		delete args;
-		return new Piece(defIter->second, teamIter->first, pos, (PieceDef::Direction) dir);
+		return new Piece(
+			defIter->second,
+			teamIter->first,
+			pos,
+			(PieceDef::Direction) dir,
+			moveCount,
+			lastMove
+		);
 	}
 
     /**

@@ -1,6 +1,5 @@
 #include "moveMarker.h"
 
-#include <iostream>
 #include <SFML/Graphics.hpp>
 #include <tuple>
 #include "event.h"
@@ -116,7 +115,9 @@ MoveMarker::~MoveMarker() {
  */
 void MoveMarker::handleEvent(Event* event) {
 	Piece* piece = event->piece;
+
 	sf::Vector2i pos = piece->getPos();
+
 	std::map<
 		sf::Vector2i,
 		std::tuple<bool, Piece*, const TargetingRule*>,
@@ -129,8 +130,6 @@ void MoveMarker::handleEvent(Event* event) {
 	}
 
 	const TargetingRule* rule = std::get<2>(ruleIter->second);
-
-	std::cout << "\t\t" << rootPiece->getDef()->name << " handling " << event->action << " for " << piece->getDef()->name << std::endl;
 
     if ("leave" == event->action) {
         std::get<0>(ruleIter->second) = rule->matches(rootPiece, nullptr);

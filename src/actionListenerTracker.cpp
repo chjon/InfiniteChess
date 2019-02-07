@@ -1,6 +1,8 @@
 #include "actionListenerTracker.h"
 
 #include "moveMarker.h"
+#include "piece.h"
+#include "vectorUtils.h"
 
 // Constructors
 ActionListenerTracker::ActionListenerTracker() {
@@ -12,7 +14,7 @@ ActionListenerTracker::ActionListenerTracker() {
 ActionListenerTracker::~ActionListenerTracker() {
 	for (std::map<
 		sf::Vector2i,
-		std::vector<MoveMarker*>*,
+		std::map<std::string, MoveMarker*>*,
 		VectorUtils::cmpVectorLexicographically
 	>::iterator i = actionListeners.begin();
 		i != actionListeners.end(); ++i
@@ -35,25 +37,34 @@ void ActionListenerTracker::addListener(sf::Vector2i positionToNotify, MoveMarke
     // Get the existing listeners for the trigger position
     std::map<
 		sf::Vector2i,
-		std::vector<MoveMarker*>*,
+		std::map<std::string, MoveMarker*>*,
 		VectorUtils::cmpVectorLexicographically
 	>::iterator triggerIter =
 		actionListeners.find(positionToNotify);
 
-	std::vector<MoveMarker*>* positionListeners;
+	std::map<std::string, MoveMarker*>* positionListeners;
 
 	// Check if there are existing listeners for the trigger position
     if (triggerIter == actionListeners.end()) {
-        positionListeners = new std::vector<MoveMarker*>();
+        positionListeners = new std::map<std::string, MoveMarker*>();
         actionListeners.insert(std::make_pair(positionToNotify, positionListeners));
     } else {
 		positionListeners = triggerIter->second;
     }
 
     // Add the listener
-    positionListeners->push_back(listener);
+    std::string key = generateKey(listener);
+    if (positionListeners->find(key) == positionListeners->end()) {
+		positionListeners->insert(std::make_pair(key, listener));
+    }
 }
 
+/**
+ * Generate a key from a move marker
+ */
+std::string ActionListenerTracker::generateKey(MoveMarker* marker) {
+	return VectorUtils::toString(marker->getRootPiece()->getPos());
+}
 
 // Public API
 
@@ -82,14 +93,14 @@ void ActionListenerTracker::removeListeners(MoveMarker* listener) {
 	std::vector<sf::Vector2i> toDelete;
 
     // Iterate through all the tracked positions
-    for (std::map<sf::Vector2i, std::vector<MoveMarker*>*>::iterator i = actionListeners.begin();
+    for (std::map<sf::Vector2i, std::map<std::string, MoveMarker*>*>::iterator i = actionListeners.begin();
 		i != actionListeners.end(); ++i
 	) {
-		std::vector<MoveMarker*>* positionListeners = i->second;
-		std::vector<MoveMarker*>::iterator j = positionListeners->begin();
+		std::map<std::string, MoveMarker*>* positionListeners = i->second;
+		std::map<std::string, MoveMarker*>::iterator j = positionListeners->begin();
 
         // Iterate through all the listeners for the positions
-        while (j != positionListeners->end() && *j != listener) {
+        while (j != positionListeners->end() && j->second != listener) {
 			++j;
         }
 
@@ -122,7 +133,7 @@ void ActionListenerTracker::notify(sf::Vector2i positionToNotify, Event* event) 
 	// Get the existing listeners for the trigger position
     std::map<
 		sf::Vector2i,
-		std::vector<MoveMarker*>*,
+		std::map<std::string, MoveMarker*>*,
 		VectorUtils::cmpVectorLexicographically
 	>::iterator triggerIter =
 		actionListeners.find(positionToNotify);
@@ -131,13 +142,13 @@ void ActionListenerTracker::notify(sf::Vector2i positionToNotify, Event* event) 
 
 	// Check if there are existing listeners for the trigger position
     if (triggerIter != actionListeners.end()) {
-		std::vector<MoveMarker*>* positionListeners = triggerIter->second;
+		std::map<std::string, MoveMarker*>* positionListeners = triggerIter->second;
 
 		// Notify each of the listeners at the position
-		for (std::vector<MoveMarker*>::iterator i = positionListeners->begin();
+		for (std::map<std::string, MoveMarker*>::iterator i = positionListeners->begin();
 			i != positionListeners->end(); ++i
 		) {
-            (*i)->handleEvent(event);
+            i->second->handleEvent(event);
 		}
     }
 }

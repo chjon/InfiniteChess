@@ -13,7 +13,7 @@ class MoveMarker;
 // Class declaration
 class ActionListenerTracker {
 private:
-    std::map<sf::Vector2i, std::vector<MoveMarker*>*, VectorUtils::cmpVectorLexicographically> actionListeners;
+    std::map<sf::Vector2i, std::map<std::string, MoveMarker*>*, VectorUtils::cmpVectorLexicographically> actionListeners;
 
     // Helpers
     /**
@@ -23,6 +23,11 @@ private:
 	 * @param listener the move marker to notify upon update of the trigger position
 	 */
     void addListener(sf::Vector2i positionToNotify, MoveMarker* listener);
+
+    /**
+     * Generate a key from a move marker
+     */
+    static std::string generateKey(MoveMarker* marker);
 
 public:
     // Constructors

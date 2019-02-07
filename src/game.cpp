@@ -67,7 +67,7 @@ void Game::run() {
 			std::map<const unsigned int, std::pair<const std::string, sf::Color>>*,
 			unsigned int,
 			std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>*
-		> board = BoardLoader::loadBoard("saves/initial.chess", pieceDefs);
+		> board = BoardLoader::loadBoard("saves/original.chess", pieceDefs);
 
 		// Initialize everything
 		pieceTracker->onStartup(pieceDefs, std::get<2>(board));
