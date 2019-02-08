@@ -14,6 +14,12 @@ class MoveMarker;
 class PieceTracker;
 class Piece;
 
+// Helper structs
+struct TeamNode {
+	unsigned int teamIndex;
+    TeamNode* next;
+};
+
 
 
 // Class declaration
@@ -25,10 +31,7 @@ private:
 	ActionListenerTracker actionListenerTracker;
 	EventProcessor eventProcessor;
 
-	unsigned int NUM_TEAMS = 1;
-	unsigned int* teams;
-	unsigned int curTurn;
-
+	TeamNode* curTurn;
 	Piece* selectedPiece;
 
 	// Event handlers
@@ -39,6 +42,7 @@ private:
 
 	// Helpers
 	void move(const MoveMarker* dest);
+	void advanceTurn();
 
 public:
 	// Constructors
