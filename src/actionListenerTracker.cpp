@@ -1,5 +1,6 @@
 #include "actionListenerTracker.h"
 
+#include "moveDef.h"
 #include "moveMarker.h"
 #include "piece.h"
 #include "vectorUtils.h"
@@ -63,7 +64,9 @@ void ActionListenerTracker::addListener(sf::Vector2i positionToNotify, MoveMarke
  * Generate a key from a move marker
  */
 std::string ActionListenerTracker::generateKey(MoveMarker* marker) {
-	return VectorUtils::toString(marker->getRootPiece()->getPos());
+	return
+		VectorUtils::toString(marker->getRootPiece()->getPos()) +
+		std::to_string(marker->getRootMove()->index);
 }
 
 // Public API
