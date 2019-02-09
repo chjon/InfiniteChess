@@ -17,13 +17,12 @@ void Controller::onStartup(
 	TeamNode* head = nullptr;
 	curTurn = nullptr;
 
-	// Create a list of all the teams
+	// Store all the teams
 	std::map<const unsigned int, std::pair<const std::string, sf::Color>>::iterator i = teams_->begin();
 	while (i != teams_->end()) {
 		// Create the team
 		TeamNode* temp = new TeamNode{ i->first, nullptr };
-
-		// Create the team
+		teams.insert(std::make_pair(i->first, temp));
 		if (head == nullptr) {
 			head = temp;
 		} else {
@@ -191,7 +190,12 @@ Controller::Controller(Game* g, PieceTracker* p) :
  * Destructor
  */
 Controller::~Controller() {
-	delete curTurn;
+	// Delete the teams
+	for (std::map<unsigned int, TeamNode*>::iterator i = teams.begin(); i != teams.end(); ++i) {
+        delete i->second;
+	}
+	teams.clear();
+
 	curTurn = nullptr;
 	selectedPiece = nullptr;
 }

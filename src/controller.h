@@ -31,6 +31,7 @@ private:
 	ActionListenerTracker actionListenerTracker;
 	EventProcessor eventProcessor;
 
+	std::map<unsigned int, TeamNode*> teams;
 	TeamNode* curTurn;
 	Piece* selectedPiece;
 
