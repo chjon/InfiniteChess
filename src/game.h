@@ -40,6 +40,10 @@ public:
 
 	// Methods
 	void run();
+
+	// Event handlers
+	void onCameraChange();
+	void onGeneration(MoveMarker* marker);
 };
 
 #endif // CHESS_GAME_H

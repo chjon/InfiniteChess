@@ -39,7 +39,14 @@ private:
 
 public:
 	// Constructors
-	Piece(const PieceDef* pieceDef_, const unsigned int team_, sf::Vector2i pos_, PieceDef::Direction dir_);
+	Piece(
+		const PieceDef* pieceDef_,
+		const unsigned int team_,
+		sf::Vector2i pos_,
+		PieceDef::Direction dir_,
+		const unsigned int moveCount_,
+		const int lastMove_
+	);
 	~Piece();
 
 	// Accessors

@@ -14,6 +14,12 @@ class MoveMarker;
 class PieceTracker;
 class Piece;
 
+// Helper structs
+struct TeamNode {
+	unsigned int teamIndex;
+    TeamNode* next;
+};
+
 
 
 // Class declaration
@@ -25,10 +31,8 @@ private:
 	ActionListenerTracker actionListenerTracker;
 	EventProcessor eventProcessor;
 
-	unsigned int NUM_TEAMS = 1;
-	unsigned int* teams;
-	unsigned int curTurn;
-
+	std::map<unsigned int, TeamNode*> teams;
+	TeamNode* curTurn;
 	Piece* selectedPiece;
 
 	// Event handlers
@@ -39,6 +43,7 @@ private:
 
 	// Helpers
 	void move(const MoveMarker* dest);
+	void advanceTurn();
 
 public:
 	// Constructors
@@ -50,6 +55,7 @@ public:
 		std::map<const unsigned int, std::pair<const std::string, sf::Color>>* teams,
 		unsigned int curTeam
 	);
+	void onGeneration(MoveMarker* marker);
 
 	// Accessors
 	Piece* getSelectedPiece() const;

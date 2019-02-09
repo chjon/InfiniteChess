@@ -14,24 +14,29 @@ void Controller::onStartup(
 	std::map<const unsigned int, std::pair<const std::string, sf::Color>>* teams_,
 	unsigned int curTeam_
 ) {
-	NUM_TEAMS = teams_->size();
-	teams = new unsigned int[NUM_TEAMS];
+	TeamNode* head = nullptr;
+	curTurn = nullptr;
 
-	// Create a list of all the teams
-	unsigned int index = 0;
+	// Store all the teams
 	std::map<const unsigned int, std::pair<const std::string, sf::Color>>::iterator i = teams_->begin();
 	while (i != teams_->end()) {
-		// Save the team index
-		teams[index] = i->first;
+		// Create the team
+		TeamNode* temp = new TeamNode{ i->first, nullptr };
+		teams.insert(std::make_pair(i->first, temp));
+		if (head == nullptr) {
+			head = temp;
+		} else {
+			curTurn->next = temp;
+		}
 
-		// Get the index of the team to go first
-        if (i->first == curTeam_) {
-			curTurn = index;
-        }
-
+		// Advance to the next team
+		curTurn = temp;
         ++i;
-        ++index;
 	}
+
+	// Link the teams in a loop
+	curTurn->next = head;
+	curTurn = head;
 
 	// Update all of the pieces in the piece tracker
 	const std::vector<Piece*>* pieces = pieceTracker->getPieces();
@@ -47,6 +52,13 @@ void Controller::onStartup(
 }
 
 /**
+ * Add a move marker as a listener when it is generated
+ */
+void Controller::onGeneration(MoveMarker* marker) {
+	actionListenerTracker.addListeners(marker);
+}
+
+/**
  * Select/deselect a square
  */
 void Controller::onMousePress(sf::Vector2i pos) {
@@ -55,7 +67,7 @@ void Controller::onMousePress(sf::Vector2i pos) {
 		selectedPiece = game->pieceTracker->getPiece(pos);
 
 		// Check whether the piece can be selected this turn
-		if (selectedPiece != nullptr && teams[curTurn] != selectedPiece->getTeam()) {
+		if (selectedPiece != nullptr && curTurn->teamIndex != selectedPiece->getTeam()) {
 			selectedPiece = nullptr;
 		}
 
@@ -135,12 +147,14 @@ void Controller::move(const MoveMarker* dest) {
 		}
 	}
 
+	bool endsTurn = dest->getRootMove()->endsTurn;
+
 	// Execute all the queued events
 	eventProcessor.executeEvents();
 
 	// Progress to the next turn
-	if (dest->getRootMove()->endsTurn) {
-		curTurn = (curTurn + 1) % NUM_TEAMS;
+	if (endsTurn) {
+		advanceTurn();
 	}
 
 	// Deselect the piece
@@ -151,6 +165,12 @@ void Controller::move(const MoveMarker* dest) {
 	targets = nullptr;
 }
 
+/**
+ * Advance to the next turn
+ */
+void Controller::advanceTurn() {
+    curTurn = curTurn->next;
+}
 
 // Public constructors
 
@@ -161,8 +181,7 @@ Controller::Controller(Game* g, PieceTracker* p) :
 	game{g},
 	pieceTracker{p},
 	eventProcessor{p, actionListenerTracker},
-	teams{nullptr},
-	curTurn{0},
+	curTurn{nullptr},
 	selectedPiece{nullptr}
 {
 }
@@ -171,8 +190,13 @@ Controller::Controller(Game* g, PieceTracker* p) :
  * Destructor
  */
 Controller::~Controller() {
-	delete[] teams;
-	teams = nullptr;
+	// Delete the teams
+	for (std::map<unsigned int, TeamNode*>::iterator i = teams.begin(); i != teams.end(); ++i) {
+        delete i->second;
+	}
+	teams.clear();
+
+	curTurn = nullptr;
 	selectedPiece = nullptr;
 }
 
@@ -191,5 +215,5 @@ Piece* Controller::getSelectedPiece() const {
  * Determine whether it is this team's turn to move
  */
 bool Controller::canMove(unsigned int team) const {
-	return teams[curTurn] == team;
+	return curTurn->teamIndex == team;
 }

@@ -115,7 +115,9 @@ MoveMarker::~MoveMarker() {
  */
 void MoveMarker::handleEvent(Event* event) {
 	Piece* piece = event->piece;
+
 	sf::Vector2i pos = piece->getPos();
+
 	std::map<
 		sf::Vector2i,
 		std::tuple<bool, Piece*, const TargetingRule*>,

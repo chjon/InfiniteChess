@@ -319,8 +319,6 @@ void Renderer::onResize(const unsigned int width, const unsigned int height) {
 void Renderer::onCameraMove() {
 	cameraShift.x = - tileSize * std::fmod(cameraPos.x, 2.f);
 	cameraShift.y = - tileSize * std::fmod(cameraPos.y, 2.f);
-
-	game->pieceTracker->onCameraChange();
 	needsRedraw = true;
 }
 
