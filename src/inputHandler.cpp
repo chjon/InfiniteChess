@@ -83,8 +83,8 @@ void InputHandler::checkEvents() {
 void InputHandler::onKeyPress(sf::Event::KeyEvent keyEvent) {
 	// Toggle the debug display
 	if      (keyEvent.code == KEY_DEBUG) renderer->toggleDisplayDebugData();
-	// Close the window
-	else if (keyEvent.code == KEY_EXIT ) window->close();
+	// Toggle the menu
+	else if (keyEvent.code == KEY_MENU) renderer->toggleMenu();
 }
 
 /**
@@ -94,11 +94,13 @@ void InputHandler::onMousePress(sf::Event::MouseButtonEvent event) {
 	sf::Vector2i pos(event.x, event.y);
 
     // Handle the button press for the layers
-	for (std::vector<WindowLayer*>::iterator i = layers.begin(); i != layers.end(); ++i) {
-        if ((*i)->handleClick(pos)) {
-			return;
-        }
-	}
+    if (renderer->menuIsVisible()) {
+		for (std::vector<WindowLayer*>::iterator i = layers.begin(); i != layers.end(); ++i) {
+			if ((*i)->handleClick(pos)) {
+				return;
+			}
+		}
+    }
 
     // Handle the button press on the board
     game->controller->onMousePress(renderer->getMouseTilePosition());

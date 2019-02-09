@@ -25,7 +25,7 @@ private:
 
 	// Options keybinds
 	const sf::Keyboard::Key KEY_DEBUG = sf::Keyboard::Key::F3;
-	const sf::Keyboard::Key KEY_EXIT  = sf::Keyboard::Key::Escape;
+	const sf::Keyboard::Key KEY_MENU  = sf::Keyboard::Key::Escape;
 
 	// Members
 	Game* game;
@@ -39,6 +39,7 @@ private:
 	void onKeyPress(sf::Event::KeyEvent keyEvent);
 	bool isCritical(sf::Event::EventType eventType);
 	void onMousePress(sf::Event::MouseButtonEvent event);
+
 public:
 	// Constructors
 	InputHandler(Game* g, sf::RenderWindow* w, Renderer* r);

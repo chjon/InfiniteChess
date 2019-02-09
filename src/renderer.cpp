@@ -46,6 +46,11 @@ void Renderer::drawBoard() const {
  * Draw the layers
  */
 void Renderer::drawUILayers() const {
+	// Check whether the menu should be drawn
+	if (!displayMenu) {
+		return;
+	}
+
 	for (std::vector<WindowLayer*>::const_iterator i = layers.begin(); i != layers.end(); ++i) {
         (*i)->draw(uiTextures, debugFont, window);
 	}
@@ -399,6 +404,14 @@ bool Renderer::isRenderable(sf::Vector2i pos) const {
 	);
 
     return renderable;
+}
+
+/**
+ * Toggle the menu
+ */
+void Renderer::toggleMenu() {
+	displayMenu ^= 1;
+	needsRedraw = true;
 }
 
 // Public mutators

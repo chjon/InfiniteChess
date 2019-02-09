@@ -38,6 +38,7 @@ private:
 
 	// Flags
 	bool displayDebugData = false;
+	bool displayMenu = false;
 
 	// Members
 	Game* game;
@@ -92,11 +93,15 @@ public:
 	sf::Vector2i getMouseTilePosition() const;
 	sf::Vector2u getTileDimensions() const;
 	bool isRenderable(sf::Vector2i pos) const;
+	inline bool menuIsVisible() const {
+        return displayMenu;
+	};
 
 	// Mutators
 	void setCameraPos(const sf::Vector2f pos);
 	void moveCamera(const sf::Vector2f translationVec);
 	void toggleDisplayDebugData();
+	void toggleMenu();
 
 	void addLayer(WindowLayer* layer) {
 		layers.push_back(layer);

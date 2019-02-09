@@ -69,17 +69,13 @@ void Game::run() {
 		std::vector<std::string>* uiTextureNames = new std::vector<std::string>();
 		WindowLayer* menuLayer = new WindowLayer();
 		uiTextureNames->push_back("button");
-		Button* button = new Button(0, 0, 80, 40, "Load", "button", [&, this]{
-            loadBoard("saves/input.chess");
-		});
+		Button* button = new Button(0, 0, 80, 40, "Load", "button", [&, this]{ loadBoard("saves/input.chess"); });
 		menuLayer->addClickable(button);
-		button = new Button(0, 50, 80, 40, "Save", "button", [&, this]{
-			saveBoard("saves/output.chess");
-		});
+		button = new Button(0, 50, 80, 40, "Save", "button", [&, this]{ saveBoard("saves/output.chess"); });
 		menuLayer->addClickable(button);
-		uiTextures = ResourceLoader::loadTextures(
-			uiTextureNames, "res/textures/ui/", ".png"
-		);
+		button = new Button(0, 100, 80, 40, "Exit", "button", [&, this]{ window->close(); });
+		menuLayer->addClickable(button);
+		uiTextures = ResourceLoader::loadTextures(uiTextureNames, "res/textures/ui/", ".png");
 
 		loadBoard("saves/input.chess");
 
