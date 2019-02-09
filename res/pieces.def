@@ -3,7 +3,7 @@
 # 
 # Move Save Format:
 # [<MoveId>,<BaseVector[<x,y>]>,<CanLeap><EndsTurn><XSymmetric><YSymmetric><XYSymmetric>,
-#  <ChainedMoves[MoveIds...]>,<ScalingRules[NumRules...]>,<NthStepRules[NumRules...]>,<TargettingRules[TargetRules...]>]
+#  <ChainedMoves[MoveIds...]>,<ScalingRules[NumRules...]>,<NthStepRules[NumRules...]>,<TargetingRules[TargetRules...]>]
 #
 # NumRule Save Format:
 # <Operator: [<, <=, =, >=, >, !=]><Number>
@@ -160,13 +160,13 @@
 	],],
 	
 	[Tripper,00,[
-		[0,[1,1,],11110,[],[=3,],[!=-1,],[
+		[0,[1,3,],11110,[],[=1,],[!=-1,],[
 			[[0,0,],*,[[SameTeam,=0,],],[[destroy,"",],],],
 		],],
 	],],
 	
 	[Alfil,00,[
-		[0,[1,1,],11110,[],[=2,],[!=-1,],[
+		[0,[1,2,],11110,[],[=1,],[!=-1,],[
 			[[0,0,],*,[[SameTeam,=0,],],[[destroy,"",],],],
 		],],
 	],],
