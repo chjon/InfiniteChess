@@ -45,11 +45,13 @@ void InputHandler::checkEvents() {
 		// Check whether the dimensions need to be updated
 		case sf::Event::Resized:
 			renderer->onResize(event.size.width, event.size.height);
+			game->onCameraChange();
 			break;
 
 		// Check whether the tile size needs to be updated
 		case sf::Event::MouseWheelScrolled:
 			renderer->onZoom(event.mouseWheelScroll.delta);
+			game->onCameraChange();
 			break;
 
 		// Check whether a key was pressed
