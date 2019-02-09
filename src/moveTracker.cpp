@@ -121,9 +121,10 @@ void MoveTracker::onCameraChange(PieceTracker* pieceTracker) {
 		terminal->onGeneration(pieceTracker);
 
         // Extend the move marker upward
-        while (pieceTracker->isRenderable(terminal->getNextPos())) {
+        while (pieceTracker->isRenderable(terminal->getNextPos()) && terminal->getNextPos() != terminal->getPos()) {
 			const MoveDef* rootMove = terminal->getRootMove();
 			MoveMarker* prev = terminal;
+
 			terminal = new MoveMarker(
 				piece, rootMove, terminal->getBaseVector(), terminal->getNextPos(),
 				terminal->switchedX, terminal->switchedY, terminal->switchedXY, terminal->lambda + 1

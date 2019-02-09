@@ -31,6 +31,8 @@ public:
 	const std::vector<NumRule*>* nthStepRules;
 	const std::vector<const TargetingRule*>* targetingRules;
 
+	unsigned int constantMultiple;
+
 	// Constructors
 	MoveDef(
 		int index_, sf::Vector2i baseVector_, bool canLeap, bool endsTurn,
@@ -46,6 +48,8 @@ public:
 
 	// Methods
 	const std::vector<MoveMarker*>* generateMarkers(const Piece* piece) const;
+
+	bool meetsNthStepRules(const unsigned int moveCount) const;
 };
 
 #endif // CHESS_MOVE_DEF_H

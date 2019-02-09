@@ -20,6 +20,10 @@ public:
     NumRule(const std::string& s);
     ~NumRule();
 
+    // Accessors
+    inline const Operation getOperation() const { return operation; };
+    inline const unsigned int getNum() const { return num; };
+
     // Methods
     bool matches(unsigned int candidate) const;
 };

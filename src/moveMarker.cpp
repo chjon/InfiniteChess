@@ -216,6 +216,10 @@ void MoveMarker::onPieceEnter(Piece* piece, PieceTracker* pieceTracker) {
  * Iterate the move forward to get the position of the next move marker
  */
 sf::Vector2i MoveMarker::getNextPos() const {
+	if (rootMove->constantMultiple && lambda >= rootMove->constantMultiple) {
+		return pos;
+	}
+
 	return pos + baseVector;
 }
 

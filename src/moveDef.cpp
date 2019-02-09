@@ -1,6 +1,7 @@
 #include "moveDef.h"
 
 #include "moveMarker.h"
+#include "numRule.h"
 #include "piece.h"
 #include "pieceDef.h"
 #include "vectorUtils.h"
@@ -45,8 +46,13 @@ MoveDef::MoveDef(
     chainedMoves{chainedMoves_},
     scalingRules{scalingRules_},
     nthStepRules{nthStepRules_},
-    targetingRules{targetingRules_}
+    targetingRules{targetingRules_},
+    constantMultiple{0}
 {
+	if (scalingRules->size() == 1) {
+		NumRule* rule = *(scalingRules->begin());
+		constantMultiple = (rule->getOperation() == NumRule::EQ) ? (rule->getNum()) : (0);
+	}
 }
 
 /**
@@ -68,6 +74,11 @@ MoveDef::~MoveDef() {
 const std::vector<MoveMarker*>* MoveDef::generateMarkers(const Piece* piece) const {
 	std::vector<MoveMarker*>* markers = new std::vector<MoveMarker*>();
 
+	// Do not generate anything if the piece does not meet the move's nth step rules
+	if (!meetsNthStepRules(piece->getMoveCount())) {
+		return markers;
+	}
+
 	// Rotate the vector to the correct direction
 	sf::Vector2i rotated = rotate(baseVector, piece->dir);
 
@@ -85,3 +96,13 @@ const std::vector<MoveMarker*>* MoveDef::generateMarkers(const Piece* piece) con
 
 	return markers;
 }
+
+bool MoveDef::meetsNthStepRules(const unsigned int moveCount) const {
+	for (std::vector<NumRule*>::const_iterator i = nthStepRules->begin(); i != nthStepRules->end(); ++i) {
+		if (!(*i)->matches(moveCount)) {
+			return false;
+		}
+	}
+
+	return true;
+};
