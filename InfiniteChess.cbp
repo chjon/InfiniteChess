@@ -90,6 +90,9 @@
 		<Unit filename="src/stringUtils.h" />
 		<Unit filename="src/targetingRule.cpp" />
 		<Unit filename="src/targetingRule.h" />
+		<Unit filename="src/ui/button.h" />
+		<Unit filename="src/ui/clickable.h" />
+		<Unit filename="src/ui/windowLayer.h" />
 		<Unit filename="src/vectorUtils.h" />
 		<Extensions>
 			<code_completion />

@@ -47,6 +47,19 @@ PieceTracker::~PieceTracker() {
 	}
 }
 
+// Clear pieces
+void PieceTracker::clearPieces() {
+	if (pieces != nullptr) {
+		for (std::map<sf::Vector2i, Piece*>::iterator it = pieces->begin(); it != pieces->end(); it++) {
+			delete it->second;
+		}
+
+		// Clean up
+		delete pieces;
+		pieces = nullptr;
+	}
+}
+
 // Public event handlers
 
 /**

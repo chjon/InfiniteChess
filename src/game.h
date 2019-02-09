@@ -27,11 +27,19 @@ private:
 	PieceTracker*     pieceTracker;
 	Controller*       controller;
 
+	std::map<std::string, const PieceDef*>* pieceDefs;
+	std::map<std::string, sf::Texture*>* textures;
+	std::map<std::string, sf::Texture*>* uiTextures;
+
 	// Friends
 	friend Renderer;
 	friend InputHandler;
 	friend Controller;
 	friend PieceTracker;
+
+	// Helpers
+	void loadBoard(std::string fileName);
+	void saveBoard(std::string fileName);
 
 public:
 	// Constructors

@@ -5,6 +5,8 @@
 #include "pieceDefLoader.h"
 #include "resourceLoader.h"
 #include "stringUtils.h"
+#include "ui/windowLayer.h"
+#include "ui/button.h"
 
 // Public constructors
 
@@ -54,29 +56,35 @@ Game::~Game() {
 void Game::run() {
 	// Try loading resources
 	try {
-		std::map<std::string, const PieceDef*>* pieceDefs = PieceDefLoader::loadPieceDefs("res/pieces.def");
-		std::map<std::string, sf::Texture*>* textures = ResourceLoader::loadTextures(
+		pieceDefs = PieceDefLoader::loadPieceDefs("res/pieces.def");
+		textures = ResourceLoader::loadTextures(
 			ResourceLoader::getListFromMap(pieceDefs,
 				(std::string(*)(const std::string, const PieceDef*)) [](auto name, auto pieceDef){
 					return name;
 				}
-			), "res/textures/", ".png"
+			), "res/textures/pieces/", ".png"
 		);
 
-		std::tuple<
-			std::map<const unsigned int, std::pair<const std::string, sf::Color>>*,
-			unsigned int,
-			std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>*
-		> board = BoardLoader::loadBoard("saves/initial.chess", pieceDefs);
+		// Create menu layer
+		std::vector<std::string>* uiTextureNames = new std::vector<std::string>();
+		WindowLayer* menuLayer = new WindowLayer();
+		uiTextureNames->push_back("button");
+		Button* button = new Button(0, 0, 80, 40, "Load", "button", [&, this]{
+            loadBoard("saves/input.chess");
+		});
+		menuLayer->addClickable(button);
+		button = new Button(0, 50, 80, 40, "Save", "button", [&, this]{
+			saveBoard("saves/output.chess");
+		});
+		menuLayer->addClickable(button);
+		uiTextures = ResourceLoader::loadTextures(
+			uiTextureNames, "res/textures/ui/", ".png"
+		);
 
-		// Initialize everything
-		pieceTracker->onStartup(pieceDefs, std::get<2>(board));
-		renderer->onStartup(textures, std::get<0>(board));
-		controller->onStartup(std::get<0>(board), std::get<1>(board));
+		loadBoard("saves/input.chess");
 
-		// Clean up
-		pieceDefs = nullptr;
-		textures = nullptr;
+		inputHandler->addLayer(menuLayer);
+		renderer->addLayer(menuLayer);
 
 	} catch (ResourceLoader::FileFormatException ex) {
         std::cout << "FileFormatException: " << ex.what() << std::endl;
@@ -114,4 +122,23 @@ void Game::onCameraChange() {
 
 void Game::onGeneration(MoveMarker* marker) {
     controller->onGeneration(marker);
+}
+
+// Helpers
+void Game::loadBoard(std::string fileName) {
+	std::tuple<
+		std::map<const unsigned int, std::pair<const std::string, sf::Color>>*,
+		unsigned int,
+		std::map<sf::Vector2i, Piece*, VectorUtils::cmpVectorLexicographically>*
+	> board = BoardLoader::loadBoard(fileName, pieceDefs);
+
+	// Initialize everything
+
+	pieceTracker->onStartup(pieceDefs, std::get<2>(board));
+	renderer->onStartup(textures, uiTextures, std::get<0>(board));
+	controller->onStartup(std::get<0>(board), std::get<1>(board));
+}
+
+void Game::saveBoard(std::string fileName) {
+
 }

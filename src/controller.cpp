@@ -14,6 +14,8 @@ void Controller::onStartup(
 	std::map<const unsigned int, std::pair<const std::string, sf::Color>>* teams_,
 	unsigned int curTeam_
 ) {
+	clearTeams();
+
 	TeamNode* head = nullptr;
 	curTurn = nullptr;
 
@@ -94,6 +96,14 @@ void Controller::onMousePress(sf::Vector2i pos) {
 
 
 // Private helpers
+
+void Controller::clearTeams() {
+	// Delete the teams
+	for (std::map<unsigned int, TeamNode*>::iterator i = teams.begin(); i != teams.end(); ++i) {
+        delete i->second;
+	}
+	teams.clear();
+}
 
 void Controller::move(const MoveMarker* dest) {
 	sf::Vector2i pos = dest->getPos();
@@ -193,12 +203,7 @@ Controller::Controller(Game* g, PieceTracker* p) :
  * Destructor
  */
 Controller::~Controller() {
-	// Delete the teams
-	for (std::map<unsigned int, TeamNode*>::iterator i = teams.begin(); i != teams.end(); ++i) {
-        delete i->second;
-	}
-	teams.clear();
-
+	clearTeams();
 	curTurn = nullptr;
 	selectedPiece = nullptr;
 }

@@ -51,6 +51,7 @@ public:
 	bool isRenderable(sf::Vector2i pos) const;
 
     // Methods
+    void clearPieces();
     void addPiece(Piece* piece);
     bool removePiece(sf::Vector2i pos);
     MoveMarker* getValidMove(Piece* piece, sf::Vector2i dest);

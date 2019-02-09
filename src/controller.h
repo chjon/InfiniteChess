@@ -43,6 +43,7 @@ private:
 	friend InputHandler;
 
 	// Helpers
+	void clearTeams();
 	void move(const MoveMarker* dest);
 	void advanceTurn();
 

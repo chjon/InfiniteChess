@@ -9,7 +9,7 @@
 class Game;
 class InputHandler;
 class Piece;
-
+class WindowLayer;
 
 
 // Class declaration
@@ -44,7 +44,9 @@ private:
 	sf::RenderWindow* window;
 
 	std::map<std::string, sf::Texture*>* textures;
+	std::map<std::string, sf::Texture*>* uiTextures;
 	std::map<const unsigned int, std::pair<const std::string, sf::Color>>* teams;
+	std::vector<WindowLayer*> layers;
 
 	unsigned int parity;
 	float tileSize = 50;
@@ -60,11 +62,13 @@ private:
 	void drawBoard() const;
 	void drawPieces() const;
 	void drawOverlays() const;
+	void drawUILayers() const;
 
 	void drawDebugText(const std::string& s, const unsigned int row) const;
 	void drawPiece(Piece* p) const;
 	void drawTile(const int x, const int y, const sf::Color c) const;
 	void drawDebug() const;
+
 public:
 	// Flags
 	bool needsRedraw = false;
@@ -76,6 +80,7 @@ public:
 	// Event handlers
 	void onStartup(
 		std::map<std::string, sf::Texture*>* textures_,
+		std::map<std::string, sf::Texture*>* uiTextures_,
 		std::map<const unsigned int, std::pair<const std::string, sf::Color>>* teams_
 	);
 	void onResize(const unsigned int width, const unsigned int height);
@@ -92,6 +97,10 @@ public:
 	void setCameraPos(const sf::Vector2f pos);
 	void moveCamera(const sf::Vector2f translationVec);
 	void toggleDisplayDebugData();
+
+	void addLayer(WindowLayer* layer) {
+		layers.push_back(layer);
+	}
 
 	// Utility methods
 	void draw();

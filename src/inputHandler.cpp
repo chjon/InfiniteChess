@@ -1,5 +1,7 @@
 #include "inputHandler.h"
 
+#include "ui/windowLayer.h"
+
 // Private methods
 
 /**
@@ -66,7 +68,7 @@ void InputHandler::checkEvents() {
 
 		// Check whether the mouse was clicked
 		case sf::Event::MouseButtonPressed:
-            game->controller->onMousePress(renderer->getMouseTilePosition());
+			onMousePress(event.mouseButton);
             break;
 
 		default:
@@ -83,6 +85,23 @@ void InputHandler::onKeyPress(sf::Event::KeyEvent keyEvent) {
 	if      (keyEvent.code == KEY_DEBUG) renderer->toggleDisplayDebugData();
 	// Close the window
 	else if (keyEvent.code == KEY_EXIT ) window->close();
+}
+
+/**
+ * Handle mouse presses
+ */
+void InputHandler::onMousePress(sf::Event::MouseButtonEvent event) {
+	sf::Vector2i pos(event.x, event.y);
+
+    // Handle the button press for the layers
+	for (std::vector<WindowLayer*>::iterator i = layers.begin(); i != layers.end(); ++i) {
+        if ((*i)->handleClick(pos)) {
+			return;
+        }
+	}
+
+    // Handle the button press on the board
+    game->controller->onMousePress(renderer->getMouseTilePosition());
 }
 
 /**

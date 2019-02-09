@@ -7,6 +7,7 @@
 // Forward declarations
 class Game;
 class Renderer;
+class WindowLayer;
 
 
 
@@ -30,19 +31,24 @@ private:
 	Game* game;
 	sf::RenderWindow* window;
 	Renderer* renderer;
+	std::vector<WindowLayer*> layers;
 
 	// Methods
 	void checkKeyboard();
 	void checkEvents();
 	void onKeyPress(sf::Event::KeyEvent keyEvent);
 	bool isCritical(sf::Event::EventType eventType);
-
+	void onMousePress(sf::Event::MouseButtonEvent event);
 public:
 	// Constructors
 	InputHandler(Game* g, sf::RenderWindow* w, Renderer* r);
 	~InputHandler();
 
 	// Methods
+	inline void addLayer(WindowLayer* layer) {
+        layers.push_back(layer);
+	}
+
 	void tick();
 };
 

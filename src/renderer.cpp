@@ -1,9 +1,11 @@
-#include <string>
 #include "renderer.h"
-#include "vectorUtils.h"
+
+#include <string>
 #include "moveMarker.h"
-#include "piece.h"
 #include "moveTracker.h"
+#include "piece.h"
+#include "vectorUtils.h"
+#include "ui/windowLayer.h"
 
 // Private utility methods
 
@@ -37,6 +39,15 @@ void Renderer::drawBoard() const {
 				window->draw(tile);
 			}
 		}
+	}
+}
+
+/**
+ * Draw the layers
+ */
+void Renderer::drawUILayers() const {
+	for (std::vector<WindowLayer*>::const_iterator i = layers.begin(); i != layers.end(); ++i) {
+        (*i)->draw(uiTextures, debugFont, window);
 	}
 }
 
@@ -234,6 +245,7 @@ Renderer::Renderer(Game* g, sf::RenderWindow* w) :
 	game{g},
 	window{w},
 	textures{nullptr},
+	uiTextures{nullptr},
 	teams{nullptr}
 {
 	window->setFramerateLimit(MAX_FRAMERATE);
@@ -275,9 +287,11 @@ Renderer::~Renderer() {
  */
 void Renderer::onStartup(
 	std::map<std::string, sf::Texture*>* textures_,
+	std::map<std::string, sf::Texture*>* uiTextures_,
 	std::map<const unsigned int, std::pair<const std::string, sf::Color>>* teams_
 ) {
 	textures = textures_;
+	uiTextures = uiTextures_;
 	teams = teams_;
 
 	// Load resources
@@ -429,6 +443,7 @@ void Renderer::draw() {
 	drawBoard();
 	drawOverlays();
 	drawPieces();
+	drawUILayers();
 
 	// Draw debug data
 	if (displayDebugData) {
