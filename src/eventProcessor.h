@@ -5,6 +5,7 @@
 
 // Forward declarations
 class ActionListenerTracker;
+class Controller;
 class Event;
 class PieceTracker;
 
@@ -16,6 +17,7 @@ private:
 	// References
 	PieceTracker* pieceTracker;
 	ActionListenerTracker& actionListenerTracker;
+	Controller* controller;
 
 	// Constants
 	static const int NUM_QUEUES = 3;
@@ -41,7 +43,7 @@ public:
 	static const int AFTER = 2;
 
 	// Constructors
-    EventProcessor(PieceTracker* pieceTracker_, ActionListenerTracker& actionListenerTracker_);
+    EventProcessor(PieceTracker* pieceTracker_, ActionListenerTracker& actionListenerTracker_, Controller* controller_);
     ~EventProcessor();
 
 	// Public API

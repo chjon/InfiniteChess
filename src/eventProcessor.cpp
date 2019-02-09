@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "actionListenerTracker.h"
+#include "controller.h"
 #include "event.h"
 #include "moveMarker.h"
 #include "moveTracker.h"
@@ -10,9 +11,12 @@
 #include "vectorUtils.h"
 
 // Constructors
-EventProcessor::EventProcessor(PieceTracker* pieceTracker_, ActionListenerTracker& actionListenerTracker_):
+EventProcessor::EventProcessor(
+	PieceTracker* pieceTracker_, ActionListenerTracker& actionListenerTracker_, Controller* controller_
+):
 	pieceTracker{pieceTracker_},
-	actionListenerTracker{actionListenerTracker_}
+	actionListenerTracker{actionListenerTracker_},
+	controller{controller_}
 {
 }
 
@@ -96,6 +100,9 @@ void EventProcessor::execute(Event* event) {
         pieceTracker->addPiece(piece);
 
 	} else if ("destroy" == event->action) {
+        // Decrement the piece count for the team
+        controller->removePiece(piece->getTeam());
+
 		// Delete the piece
 		delete piece;
 	}

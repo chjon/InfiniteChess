@@ -21,7 +21,7 @@ void Controller::onStartup(
 	std::map<const unsigned int, std::pair<const std::string, sf::Color>>::iterator i = teams_->begin();
 	while (i != teams_->end()) {
 		// Create the team
-		TeamNode* temp = new TeamNode{ i->first, nullptr };
+		TeamNode* temp = new TeamNode{ i->first, nullptr, 0 };
 		teams.insert(std::make_pair(i->first, temp));
 		if (head == nullptr) {
 			head = temp;
@@ -42,6 +42,7 @@ void Controller::onStartup(
 	const std::vector<Piece*>* pieces = pieceTracker->getPieces();
 	for (std::vector<Piece*>::const_iterator i = pieces->begin(); i != pieces->end(); ++i) {
 		eventProcessor.insertInQueue(EventProcessor::AFTER, new Event(*i, "enter", ""));
+		teams.find((*i)->getTeam())->second->numPieces++;
 	}
 
 	eventProcessor.executeEvents();
@@ -169,7 +170,9 @@ void Controller::move(const MoveMarker* dest) {
  * Advance to the next turn
  */
 void Controller::advanceTurn() {
-    curTurn = curTurn->next;
+	do {
+		curTurn = curTurn->next;
+	} while (curTurn->numPieces == 0);
 }
 
 // Public constructors
@@ -180,7 +183,7 @@ void Controller::advanceTurn() {
 Controller::Controller(Game* g, PieceTracker* p) :
 	game{g},
 	pieceTracker{p},
-	eventProcessor{p, actionListenerTracker},
+	eventProcessor{p, actionListenerTracker, this},
 	curTurn{nullptr},
 	selectedPiece{nullptr}
 {

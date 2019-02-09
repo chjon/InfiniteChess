@@ -18,6 +18,7 @@ class Piece;
 struct TeamNode {
 	unsigned int teamIndex;
     TeamNode* next;
+    unsigned int numPieces;
 };
 
 
@@ -60,6 +61,21 @@ public:
 	// Accessors
 	Piece* getSelectedPiece() const;
 	bool canMove(unsigned int team) const;
+
+	// Mutators
+	inline void addPiece(unsigned int teamIndex) {
+		std::map<unsigned int, TeamNode*>::iterator i = teams.find(teamIndex);
+		if (i != teams.end()) {
+            i->second->numPieces++;
+		}
+	}
+
+	void removePiece(unsigned int teamIndex) {
+		std::map<unsigned int, TeamNode*>::iterator i = teams.find(teamIndex);
+		if (i != teams.end()) {
+            i->second->numPieces--;
+		}
+	}
 };
 
 #endif // CHESS_CONTROLLER_H
