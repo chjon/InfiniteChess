@@ -283,8 +283,9 @@ public:
 		std::map<std::string, sf::Texture*>* textures = new std::map<std::string, sf::Texture*>();
 		for (std::vector<std::string>::const_iterator i = fileNames->begin(); i != fileNames->end(); ++i) {
 			sf::Texture* texture = new sf::Texture();
-			texture->loadFromFile(texturesDirectory + *i + texturesExtension);
-			textures->insert(std::make_pair(*i, texture));
+			if (texture->loadFromFile(texturesDirectory + *i + texturesExtension)) {
+				textures->insert(std::make_pair(*i, texture));
+			}
 		}
 		return textures;
     }
