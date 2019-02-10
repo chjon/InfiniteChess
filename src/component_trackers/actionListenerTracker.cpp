@@ -66,6 +66,7 @@ void ActionListenerTracker::addListener(sf::Vector2i positionToNotify, MoveMarke
 std::string ActionListenerTracker::generateKey(MoveMarker* marker) {
 	return
 		VectorUtils::toString(marker->getRootPiece()->getPos()) +
+		VectorUtils::toString(marker->getPos()) +
 		std::to_string(marker->getRootMove()->index);
 }
 

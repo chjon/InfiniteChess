@@ -79,9 +79,13 @@
 		<Unit filename="src/components/targetingRule.h" />
 		<Unit filename="src/controller.cpp" />
 		<Unit filename="src/controller.h" />
-		<Unit filename="src/eventProcessor.h" />
 		<Unit filename="src/game.cpp" />
 		<Unit filename="src/game.h" />
+		<Unit filename="src/io/boardLoader.h" />
+		<Unit filename="src/io/inputHandler.cpp" />
+		<Unit filename="src/io/inputHandler.h" />
+		<Unit filename="src/io/pieceDefLoader.h" />
+		<Unit filename="src/io/resourceLoader.h" />
 		<Unit filename="src/main.cpp" />
 		<Unit filename="src/renderer.cpp" />
 		<Unit filename="src/renderer.h" />
