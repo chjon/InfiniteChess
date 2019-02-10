@@ -392,18 +392,17 @@ sf::Vector2u Renderer::getTileDimensions() const {
 }
 
 /**
- * Determine whether a certain tile position is within the bounds of the screen
+ * Determine whether a move marker should generate another move marker
  */
-bool Renderer::isRenderable(sf::Vector2i pos) const {
-    sf::Vector2i screenPos = getScreenPos(pos);
+bool Renderer::shouldGenerate(MoveMarker* terminal) const {
+    sf::Vector2i baseVector = terminal->getBaseVector();
+	sf::Vector2i screenPos = getScreenPos(terminal->getNextPos());
 
-    bool renderable = !((screenPos.x) < -tileSize ||
-		(screenPos.x > 0 && (unsigned int) screenPos.x > window->getSize().x) ||
-		(screenPos.y) < -tileSize ||
-		(screenPos.y > 0 && (unsigned int) screenPos.y > window->getSize().y)
-	);
-
-    return renderable;
+	return
+		(screenPos.x > 0 && baseVector.x < 0) ||
+		(screenPos.y > 0 && baseVector.y < 0) ||
+		(screenPos.x > 0 && (unsigned int) screenPos.x < window->getSize().x && baseVector.x > 0) ||
+		(screenPos.y > 0 && (unsigned int) screenPos.y < window->getSize().y && baseVector.y > 0);
 }
 
 /**

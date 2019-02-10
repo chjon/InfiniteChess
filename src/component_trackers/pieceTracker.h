@@ -48,7 +48,7 @@ public:
     /**
      * Determine whether a certain position is within the bounds of the screen
      */
-	bool isRenderable(sf::Vector2i pos) const;
+	bool shouldGenerate(MoveMarker* terminal) const;
 
     // Methods
     void clearPieces();

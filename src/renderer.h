@@ -8,6 +8,7 @@
 // Forward declarations
 class Game;
 class InputHandler;
+class MoveMarker;
 class Piece;
 class WindowLayer;
 
@@ -92,7 +93,7 @@ public:
 	sf::Vector2f getMousePosition() const;
 	sf::Vector2i getMouseTilePosition() const;
 	sf::Vector2u getTileDimensions() const;
-	bool isRenderable(sf::Vector2i pos) const;
+	bool shouldGenerate(MoveMarker* terminal) const;
 	inline bool menuIsVisible() const {
         return displayMenu;
 	};

@@ -95,10 +95,10 @@ void PieceTracker::onGeneration(MoveMarker* generated) {
 // Accessors
 
 /**
- * Determine whether a certain position is within the bounds of the screen
+ * Determine whether a move marker should generate another marker
  */
-bool PieceTracker::isRenderable(sf::Vector2i pos) const {
-	return game->renderer->isRenderable(pos);
+bool PieceTracker::shouldGenerate(MoveMarker* terminal) const {
+	return game->renderer->shouldGenerate(terminal);
 }
 
 
