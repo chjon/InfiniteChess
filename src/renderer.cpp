@@ -399,10 +399,10 @@ bool Renderer::shouldGenerate(MoveMarker* terminal) const {
 	sf::Vector2i screenPos = getScreenPos(terminal->getNextPos());
 
 	return
-		(baseVector.x < 0 && screenPos.x > 0) ||
-		(baseVector.y < 0 && screenPos.y > 0) ||
-		(baseVector.x > 0 && (screenPos.x < 0 || (unsigned int) screenPos.x < window->getSize().x)) ||
-		(baseVector.y > 0 && (screenPos.y < 0 || (unsigned int) screenPos.y < window->getSize().y));
+		(baseVector.x < 0 && screenPos.x > -tileSize) ||
+		(baseVector.y < 0 && screenPos.y > -tileSize) ||
+		(baseVector.x > 0 && (screenPos.x < -tileSize || (unsigned int) screenPos.x < window->getSize().x)) ||
+		(baseVector.y > 0 && (screenPos.y < -tileSize || (unsigned int) screenPos.y < window->getSize().y));
 }
 
 /**
