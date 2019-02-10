@@ -16,6 +16,7 @@ void Controller::onStartup(
 ) {
 	clearTeams();
 	eventProcessor.onStartup();
+	selectedPiece = nullptr;
 
 	TeamNode* head = nullptr;
 	curTurn = nullptr;
