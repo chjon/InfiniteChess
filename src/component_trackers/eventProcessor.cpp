@@ -48,11 +48,17 @@ void EventProcessor::execute(Event* event) {
         piece->onMove();
         piece->onCameraChange(pieceTracker);
 
-        // Update the other move markers
-		std::vector<MoveMarker*>* enterPos = pieceTracker->getMoveMarkers(piece->getPos());
-		for (std::vector<MoveMarker*>::iterator i = enterPos->begin(); i != enterPos->end(); ++i) {
-			(*i)->onPieceEnter(piece, pieceTracker);
-		}
+        // Update other markers only if this is not an initialization event
+        if (event->args != "initialization") {
+			// Update the other move markers
+			std::vector<MoveMarker*>* enterPos = pieceTracker->getMoveMarkers(piece->getPos());
+			for (std::vector<MoveMarker*>::iterator i = enterPos->begin(); i != enterPos->end(); ++i) {
+				(*i)->onPieceEnter(piece, pieceTracker);
+			}
+
+			// Clean up
+			delete enterPos;
+        }
 
 		// Alert action listeners
         actionListenerTracker.notify(piece->getPos(), event);
@@ -65,7 +71,6 @@ void EventProcessor::execute(Event* event) {
 
 		// Clean up
 		delete moveMarkers;
-		delete enterPos;
 
 	} else if ("leave" == event->action) {
 		// Unregister action listeners

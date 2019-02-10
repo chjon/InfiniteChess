@@ -52,7 +52,7 @@ bool MoveMarker::isAttacked(PieceTracker* pieceTracker) const {
 	bool positionIsAttacked = false;
 	for (std::vector<MoveMarker*>::iterator i = markers->begin(); i != markers->end(); ++i) {
 		if (((*i)->rootPiece->getTeam() == rootPiece->getTeam()) ||
-			(!(*i)->rootMove->canLeap && (*i)->requiresLeap) ||
+			(!(*i)->rootMove->canLeap && (*i)->numObstructions) ||
 			(!(*i)->meetsScalingRule) ||
 			(!(*i)->meetsNthStepRule)
 		) {
@@ -83,9 +83,9 @@ MoveMarker::MoveMarker(
 	pos{pos_},
 	next{nullptr},
 	prev{nullptr},
-	requiresLeap{false},
 	meetsScalingRule{false},
 	meetsNthStepRule{false},
+	numObstructions{0},
 	targets{new std::map<sf::Vector2i, std::tuple<bool, Piece*, const TargetingRule*>, VectorUtils::cmpVectorLexicographically>()},
 	switchedX{switchedX_},
 	switchedY{switchedY_},
@@ -164,29 +164,14 @@ void MoveMarker::onGeneration(PieceTracker* pieceTracker) {
 }
 
 /**
- * Update the move marker chain when a piece leaves the tile
+ * Update the move marker chain's properties
  */
-void MoveMarker::onPieceLeaveNext(Piece* piece, PieceTracker* pieceTracker) {
-	requiresLeap = false;
+void MoveMarker::update(Piece* piece, PieceTracker* pieceTracker, unsigned int numObstructions_) {
+	numObstructions = numObstructions_;
 
-	// Check whether to propagate the event
-	if (next != nullptr && pieceTracker->getPiece(pos) == nullptr) {
-		next->onPieceLeaveNext(piece, pieceTracker);
-	}
-}
-
-/**
- * Update the move marker chain when a piece enters the tile
- */
-void MoveMarker::onPieceEnterNext(Piece* piece, PieceTracker* pieceTracker) {
-	// Check whether the tile is already accessible only via leap
-	if (!requiresLeap) {
-		requiresLeap = true;
-
-		// Check if there is a next tile
-		if (next != nullptr) {
-			next->onPieceEnterNext(piece, pieceTracker);
-		}
+	// Check if there is a next tile
+	if (next != nullptr) {
+		next->update(piece, pieceTracker, numObstructions_ + (pieceTracker->getPiece(pos) != nullptr));
 	}
 }
 
@@ -194,8 +179,8 @@ void MoveMarker::onPieceEnterNext(Piece* piece, PieceTracker* pieceTracker) {
  * Update the move marker when a piece leaves the tile
  */
 void MoveMarker::onPieceLeave(Piece* piece, PieceTracker* pieceTracker) {
-	if (!requiresLeap && next != nullptr) {
-		next->onPieceLeaveNext(piece, pieceTracker);
+	if (next != nullptr) {
+		next->update(piece, pieceTracker, next->numObstructions - 1);
 	}
 }
 
@@ -204,7 +189,7 @@ void MoveMarker::onPieceLeave(Piece* piece, PieceTracker* pieceTracker) {
  */
 void MoveMarker::onPieceEnter(Piece* piece, PieceTracker* pieceTracker) {
 	if (next != nullptr) {
-		next->onPieceEnterNext(piece, pieceTracker);
+		next->update(piece, pieceTracker, next->numObstructions + 1);
 	}
 }
 
@@ -249,7 +234,7 @@ const std::vector<std::pair<Piece*, const TargetingRule*>>* MoveMarker::getTarge
  */
 bool MoveMarker::canMove() const {
 	// Check if the position meets the movement requirements
-	if ((!rootMove->canLeap && requiresLeap) ||
+	if ((!rootMove->canLeap && numObstructions) ||
 		(!meetsScalingRule) ||
 		(!meetsNthStepRule) ||
 		(!meetsTargetingRules())
@@ -297,6 +282,6 @@ void MoveMarker::setNext(MoveMarker* newNext) {
 /**
  * Set whether the move marker requires a leap
  */
-void MoveMarker::setRequiresLeap(bool requiresLeap_) {
-	requiresLeap = requiresLeap_;
+void MoveMarker::setNumObstructions(unsigned int numObstructions_) {
+	numObstructions = numObstructions_;
 }

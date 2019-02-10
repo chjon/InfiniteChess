@@ -132,13 +132,11 @@ void MoveTracker::onCameraChange(PieceTracker* pieceTracker) {
 
 			// Link the move markers
 			prev->setNext(terminal);
-
-			// Check if a leap is necessary for the move
-			if (prev->getRequiresLeap() || pieceTracker->getPiece(prev->getPos()) != nullptr) {
-				terminal->setRequiresLeap(true);
-			}
-
             moveMarkers->find(rootMove)->second->insert(std::make_pair(terminal->getPos(), terminal));
+
+			terminal->setNumObstructions((prev == nullptr) ? (0) : (
+				prev->getNumObstructions() + (pieceTracker->getPiece(prev->getPos()) != nullptr)
+			));
 
             // Update the move marker on generation
             terminal->onGeneration(pieceTracker);

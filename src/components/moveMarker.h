@@ -52,11 +52,6 @@ private:
 	MoveMarker* prev;
 
 	/**
-	 * Whether a leap is required to get to the move marker
-	 */
-	bool requiresLeap;
-
-	/**
 	 * Whether the move marker meets a scaling rule
 	 */
 	bool meetsScalingRule;
@@ -65,6 +60,11 @@ private:
 	 * Whether the piece meets an nth step rule
 	 */
 	bool meetsNthStepRule;
+
+	/**
+	 * The number of pieces in the way of this move marker
+	 */
+	unsigned int numObstructions;
 
 	/**
 	 * The move marker's targets
@@ -86,14 +86,9 @@ private:
 	// Event handlers
 
 	/**
-	 * Update the move marker chain when a piece leaves the tile
+	 * Update the move marker chain's properties
 	 */
-	void onPieceLeaveNext(Piece* piece, PieceTracker* pieceTracker);
-
-	/**
-	 * Update the move marker chain when a piece enters the tile
-	 */
-	void onPieceEnterNext(Piece* piece, PieceTracker* pieceTracker);
+	void update(Piece* piece, PieceTracker* pieceTracker, unsigned int numObstructions_);
 
 	// Friends
 	friend Piece;
@@ -177,9 +172,9 @@ public:
 	inline const sf::Vector2i getBaseVector() const { return baseVector; }
 
 	/**
-	 * Get whether the move marker requires a leap
+	 * Get the number of pieces in the way of this move marker
 	 */
-	inline const bool getRequiresLeap() const { return requiresLeap; }
+	inline const unsigned int getNumObstructions() const { return numObstructions; }
 
 	/**
 	 * Get the targets for the move marker
@@ -206,7 +201,7 @@ public:
 	/**
 	 * Set whether the move marker requires a leap
 	 */
-	void setRequiresLeap(bool requiresLeap_);
+	void setNumObstructions(unsigned int numObstructions_);
 
 	// Helpers
 

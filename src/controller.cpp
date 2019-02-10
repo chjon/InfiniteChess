@@ -45,7 +45,7 @@ void Controller::onStartup(
 	// Update all of the pieces in the piece tracker
 	const std::vector<Piece*>* pieces = pieceTracker->getPieces();
 	for (std::vector<Piece*>::const_iterator i = pieces->begin(); i != pieces->end(); ++i) {
-		eventProcessor.insertInQueue(EventProcessor::AFTER, new Event(*i, "enter", ""));
+		eventProcessor.insertInQueue(EventProcessor::AFTER, new Event(*i, "enter", "initialization"));
 		teams.find((*i)->getTeam())->second->numPieces++;
 	}
 

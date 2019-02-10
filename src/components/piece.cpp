@@ -64,7 +64,6 @@ void Piece::setPos(sf::Vector2i dest) {
 
 void Piece::move(sf::Vector2i dest) {
     pos = dest;
-    //lastMove = dest->getRootMove()->index;
     moveCount++;
     moveTracker->onMove();
 }
