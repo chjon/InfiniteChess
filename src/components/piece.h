@@ -78,7 +78,7 @@ public:
 	void move(sf::Vector2i dest);
 
 	// Event handlers
-	void onStartUp(PieceTracker* pieceTracker);
+	void onStartup(PieceTracker* pieceTracker);
 	void onCameraChange(PieceTracker* pieceTracker);
 	void onMove();
 };

@@ -108,6 +108,16 @@ MoveTracker::~MoveTracker() {
 // Event handlers
 
 /**
+ * Update the move markers on generation
+ */
+void MoveTracker::onStartup(PieceTracker* pieceTracker) {
+	// Update the move marker on generation
+	for (std::vector<MoveMarker*>::iterator i = terminalMoveMarkers->begin(); i != terminalMoveMarkers->end(); ++i) {
+		(*i)->onGeneration(pieceTracker);
+	}
+}
+
+/**
  * Update the move markers when the camera changes
  */
 void MoveTracker::onCameraChange(PieceTracker* pieceTracker) {
@@ -116,9 +126,6 @@ void MoveTracker::onCameraChange(PieceTracker* pieceTracker) {
 	// Update the terminal markers
 	for (std::vector<MoveMarker*>::iterator i = terminalMoveMarkers->begin(); i != terminalMoveMarkers->end(); ++i) {
         MoveMarker* terminal = *i;
-
-        // Update the move marker on generation
-		terminal->onGeneration(pieceTracker);
 
         // Extend the move marker upward
         while (terminal->getNextPos() != terminal->getPos() && pieceTracker->shouldGenerate(terminal)) {

@@ -72,6 +72,10 @@ void Piece::move(sf::Vector2i dest) {
 
 // Event handlers
 
+void Piece::onStartup(PieceTracker* pieceTracker) {
+    moveTracker->onStartup(pieceTracker);
+}
+
 void Piece::onCameraChange(PieceTracker* pieceTracker) {
 	moveTracker->onCameraChange(pieceTracker);
 }

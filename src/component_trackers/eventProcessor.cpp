@@ -46,6 +46,7 @@ void EventProcessor::execute(Event* event) {
 	if ("enter" == event->action) {
 		// Update the piece
         piece->onMove();
+        piece->onStartup(pieceTracker);
         piece->onCameraChange(pieceTracker);
 
         // Update other markers only if this is not an initialization event
