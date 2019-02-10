@@ -79,17 +79,17 @@ const std::vector<MoveMarker*>* MoveDef::generateMarkers(const Piece* piece) con
 		return markers;
 	}
 
-	// Rotate the vector to the correct direction
-	sf::Vector2i rotated = rotate(baseVector, piece->dir);
-
 	for (int x = (isXSymmetric ? 0 : 1); x < 2; x++) {
 		for (int y = (isYSymmetric ? 0 : 1); y < 2; y++) {
 			for (int xy = (isXYSymmetric ? 0 : 1); xy < 2; xy++) {
-                sf::Vector2i reflected = VectorUtils::reflect(rotated, !x, !y, !xy);
+                sf::Vector2i reflected = VectorUtils::reflect(baseVector, !x, !y, !xy);
+
+                // Rotate the vector to the correct direction
+				sf::Vector2i rotated = rotate(reflected, piece->dir);
 
 				// Add move markers for the current set of transformations
-				sf::Vector2i nextPos = piece->pos + reflected;
-				markers->push_back(new MoveMarker(piece, this, reflected, nextPos, !x, !y, !xy, 1));
+				sf::Vector2i nextPos = piece->pos + rotated;
+				markers->push_back(new MoveMarker(piece, this, rotated, nextPos, !x, !y, !xy, 1));
 			}
 		}
 	}
