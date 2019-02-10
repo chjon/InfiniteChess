@@ -2,8 +2,8 @@
 #define CHESS_CONTROLLER_H
 
 #include <SFML/Graphics.hpp>
-#include "actionListenerTracker.h"
-#include "eventProcessor.h"
+#include "component_trackers/actionListenerTracker.h"
+#include "component_trackers/eventProcessor.h"
 #include "game.h"
 
 // Forward declarations

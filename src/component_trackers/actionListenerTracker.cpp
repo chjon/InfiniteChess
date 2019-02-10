@@ -1,9 +1,9 @@
 #include "actionListenerTracker.h"
 
-#include "moveDef.h"
-#include "moveMarker.h"
-#include "piece.h"
-#include "vectorUtils.h"
+#include "../components/moveDef.h"
+#include "../components/moveMarker.h"
+#include "../components/piece.h"
+#include "../utils/vectorUtils.h"
 
 // Constructors
 ActionListenerTracker::ActionListenerTracker() {

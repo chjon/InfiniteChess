@@ -4,7 +4,7 @@
 #include "numRule.h"
 #include "piece.h"
 #include "pieceDef.h"
-#include "vectorUtils.h"
+#include "../utils/vectorUtils.h"
 
 // Private helper methods
 

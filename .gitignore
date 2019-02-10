@@ -2,3 +2,11 @@
 /bin/Debug/*.exe
 /*.layout
 /*.depend
+/obj/Debug/src/components/*.o
+/obj/Release/src/component_trackers/*.o
+/obj/Release/src/components/*.o
+/obj/Debug/src/component_trackers/*.o
+/obj/Release/src/io/*.o
+/obj/Debug/src/io/*.o
+/bin/Release/*.exe
+/*.exe

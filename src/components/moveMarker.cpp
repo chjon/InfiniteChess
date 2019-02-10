@@ -7,7 +7,7 @@
 #include "numRule.h"
 #include "piece.h"
 #include "pieceDef.h"
-#include "pieceTracker.h"
+#include "../component_trackers/actionListenerTracker.h"
 #include "targetingRule.h"
 
 // Private helpers

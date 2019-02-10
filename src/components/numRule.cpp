@@ -1,7 +1,7 @@
 #include "numRule.h"
 
 #include <string>
-#include "resourceLoader.h"
+#include "../io/resourceLoader.h"
 
 // Constructors
 

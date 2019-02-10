@@ -6,7 +6,7 @@
 #include "event.h"
 #include "numRule.h"
 #include "piece.h"
-#include "resourceLoader.h"
+#include "../io/resourceLoader.h"
 
 // Initialize constants
 const std::string TargetingRule::EMPTY_ONLY = "!";

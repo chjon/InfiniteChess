@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "pieceDef.h"
-#include "vectorUtils.h"
+#include "../utils/vectorUtils.h"
 
 // Forward declarations
 class Event;

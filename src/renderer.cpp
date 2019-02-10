@@ -1,10 +1,10 @@
 #include "renderer.h"
 
 #include <string>
-#include "moveMarker.h"
-#include "moveTracker.h"
-#include "piece.h"
-#include "vectorUtils.h"
+#include "components/moveMarker.h"
+#include "component_trackers/moveTracker.h"
+#include "components/piece.h"
+#include "utils/vectorUtils.h"
 #include "ui/windowLayer.h"
 
 // Private utility methods

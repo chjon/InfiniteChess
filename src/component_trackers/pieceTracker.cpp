@@ -1,10 +1,10 @@
 #include "pieceTracker.h"
 
 #include <map>
-#include "game.h"
-#include "moveMarker.h"
+#include "../game.h"
+#include "../components/moveMarker.h"
 #include "moveTracker.h"
-#include "piece.h"
+#include "../components/piece.h"
 
 
 

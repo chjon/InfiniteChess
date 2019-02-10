@@ -2,13 +2,13 @@
 #define CHESS_PIECE_DEF_LOADER_H
 
 #include <SFML/Graphics.hpp>
-#include "event.h"
-#include "moveDef.h"
-#include "numRule.h"
-#include "targetingRule.h"
-#include "pieceDef.h"
+#include "../components/event.h"
+#include "../components/moveDef.h"
+#include "../components/numRule.h"
+#include "../components/targetingRule.h"
+#include "../components/pieceDef.h"
 #include "resourceLoader.h"
-#include "vectorUtils.h"
+#include "../utils/vectorUtils.h"
 
 // Class declaration
 class PieceDefLoader {

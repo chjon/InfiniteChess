@@ -2,7 +2,7 @@
 #define CHESS_INPUT_HANDLER_H
 
 #include <SFML/Graphics.hpp>
-#include "renderer.h"
+#include "../renderer.h"
 
 // Forward declarations
 class Game;

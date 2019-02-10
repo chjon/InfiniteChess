@@ -2,13 +2,13 @@
 
 #include <SFML/Graphics.hpp>
 #include "actionListenerTracker.h"
-#include "controller.h"
-#include "event.h"
-#include "moveMarker.h"
+#include "../controller.h"
+#include "../components/event.h"
+#include "../components/moveMarker.h"
 #include "moveTracker.h"
-#include "piece.h"
+#include "../components/piece.h"
 #include "pieceTracker.h"
-#include "vectorUtils.h"
+#include "../utils/vectorUtils.h"
 
 // Constructors
 EventProcessor::EventProcessor(

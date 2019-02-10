@@ -3,7 +3,7 @@
 
 #include <fstream>
 #include <SFML/Graphics.hpp>
-#include "stringUtils.h"
+#include "../utils/stringUtils.h"
 
 // Forward declarations
 class BoardLoader;

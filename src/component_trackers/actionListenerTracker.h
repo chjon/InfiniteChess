@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <map>
 #include <vector>
-#include "vectorUtils.h"
+#include "../utils/vectorUtils.h"
 
 // Forward declarations
 class Event;

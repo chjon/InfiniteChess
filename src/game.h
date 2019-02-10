@@ -3,10 +3,10 @@
 
 #include <SFML/Graphics.hpp>
 #include "renderer.h"
-#include "inputHandler.h"
-#include "pieceTracker.h"
+#include "io/inputHandler.h"
+#include "component_trackers/pieceTracker.h"
 #include "controller.h"
-#include "resourceLoader.h"
+#include "io/resourceLoader.h"
 
 // Forward declarations
 class Renderer;

@@ -3,8 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 #include <map>
-#include "pieceDef.h"
-#include "vectorUtils.h"
+#include "../components/pieceDef.h"
+#include "../utils/vectorUtils.h"
 
 // Forward declarations
 class Game;

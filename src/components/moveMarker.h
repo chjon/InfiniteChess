@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <tuple>
-#include "pieceTracker.h"
+#include "../component_trackers/pieceTracker.h"
 
 // Forward definitions
 class Event;

@@ -2,9 +2,9 @@
 #define CHESS_BOARD_LOADER_H
 
 #include <SFML/Graphics.hpp>
-#include "piece.h"
-#include "stringUtils.h"
-#include "vectorUtils.h"
+#include "../components/piece.h"
+#include "../utils/stringUtils.h"
+#include "../utils/vectorUtils.h"
 
 // Class declaration
 class BoardLoader {

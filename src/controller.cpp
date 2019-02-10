@@ -1,12 +1,12 @@
 #include "controller.h"
 
-#include "actionListenerTracker.h"
-#include "event.h"
-#include "eventProcessor.h"
-#include "moveDef.h"
-#include "moveMarker.h"
-#include "piece.h"
-#include "targetingRule.h"
+#include "component_trackers/actionListenerTracker.h"
+#include "components/event.h"
+#include "component_trackers/eventProcessor.h"
+#include "components/moveDef.h"
+#include "components/moveMarker.h"
+#include "components/piece.h"
+#include "components/targetingRule.h"
 
 // Private event handlers
 

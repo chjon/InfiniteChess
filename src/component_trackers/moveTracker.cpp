@@ -1,9 +1,9 @@
 #include "moveTracker.h"
 
-#include "moveMarker.h"
-#include "piece.h"
-#include "pieceDef.h"
-#include "moveDef.h"
+#include "../components/moveMarker.h"
+#include "../components/piece.h"
+#include "../components/pieceDef.h"
+#include "../components/moveDef.h"
 
 // Private methods
 

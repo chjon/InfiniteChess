@@ -1,6 +1,6 @@
 #include "inputHandler.h"
 
-#include "ui/windowLayer.h"
+#include "../ui/windowLayer.h"
 
 // Private methods
 

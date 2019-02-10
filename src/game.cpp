@@ -1,10 +1,10 @@
 #include "game.h"
 
 #include <iostream>
-#include "boardLoader.h"
-#include "pieceDefLoader.h"
-#include "resourceLoader.h"
-#include "stringUtils.h"
+#include "io/boardLoader.h"
+#include "io/pieceDefLoader.h"
+#include "io/resourceLoader.h"
+#include "utils/stringUtils.h"
 #include "ui/windowLayer.h"
 #include "ui/button.h"
 

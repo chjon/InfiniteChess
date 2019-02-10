@@ -56,44 +56,40 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="src/actionListenerTracker.cpp" />
-		<Unit filename="src/actionListenerTracker.h" />
-		<Unit filename="src/boardLoader.h" />
+		<Unit filename="src/component_trackers/actionListenerTracker.cpp" />
+		<Unit filename="src/component_trackers/actionListenerTracker.h" />
+		<Unit filename="src/component_trackers/eventProcessor.cpp" />
+		<Unit filename="src/component_trackers/eventProcessor.h" />
+		<Unit filename="src/component_trackers/moveTracker.cpp" />
+		<Unit filename="src/component_trackers/moveTracker.h" />
+		<Unit filename="src/component_trackers/pieceTracker.cpp" />
+		<Unit filename="src/component_trackers/pieceTracker.h" />
+		<Unit filename="src/components/event.h" />
+		<Unit filename="src/components/moveDef.cpp" />
+		<Unit filename="src/components/moveDef.h" />
+		<Unit filename="src/components/moveMarker.cpp" />
+		<Unit filename="src/components/moveMarker.h" />
+		<Unit filename="src/components/numRule.cpp" />
+		<Unit filename="src/components/numRule.h" />
+		<Unit filename="src/components/piece.cpp" />
+		<Unit filename="src/components/piece.h" />
+		<Unit filename="src/components/pieceDef.cpp" />
+		<Unit filename="src/components/pieceDef.h" />
+		<Unit filename="src/components/targetingRule.cpp" />
+		<Unit filename="src/components/targetingRule.h" />
 		<Unit filename="src/controller.cpp" />
 		<Unit filename="src/controller.h" />
-		<Unit filename="src/event.h" />
-		<Unit filename="src/eventProcessor.cpp" />
 		<Unit filename="src/eventProcessor.h" />
 		<Unit filename="src/game.cpp" />
 		<Unit filename="src/game.h" />
-		<Unit filename="src/inputHandler.cpp" />
-		<Unit filename="src/inputHandler.h" />
 		<Unit filename="src/main.cpp" />
-		<Unit filename="src/moveDef.cpp" />
-		<Unit filename="src/moveDef.h" />
-		<Unit filename="src/moveMarker.cpp" />
-		<Unit filename="src/moveMarker.h" />
-		<Unit filename="src/moveTracker.cpp" />
-		<Unit filename="src/moveTracker.h" />
-		<Unit filename="src/numRule.cpp" />
-		<Unit filename="src/numRule.h" />
-		<Unit filename="src/piece.cpp" />
-		<Unit filename="src/piece.h" />
-		<Unit filename="src/pieceDef.cpp" />
-		<Unit filename="src/pieceDef.h" />
-		<Unit filename="src/pieceDefLoader.h" />
-		<Unit filename="src/pieceTracker.cpp" />
-		<Unit filename="src/pieceTracker.h" />
 		<Unit filename="src/renderer.cpp" />
 		<Unit filename="src/renderer.h" />
-		<Unit filename="src/resourceLoader.h" />
-		<Unit filename="src/stringUtils.h" />
-		<Unit filename="src/targetingRule.cpp" />
-		<Unit filename="src/targetingRule.h" />
 		<Unit filename="src/ui/button.h" />
 		<Unit filename="src/ui/clickable.h" />
 		<Unit filename="src/ui/windowLayer.h" />
-		<Unit filename="src/vectorUtils.h" />
+		<Unit filename="src/utils/stringUtils.h" />
+		<Unit filename="src/utils/vectorUtils.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
