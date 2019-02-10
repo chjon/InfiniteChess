@@ -23,7 +23,7 @@ void Controller::onStartup(
 	std::map<const unsigned int, std::pair<const std::string, sf::Color>>::iterator i = teams_->begin();
 	while (i != teams_->end()) {
 		// Create the team
-		TeamNode* temp = new TeamNode{ i->first, nullptr, 0 };
+		TeamNode* temp = new TeamNode{ i->first, nullptr, 0, i->second.first, i->second.second };
 		teams.insert(std::make_pair(i->first, temp));
 		if (head == nullptr) {
 			head = temp;

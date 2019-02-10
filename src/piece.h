@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "pieceDef.h"
+#include "vectorUtils.h"
 
 // Forward declarations
 class Event;
@@ -58,6 +59,16 @@ public:
 	inline const MoveTracker* getMoveTracker() const { return moveTracker; }
 	inline const int getLastMove() const { return lastMove; }
 	const MoveMarker* getValidMove(sf::Vector2i pos) const;
+	inline const std::string toString() const {
+        return "[" +
+			pieceDef->name + "," +
+			std::to_string(team) + "," +
+			VectorUtils::toString(pos) + "," +
+			std::to_string(dir) + "," +
+			std::to_string(moveCount) + "," +
+			std::to_string(lastMove) + "," +
+		"]";
+	}
 
 	const std::vector<std::tuple<MoveMarker*, Piece*, const TargetingRule*>>* getTargets(sf::Vector2i pos) const;
 

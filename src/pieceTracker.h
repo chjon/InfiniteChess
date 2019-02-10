@@ -56,6 +56,8 @@ public:
     bool removePiece(sf::Vector2i pos);
     MoveMarker* getValidMove(Piece* piece, sf::Vector2i dest);
     std::vector<MoveMarker*>* getMoveMarkers(sf::Vector2i pos) const;
+
+    std::string piecesToString() const;
 };
 
 #endif // CHESS_PIECE_TRACKER_H

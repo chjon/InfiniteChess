@@ -136,5 +136,11 @@ void Game::loadBoard(std::string fileName) {
 }
 
 void Game::saveBoard(std::string fileName) {
+    std::string toWrite = "[" +
+		controller->teamsToString() + "," +
+		std::to_string(controller->getCurTurn()) + "," +
+		pieceTracker->piecesToString() + ",\n" +
+	"]";
 
+	ResourceLoader::write(fileName, toWrite);
 }

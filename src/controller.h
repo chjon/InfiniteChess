@@ -19,6 +19,8 @@ struct TeamNode {
 	unsigned int teamIndex;
     TeamNode* next;
     unsigned int numPieces;
+    std::string name;
+    sf::Color color;
 };
 
 
@@ -46,6 +48,21 @@ private:
 	void clearTeams();
 	void move(const MoveMarker* dest);
 	void advanceTurn();
+	inline std::string colorToString(sf::Color color) const {
+		return "[" +
+			std::to_string(color.r) + "," +
+			std::to_string(color.g) + "," +
+			std::to_string(color.b) + "," +
+			std::to_string(color.a) + "," +
+		"]";
+	}
+	inline std::string teamToString(TeamNode* team) const {
+		return "[" +
+			std::to_string(team->teamIndex) + "," +
+			team->name + "," +
+			colorToString(team->color) + "," +
+		"]";
+	}
 
 public:
 	// Constructors
@@ -62,6 +79,17 @@ public:
 	// Accessors
 	Piece* getSelectedPiece() const;
 	bool canMove(unsigned int team) const;
+	inline std::string teamsToString() const {
+		std::string output = "[";
+		TeamNode* curNode = curTurn;
+		do {
+            output += teamToString(curNode) + ",\n";
+            curNode = curNode->next;
+		} while (curNode != curTurn);
+
+		return output + "]";
+	}
+	inline unsigned int getCurTurn() const { return curTurn->teamIndex; };
 
 	// Mutators
 	inline void addPiece(unsigned int teamIndex) {

@@ -287,6 +287,23 @@ public:
 		}
 		return textures;
     }
+
+    /**
+     * Write to file
+     */
+    inline static void write(std::string fileName, std::string toWrite) {
+		std::ofstream file(fileName, std::ios::out);
+
+		// Check whether the file is open
+		if (!file.is_open()) {
+			throw ResourceLoader::IOException("Unable to open file: " + fileName);
+		}
+
+		file << toWrite;
+
+		// Close the file
+		file.close();
+    }
 };
 
 #endif // CHESS_RESOURCE_LOADER_H

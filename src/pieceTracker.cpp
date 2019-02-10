@@ -202,3 +202,15 @@ std::vector<MoveMarker*>* PieceTracker::getMoveMarkers(sf::Vector2i pos) const {
 
 	return markers;
 }
+
+/**
+ * Get a string of all the pieces
+ */
+std::string PieceTracker::piecesToString() const {
+	std::string output = "[\n";
+	for (std::map<sf::Vector2i, Piece*>::const_iterator i = pieces->begin(); i != pieces->end(); ++i) {
+		output += i->second->toString() + ",\n";
+	}
+
+	return output + "]";
+}
