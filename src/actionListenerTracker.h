@@ -57,6 +57,11 @@ public:
      * @param event the action that triggered the notification
      */
     void notify(sf::Vector2i positionToNotify, Event* event);
+
+    /**
+	 * Clear everything on startup
+	 */
+	void onStartup();
 };
 
 #endif // CHESS_ACTION_LISTENER_TRACKER_H

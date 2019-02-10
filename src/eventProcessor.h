@@ -60,6 +60,11 @@ public:
 	 * Execute all of the events
 	 */
     void executeEvents();
+
+    /**
+	 * Clear everything on startup
+	 */
+    void onStartup();
 };
 
 #endif // CHESS_EVENT_PROCESSOR

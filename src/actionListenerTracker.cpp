@@ -155,3 +155,20 @@ void ActionListenerTracker::notify(sf::Vector2i positionToNotify, Event* event) 
 		}
     }
 }
+
+/**
+ * Clear everything on startup
+ */
+void ActionListenerTracker::onStartup() {
+	for (std::map<
+		sf::Vector2i,
+		std::map<std::string, MoveMarker*>*,
+		VectorUtils::cmpVectorLexicographically
+	>::iterator i = actionListeners.begin();
+		i != actionListeners.end(); ++i
+	) {
+        delete i->second;
+	}
+
+	actionListeners.clear();
+}

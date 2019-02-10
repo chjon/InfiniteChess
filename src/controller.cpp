@@ -15,6 +15,7 @@ void Controller::onStartup(
 	unsigned int curTeam_
 ) {
 	clearTeams();
+	eventProcessor.onStartup();
 
 	TeamNode* head = nullptr;
 	curTurn = nullptr;
@@ -38,7 +39,7 @@ void Controller::onStartup(
 
 	// Link the teams in a loop
 	curTurn->next = head;
-	curTurn = head;
+	curTurn = teams.find(curTeam_)->second;
 
 	// Update all of the pieces in the piece tracker
 	const std::vector<Piece*>* pieces = pieceTracker->getPieces();

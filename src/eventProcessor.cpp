@@ -138,3 +138,19 @@ void EventProcessor::executeEvents() {
         (*i)->clear();
 	}
 }
+
+/**
+ * Clear everything on startup
+ */
+void EventProcessor::onStartup() {
+	// Delete stored events
+	for (std::vector<std::vector<Event*>*>::const_iterator i = eventQueues.begin(); i != eventQueues.end(); ++i) {
+        for (std::vector<Event*>::iterator j = (*i)->begin(); j != (*i)->end(); ++j) {
+            delete *j;
+        }
+
+        (*i)->clear();
+	}
+
+    actionListenerTracker.onStartup();
+}
