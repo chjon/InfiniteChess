@@ -14,7 +14,7 @@
 class PieceDefLoader {
 private:
     // Constants
-	static const int NUM_MOVE_ARGS = 7;
+	static const int NUM_MOVE_ARGS = 8;
 	static const int NUM_TARGETTING_RULE_ARGS = 4;
 
 	// Object generation methods
@@ -127,7 +127,6 @@ private:
 
 		// Get the move properties
 		unsigned int index = 0;
-		const bool canLeap       = (*args)[argIndex][index++] - '0';
 		const bool endsTurn      = (*args)[argIndex][index++] - '0';
 		const bool isXSymmetric  = (*args)[argIndex][index++] - '0';
 		const bool isYSymmetric  = (*args)[argIndex][index++] - '0';
@@ -137,6 +136,8 @@ private:
 		// Load chained moves and movement rules
 		const std::vector<int>* chainedMoves = ResourceLoader::getListFromString
 			((*args)[argIndex++], (int(*)(const std::string&)) [](auto s){ return std::stoi(s); });
+		const std::vector<NumRule*>* leapingRules = ResourceLoader::getListFromString
+			((*args)[argIndex++], (NumRule*(*)(const std::string& s)) [](auto s){ return new NumRule(s); });
 		const std::vector<NumRule*>* scalingRules = ResourceLoader::getListFromString
 			((*args)[argIndex++], (NumRule*(*)(const std::string& s)) [](auto s){ return new NumRule(s); });
 		const std::vector<NumRule*>* nthStepRules = ResourceLoader::getListFromString
@@ -145,8 +146,8 @@ private:
 			((*args)[argIndex++], getTargetingRuleFromString);
 
 		MoveDef* newMove = new MoveDef(
-			moveIndex, baseVector, canLeap, endsTurn, isXSymmetric, isYSymmetric, isXYSymmetric,
-			chainedMoves, scalingRules, nthStepRules, targetingRules
+			moveIndex, baseVector, endsTurn, isXSymmetric, isYSymmetric, isXYSymmetric,
+			chainedMoves, leapingRules, scalingRules, nthStepRules, targetingRules
 		);
 
 		// Clean up and return

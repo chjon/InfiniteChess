@@ -52,7 +52,7 @@ bool MoveMarker::isAttacked(PieceTracker* pieceTracker) const {
 	bool positionIsAttacked = false;
 	for (std::vector<MoveMarker*>::iterator i = markers->begin(); i != markers->end(); ++i) {
 		if (((*i)->rootPiece->getTeam() == rootPiece->getTeam()) ||
-			(!(*i)->rootMove->canLeap && (*i)->numObstructions) ||
+			(!(*i)->meetsLeapingRule) ||
 			(!(*i)->meetsScalingRule) ||
 			(!(*i)->meetsNthStepRule)
 		) {
@@ -83,6 +83,7 @@ MoveMarker::MoveMarker(
 	pos{pos_},
 	next{nullptr},
 	prev{nullptr},
+	meetsLeapingRule{false},
 	meetsScalingRule{false},
 	meetsNthStepRule{false},
 	numObstructions{0},
@@ -144,6 +145,7 @@ void MoveMarker::handleEvent(Event* event) {
  * Update the move marker when it is generated
  */
 void MoveMarker::onGeneration(PieceTracker* pieceTracker) {
+    meetsLeapingRule = meetsNumRule(rootMove->leapingRules, numObstructions, false);
     meetsScalingRule = meetsNumRule(rootMove->scalingRules, lambda, false);
     meetsNthStepRule = meetsNumRule(rootMove->nthStepRules, rootPiece->getMoveCount(), false);
 
@@ -168,6 +170,7 @@ void MoveMarker::onGeneration(PieceTracker* pieceTracker) {
  */
 void MoveMarker::update(Piece* piece, PieceTracker* pieceTracker, unsigned int numObstructions_) {
 	numObstructions = numObstructions_;
+	meetsLeapingRule = meetsNumRule(getRootMove()->leapingRules, numObstructions, false);
 
 	// Check if there is a next tile
 	if (next != nullptr) {
@@ -234,7 +237,7 @@ const std::vector<std::pair<Piece*, const TargetingRule*>>* MoveMarker::getTarge
  */
 bool MoveMarker::canMove() const {
 	// Check if the position meets the movement requirements
-	if ((!rootMove->canLeap && numObstructions) ||
+	if ((!meetsLeapingRule) ||
 		(!meetsScalingRule) ||
 		(!meetsNthStepRule) ||
 		(!meetsTargetingRules())

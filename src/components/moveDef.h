@@ -20,13 +20,13 @@ public:
 
 	const sf::Vector2i baseVector;
 
-	const bool canLeap;
 	const bool endsTurn;
 	const bool isXSymmetric;
 	const bool isYSymmetric;
 	const bool isXYSymmetric;
 
 	const std::vector<int>* chainedMoves;
+	const std::vector<NumRule*>* leapingRules;
 	const std::vector<NumRule*>* scalingRules;
 	const std::vector<NumRule*>* nthStepRules;
 	const std::vector<const TargetingRule*>* targetingRules;
@@ -35,10 +35,11 @@ public:
 
 	// Constructors
 	MoveDef(
-		int index_, sf::Vector2i baseVector_, bool canLeap, bool endsTurn,
+		int index_, sf::Vector2i baseVector_, bool endsTurn,
 		bool isXSymmetric, bool isYSymmetric, bool isXYSymmetric,
-		const std::vector<int>* chainedMoves, const std::vector<NumRule*>* scalingRules,
-		const std::vector<NumRule*>* nthStepRules, const std::vector<const TargetingRule*>* targetingRules_
+		const std::vector<int>* chainedMoves, const std::vector<NumRule*>* leapingRules,
+		const std::vector<NumRule*>* scalingRules, const std::vector<NumRule*>* nthStepRules,
+		const std::vector<const TargetingRule*>* targetingRules_
 	);
 
 	~MoveDef();

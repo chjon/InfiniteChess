@@ -84,7 +84,8 @@ private:
 		unsigned int numMoveArgs = getNumArgs(s);
 		if (numMoveArgs != expected) {
 			throw FileFormatException(
-				"Expecting " + std::to_string(expected) + " arguments, received " + std::to_string(numMoveArgs)
+				"Expecting " + std::to_string(expected) + " arguments, " +
+				"received " + std::to_string(numMoveArgs) + ": " + s
 			);
 		}
 	}

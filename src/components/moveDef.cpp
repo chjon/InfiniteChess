@@ -32,18 +32,20 @@ sf::Vector2i MoveDef::rotate(const sf::Vector2i original, const PieceDef::Direct
  * Constructor
  */
 MoveDef::MoveDef(
-	int index_, sf::Vector2i baseVector_, bool canLeap_, bool endsTurn_, bool isXSymmetric_, bool isYSymmetric_, bool isXYSymmetric_,
-	const std::vector<int>* chainedMoves_, const std::vector<NumRule*>* scalingRules_,
-	const std::vector<NumRule*>* nthStepRules_, const std::vector<const TargetingRule*>* targetingRules_
+	int index_, sf::Vector2i baseVector_, bool endsTurn_,
+	bool isXSymmetric_, bool isYSymmetric_, bool isXYSymmetric_,
+	const std::vector<int>* chainedMoves_, const std::vector<NumRule*>* leapingRules_,
+	const std::vector<NumRule*>* scalingRules_, const std::vector<NumRule*>* nthStepRules_,
+	const std::vector<const TargetingRule*>* targetingRules_
 ) :
 	index{index_},
 	baseVector{baseVector_},
-    canLeap{canLeap_},
     endsTurn{endsTurn_},
     isXSymmetric{isXSymmetric_},
     isYSymmetric{isYSymmetric_},
     isXYSymmetric{isXYSymmetric_},
     chainedMoves{chainedMoves_},
+    leapingRules{leapingRules_},
     scalingRules{scalingRules_},
     nthStepRules{nthStepRules_},
     targetingRules{targetingRules_},

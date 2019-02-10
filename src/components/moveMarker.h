@@ -52,6 +52,11 @@ private:
 	MoveMarker* prev;
 
 	/**
+	 * Whether the move marker meets a leaping rule
+	 */
+	bool meetsLeapingRule;
+
+	/**
 	 * Whether the move marker meets a scaling rule
 	 */
 	bool meetsScalingRule;
