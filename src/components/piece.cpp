@@ -36,12 +36,12 @@ const std::vector<std::tuple<MoveMarker*, Piece*, const TargetingRule*>>* Piece:
 	return moveTracker->getTargets(pos);
 }
 
-const MoveMarker* Piece::getValidMove(sf::Vector2i pos) const {
+const MoveMarker* Piece::getValidMove(sf::Vector2i pos, bool requireChainedMove) const {
 	MoveMarker* validMove = nullptr;
 
 	const std::vector<MoveMarker*>* markers = moveTracker->getMoveMarkers(pos);
 	for (std::vector<MoveMarker*>::const_iterator i = markers->begin(); i != markers->end(); ++i) {
-        if ((*i)->canMove()) {
+        if ((*i)->canMove(requireChainedMove)) {
 			validMove = *i;
 			break;
         }
@@ -52,6 +52,22 @@ const MoveMarker* Piece::getValidMove(sf::Vector2i pos) const {
 	markers = nullptr;
 
 	return validMove;
+}
+
+bool Piece::isChainedMove(int moveIndex) const {
+	const std::map<int, const MoveDef*>::const_iterator lastMoveIter = pieceDef->moves->find(lastMove);
+	if (lastMoveIter == pieceDef->moves->end()) {
+		return true;
+	}
+
+	const std::vector<int>* chainedMoves = lastMoveIter->second->chainedMoves;
+	for (std::vector<int>::const_iterator i = chainedMoves->begin(); i != chainedMoves->end(); ++i) {
+        if (moveIndex == *i) {
+			return true;
+        }
+	}
+
+	return false;
 }
 
 

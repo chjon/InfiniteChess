@@ -58,7 +58,7 @@ public:
 	inline const PieceDef* getDef() const { return pieceDef; }
 	inline const MoveTracker* getMoveTracker() const { return moveTracker; }
 	inline const int getLastMove() const { return lastMove; }
-	const MoveMarker* getValidMove(sf::Vector2i pos) const;
+	const MoveMarker* getValidMove(sf::Vector2i pos, bool requireChainedMove) const;
 	inline const std::string toString() const {
         return "[" +
 			pieceDef->name + "," +
@@ -71,6 +71,7 @@ public:
 	}
 
 	const std::vector<std::tuple<MoveMarker*, Piece*, const TargetingRule*>>* getTargets(sf::Vector2i pos) const;
+	bool isChainedMove(int moveIndex) const;
 
 	// Mutators
 	void setPos(sf::Vector2i dest);

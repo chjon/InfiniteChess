@@ -95,7 +95,7 @@ void Renderer::drawOverlays() const {
 				j != i->second->end();
 				++j
 			) {
-				if (!j->second->canMove() && !displayDebugData) continue;
+				if (!j->second->canMove(game->controller->curTeamHasMoved()) && !displayDebugData) continue;
 				drawTile(j->first.x, j->first.y, MOVE_MARKER_COLOR);
 			}
 		}

@@ -2,7 +2,7 @@
 # [<PieceName>,<CheckVulnerable><Royal>,<MoveSet[Moves...]>]
 # 
 # Move Save Format:
-# [<MoveId>,<BaseVector[<x,y>]>,<CanLeap><EndsTurn><XSymmetric><YSymmetric><XYSymmetric>,
+# [<MoveId>,<BaseVector[<x,y>]>,<EndsTurn><XSymmetric><YSymmetric><XYSymmetric>,
 #  <ChainedMoves[MoveIds...]>,<ScalingRules[NumRules...]>,<NthStepRules[NumRules...]>,<TargetingRules[TargetRules...]>]
 #
 # NumRule Save Format:
@@ -245,6 +245,26 @@
 		],],
 		[1,[0,1,],1011,[],[=0,],[=1,],[!=-1,],[
 			[[0,0,],*,[[SameTeam,=0,],],[[destroy,"",],],],
+		],],
+	],],
+	
+	[Checkers-Man,00,[
+		[0,[2,2,],0100,[0,],[=0,],[=1,],[!=-1,],[
+			[[-1,-1,],Checkers-Man,[[SameTeam,=0,],],[[destroy,"",],],],
+			[[0,0,],!,[],[[destroy,"",],],],
+		],],
+		[1,[1,1,],1100,[],[=0,],[=1,],[!=-1,],[
+			[[0,0,],!,[],[[destroy,"",],],],
+		],],
+	],],
+	
+	[Checkers-King,00,[
+		[0,[2,2,],0110,[0,],[=0,],[=1,],[!=-1,],[
+			[[-1,-1,],Checkers-Man,[[SameTeam,=0,],],[[destroy,"",],],],
+			[[0,0,],!,[],[[destroy,"",],],],
+		],],
+		[1,[1,1,],1100,[],[=0,],[=1,],[!=-1,],[
+			[[0,0,],!,[],[[destroy,"",],],],
 		],],
 	],],
 ]

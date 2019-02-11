@@ -189,7 +189,7 @@ public:
 	/**
 	 * Determine whether the move marker is a valid move destination
 	 */
-	bool canMove() const;
+	bool canMove(bool requireChainedMove) const;
 
 	/**
 	 * Get a list of all the potential target positions that the move marker is tracking

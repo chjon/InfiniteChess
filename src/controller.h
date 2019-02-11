@@ -21,6 +21,7 @@ struct TeamNode {
     unsigned int numPieces;
     std::string name;
     sf::Color color;
+    bool moved;
 };
 
 
@@ -46,6 +47,7 @@ private:
 
 	// Helpers
 	void clearTeams();
+	void deselect();
 	void move(const MoveMarker* dest);
 	void advanceTurn();
 	inline std::string colorToString(sf::Color color) const {
@@ -89,7 +91,8 @@ public:
 
 		return output + "]";
 	}
-	inline unsigned int getCurTurn() const { return curTurn->teamIndex; };
+	inline unsigned int getCurTurn() const { return curTurn->teamIndex; }
+	inline bool curTeamHasMoved() const { return curTurn->moved; }
 
 	// Mutators
 	inline void addPiece(unsigned int teamIndex) {

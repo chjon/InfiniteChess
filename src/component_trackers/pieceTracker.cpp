@@ -159,22 +159,8 @@ const std::vector<Piece*>* PieceTracker::getPieces() const {
 /**
  * Get the first valid move marker for the position
  */
-MoveMarker* PieceTracker::getValidMove(Piece* piece, sf::Vector2i dest) {
-	const std::vector<MoveMarker*>* markers = piece->getMoveTracker()->getMoveMarkers(dest);
-	MoveMarker* validMove = nullptr;
-
-	for (std::vector<MoveMarker*>::const_iterator i = markers->begin(); i != markers->end(); ++i) {
-        if ((*i)->canMove()) {
-			validMove = *i;
-			break;
-        }
-	}
-
-	// Clean up
-	delete markers;
-	markers = nullptr;
-
-    return validMove;
+const MoveMarker* PieceTracker::getValidMove(Piece* piece, sf::Vector2i dest) {
+	return piece->getValidMove(dest, game->controller->curTeamHasMoved());
 }
 
 /**

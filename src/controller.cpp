@@ -16,7 +16,7 @@ void Controller::onStartup(
 ) {
 	clearTeams();
 	eventProcessor.onStartup();
-	selectedPiece = nullptr;
+	deselect();
 
 	TeamNode* head = nullptr;
 	curTurn = nullptr;
@@ -25,7 +25,7 @@ void Controller::onStartup(
 	std::map<const unsigned int, std::pair<const std::string, sf::Color>>::iterator i = teams_->begin();
 	while (i != teams_->end()) {
 		// Create the team
-		TeamNode* temp = new TeamNode{ i->first, nullptr, 0, i->second.first, i->second.second };
+		TeamNode* temp = new TeamNode{ i->first, nullptr, 0, i->second.first, i->second.second, false };
 		teams.insert(std::make_pair(i->first, temp));
 		if (head == nullptr) {
 			head = temp;
@@ -73,20 +73,20 @@ void Controller::onMousePress(sf::Vector2i pos) {
 
 		// Check whether the piece can be selected this turn
 		if (selectedPiece != nullptr && curTurn->teamIndex != selectedPiece->getTeam()) {
-			selectedPiece = nullptr;
+			deselect();
 		}
 
 	// Deselect
     } else if (selectedPiece->getPos() == pos) {
-    	selectedPiece = nullptr;
+    	deselect();
 
 	// Move piece
 	} else {
-		const MoveMarker* dest = selectedPiece->getValidMove(pos);
+		const MoveMarker* dest = selectedPiece->getValidMove(pos, curTeamHasMoved());
 
 		// Deselect
 		if (dest == nullptr) {
-			selectedPiece = nullptr;
+			deselect();
 		} else {
 			move(dest);
 		}
@@ -105,9 +105,21 @@ void Controller::clearTeams() {
         delete i->second;
 	}
 	teams.clear();
+	curTurn = nullptr;
+}
+
+void Controller::deselect() {
+	selectedPiece = nullptr;
+
+	// Progress to the next turn
+	if (curTurn != nullptr && curTurn->moved) {
+		advanceTurn();
+	}
 }
 
 void Controller::move(const MoveMarker* dest) {
+	curTurn->moved = true;
+
 	sf::Vector2i pos = dest->getPos();
 
 	// Set up events for moving the piece
@@ -133,7 +145,7 @@ void Controller::move(const MoveMarker* dest) {
 	) {
 		// Check whether the target is valid
 		MoveMarker* marker = std::get<0>(*i);
-        if (!marker->canMove()) continue;
+        if (!marker->canMove(curTeamHasMoved())) continue;
 
 		Piece* targetPiece = std::get<1>(*i);
 		const std::vector<Event*>* targetEvents = std::get<2>(*i)->getEvents();
@@ -165,13 +177,10 @@ void Controller::move(const MoveMarker* dest) {
 	// Execute all the queued events
 	eventProcessor.executeEvents();
 
-	// Progress to the next turn
 	if (endsTurn) {
-		advanceTurn();
+		// Deselect the piece
+		deselect();
 	}
-
-	// Deselect the piece
-	selectedPiece = nullptr;
 
 	// Clean up
 	delete targets;
@@ -182,6 +191,8 @@ void Controller::move(const MoveMarker* dest) {
  * Advance to the next turn
  */
 void Controller::advanceTurn() {
+	curTurn->moved = false;
+
 	do {
 		curTurn = curTurn->next;
 	} while (curTurn->numPieces == 0);
@@ -207,7 +218,8 @@ Controller::Controller(Game* g, PieceTracker* p) :
 Controller::~Controller() {
 	clearTeams();
 	curTurn = nullptr;
-	selectedPiece = nullptr;
+
+	deselect();
 }
 
 

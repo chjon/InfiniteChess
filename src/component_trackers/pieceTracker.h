@@ -54,7 +54,7 @@ public:
     void clearPieces();
     void addPiece(Piece* piece);
     bool removePiece(sf::Vector2i pos);
-    MoveMarker* getValidMove(Piece* piece, sf::Vector2i dest);
+    const MoveMarker* getValidMove(Piece* piece, sf::Vector2i dest);
     std::vector<MoveMarker*>* getMoveMarkers(sf::Vector2i pos) const;
 
     std::string piecesToString() const;

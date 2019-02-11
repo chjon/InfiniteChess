@@ -235,7 +235,7 @@ const std::vector<std::pair<Piece*, const TargetingRule*>>* MoveMarker::getTarge
 /**
  * Determine whether the move marker is a valid move position
  */
-bool MoveMarker::canMove() const {
+bool MoveMarker::canMove(bool requireChainedMove) const {
 	// Check if the position meets the movement requirements
 	if ((!meetsLeapingRule) ||
 		(!meetsScalingRule) ||
@@ -246,7 +246,8 @@ bool MoveMarker::canMove() const {
 		return false;
 	}
 
-	return true;
+	// Check if the move meets chained move requirements
+	return !requireChainedMove || rootPiece->isChainedMove(rootMove->index);
 }
 
 /**
