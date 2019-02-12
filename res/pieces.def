@@ -1,24 +1,5 @@
 # Piece Definition Save Format:
-# [<PieceName>,<CheckVulnerable><Royal>,<MoveSet[Moves...]>]
-# 
-# Move Save Format:
-# [<MoveId>,<BaseVector[<x,y>]>,<EndsTurn><XSymmetric><YSymmetric><XYSymmetric>,
-#  <ChainedMoves[MoveIds...]>,<ScalingRules[NumRules...]>,<NthStepRules[NumRules...]>,<TargetingRules[TargetRules...]>]
-#
-# NumRule Save Format:
-# <Operator: [<, <=, =, >=, >, !=]><Number>
-#
-# TargetRule Save Format:
-# [<OffsetVector[<x,y>]>,<PieceName>,<SelectionCriteria [DataSpecifiers...]>,<TransformationRules[TransformationRules...]>]
-#
-# PieceName special values:
-# "*": all pieces including empty
-# "+": all pieces excluding empty
-# "!": empty only
-#
-# DataSpecifiers: <[LastMove,LastTurn,NumMoves,SameTeam]><NumRule>
-#
-# TransformationRules: [[move,"[<x,y>]"], [destroy,""], [nothing,"",]]
+# https://github.com/chjon/InfiniteChess/wiki/Save-Formats#piece-definitions
 
 [
 	[Pawn,00,[
