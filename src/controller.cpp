@@ -118,8 +118,6 @@ void Controller::deselect() {
 }
 
 void Controller::move(const MoveMarker* dest) {
-	curTurn->moved = true;
-
 	sf::Vector2i pos = dest->getPos();
 
 	// Set up events for moving the piece
@@ -173,6 +171,7 @@ void Controller::move(const MoveMarker* dest) {
 	}
 
 	bool endsTurn = dest->getRootMove()->endsTurn;
+	curTurn->moved = true;
 
 	// Execute all the queued events
 	eventProcessor.executeEvents();
