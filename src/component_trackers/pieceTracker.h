@@ -48,7 +48,8 @@ public:
     /**
      * Determine whether a certain position is within the bounds of the screen
      */
-	bool shouldGenerate(MoveMarker* terminal) const;
+	bool shouldGenerate(const MoveMarker* terminal) const;
+	bool shouldDelete(const MoveMarker* terminal) const;
 
     // Methods
     void clearPieces();

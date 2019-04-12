@@ -97,8 +97,15 @@ void PieceTracker::onGeneration(MoveMarker* generated) {
 /**
  * Determine whether a move marker should generate another marker
  */
-bool PieceTracker::shouldGenerate(MoveMarker* terminal) const {
+bool PieceTracker::shouldGenerate(const MoveMarker* terminal) const {
 	return game->renderer->shouldGenerate(terminal);
+}
+
+/**
+ * Determine whether a move marker should be deleted
+ */
+bool PieceTracker::shouldDelete(const MoveMarker* terminal) const {
+	return game->renderer->shouldDelete(terminal);
 }
 
 

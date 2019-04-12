@@ -394,15 +394,46 @@ sf::Vector2u Renderer::getTileDimensions() const {
 /**
  * Determine whether a move marker should generate another move marker
  */
-bool Renderer::shouldGenerate(MoveMarker* terminal) const {
+bool Renderer::shouldGenerate(const MoveMarker* terminal) const {
     sf::Vector2i baseVector = terminal->getBaseVector();
 	sf::Vector2i screenPos = getScreenPos(terminal->getNextPos());
 
-	return
+	bool insideX =
 		(baseVector.x < 0 && screenPos.x > -tileSize) ||
+		(baseVector.x > 0 && (screenPos.x < -tileSize || (unsigned int) screenPos.x < window->getSize().x));
+
+	bool insideY =
 		(baseVector.y < 0 && screenPos.y > -tileSize) ||
-		(baseVector.x > 0 && (screenPos.x < -tileSize || (unsigned int) screenPos.x < window->getSize().x)) ||
 		(baseVector.y > 0 && (screenPos.y < -tileSize || (unsigned int) screenPos.y < window->getSize().y));
+
+	return insideX || insideY;
+}
+
+/**
+ * Determine whether a move marker should be deleted
+ */
+bool Renderer::shouldDelete(const MoveMarker* terminal) const {
+	const MoveMarker* prev = terminal->getPrev();
+	if (prev == nullptr) {
+		return false;
+	}
+
+	return false;
+
+	sf::Vector2i baseVector = terminal->getBaseVector();
+	sf::Vector2i screenPos = getScreenPos(prev->getNextPos());
+
+	bool outsideX =
+		//(baseVector.x == 0 && (screenPos.x < -tileSize || (unsigned int) screenPos.x > window->getSize().x)) ||
+		(baseVector.x < 0 && screenPos.x < -tileSize) ||
+		(baseVector.x > 0 && (screenPos.x > -tileSize && (unsigned int) screenPos.x > window->getSize().x));
+
+	bool outsideY =
+		//(baseVector.y == 0 && (screenPos.y < -tileSize || (unsigned int) screenPos.y > window->getSize().y)) ||
+		(baseVector.y < 0 && screenPos.y < -tileSize) ||
+		(baseVector.y > 0 && (screenPos.y > -tileSize && (unsigned int) screenPos.y > window->getSize().y));
+
+	return outsideX || outsideY;
 }
 
 /**

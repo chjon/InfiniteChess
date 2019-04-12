@@ -162,6 +162,11 @@ public:
 	const inline MoveMarker* getNext() const { return next; }
 
 	/**
+	 * Get the previous move marker
+	 */
+	const inline MoveMarker* getPrev() const { return prev; }
+
+	/**
 	 * Get the root piece for the move marker
 	 */
 	inline const Piece* getRootPiece() const { return rootPiece; }

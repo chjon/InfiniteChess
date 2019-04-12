@@ -127,7 +127,23 @@ void MoveTracker::onCameraChange(PieceTracker* pieceTracker) {
 	for (std::vector<MoveMarker*>::iterator i = terminalMoveMarkers->begin(); i != terminalMoveMarkers->end(); ++i) {
         MoveMarker* terminal = *i;
 
-        // Extend the move marker upward
+		// Contract the move markers backward
+		while (pieceTracker->shouldDelete(terminal)) {
+			const MoveDef* rootMove = terminal->getRootMove();
+			MoveMarker* toDelete = terminal;
+			MoveMarker* prev = const_cast<MoveMarker*>(terminal->getPrev());
+
+			// Unlink the move markers
+			prev->setNext(nullptr);
+			moveMarkers->find(rootMove)->second->erase(terminal->getPos());
+
+			// Clean up
+			delete toDelete;
+			toDelete = nullptr;
+			terminal = prev;
+		}
+
+        // Extend the move marker forward
         while (terminal->getNextPos() != terminal->getPos() && pieceTracker->shouldGenerate(terminal)) {
 			const MoveDef* rootMove = terminal->getRootMove();
 			MoveMarker* prev = terminal;
