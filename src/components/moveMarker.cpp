@@ -284,6 +284,18 @@ void MoveMarker::setNext(MoveMarker* newNext) {
 }
 
 /**
+ * Set the previous move marker
+ */
+void MoveMarker::setPrev(MoveMarker* newPrev) {
+    next = newPrev;
+
+    // Link backward as well
+    if (newPrev != nullptr) {
+		newPrev->next = this;
+    }
+}
+
+/**
  * Set whether the move marker requires a leap
  */
 void MoveMarker::setNumObstructions(unsigned int numObstructions_) {

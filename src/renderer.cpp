@@ -391,49 +391,39 @@ sf::Vector2u Renderer::getTileDimensions() const {
 	return dimensionsInTiles;
 }
 
+bool Renderer::shouldGenerate(sf::Vector2i baseVector, sf::Vector2i pos) const {
+	const sf::Vector2i screenPos = getScreenPos(pos);
+
+	const int leftBoundary = -tileSize;
+	const int rightBoundary = (int) window->getSize().x;
+	const int topBoundary = -tileSize;
+	const int bottomBoundary = (int) window->getSize().y;
+
+	const bool insideX =
+		(baseVector.x < 0 && screenPos.x > leftBoundary) ||
+		(baseVector.x > 0 && screenPos.x < rightBoundary);
+
+	const bool insideY =
+		(baseVector.y < 0 && screenPos.y > topBoundary) ||
+		(baseVector.y > 0 && screenPos.y < bottomBoundary);
+
+	return insideX || insideY;
+}
+
 /**
  * Determine whether a move marker should generate another move marker
  */
 bool Renderer::shouldGenerate(const MoveMarker* terminal) const {
-    sf::Vector2i baseVector = terminal->getBaseVector();
-	sf::Vector2i screenPos = getScreenPos(terminal->getNextPos());
-
-	bool insideX =
-		(baseVector.x < 0 && screenPos.x > -tileSize) ||
-		(baseVector.x > 0 && (screenPos.x < -tileSize || (unsigned int) screenPos.x < window->getSize().x));
-
-	bool insideY =
-		(baseVector.y < 0 && screenPos.y > -tileSize) ||
-		(baseVector.y > 0 && (screenPos.y < -tileSize || (unsigned int) screenPos.y < window->getSize().y));
-
-	return insideX || insideY;
+	return shouldGenerate(terminal->getBaseVector(), terminal->getNextPos());
 }
 
 /**
  * Determine whether a move marker should be deleted
  */
 bool Renderer::shouldDelete(const MoveMarker* terminal) const {
-	const MoveMarker* prev = terminal->getPrev();
-	if (prev == nullptr) {
-		return false;
-	}
-
-	return false;
-
-	sf::Vector2i baseVector = terminal->getBaseVector();
-	sf::Vector2i screenPos = getScreenPos(prev->getNextPos());
-
-	bool outsideX =
-		//(baseVector.x == 0 && (screenPos.x < -tileSize || (unsigned int) screenPos.x > window->getSize().x)) ||
-		(baseVector.x < 0 && screenPos.x < -tileSize) ||
-		(baseVector.x > 0 && (screenPos.x > -tileSize && (unsigned int) screenPos.x > window->getSize().x));
-
-	bool outsideY =
-		//(baseVector.y == 0 && (screenPos.y < -tileSize || (unsigned int) screenPos.y > window->getSize().y)) ||
-		(baseVector.y < 0 && screenPos.y < -tileSize) ||
-		(baseVector.y > 0 && (screenPos.y > -tileSize && (unsigned int) screenPos.y > window->getSize().y));
-
-	return outsideX || outsideY;
+	return
+		(terminal->getPrev() != nullptr) &&
+		!(shouldGenerate(terminal->getBaseVector(), terminal->getPrev()->getPos()));
 }
 
 /**

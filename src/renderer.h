@@ -93,6 +93,7 @@ public:
 	sf::Vector2f getMousePosition() const;
 	sf::Vector2i getMouseTilePosition() const;
 	sf::Vector2u getTileDimensions() const;
+	bool shouldGenerate(sf::Vector2i baseVector, sf::Vector2i pos) const;
 	bool shouldGenerate(const MoveMarker* terminal) const;
 	bool shouldDelete(const MoveMarker* terminal) const;
 	inline bool menuIsVisible() const {

@@ -209,6 +209,11 @@ public:
 	void setNext(MoveMarker* newNext);
 
 	/**
+	 * Set the previous move marker
+	 */
+	void setPrev(MoveMarker* newPrev);
+
+	/**
 	 * Set whether the move marker requires a leap
 	 */
 	void setNumObstructions(unsigned int numObstructions_);
