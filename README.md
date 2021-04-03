@@ -1,3 +1,3 @@
-# qb
+# InfiniteChess
 
-An implementation of a 3D renderer for a virtual Rubik's cube.
+Chess on an infinite board.
