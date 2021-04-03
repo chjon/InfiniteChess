@@ -10,7 +10,7 @@ Camera::Camera(glm::vec3 pos, glm::vec3 dir, glm::vec3 up, float nearPlane, floa
     m_near(nearPlane),
     m_far(farPlane),
     m_yFOV(fov),
-    m_stepSize(0.03f)
+    m_stepSize(0.001f)
 {}
 
 inline float getXFOV(float aspectRatio, float yFOV) {

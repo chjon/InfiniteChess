@@ -10,6 +10,7 @@ namespace qb {
         void update(const KeyEventHandler& keh);
         void setDimensions(glm::vec2 screenDims);
         void setMouse(int x, int y);
+        const glm::vec4& getPos() { return m_pos; }
     private:
         glm::vec4 m_pos;
         glm::vec4 m_dir;

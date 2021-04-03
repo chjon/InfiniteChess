@@ -8,7 +8,7 @@ qb::KeyEventHandler keh;
 GLuint program;
 GLuint vboVertices, vboColours, iboFaces;
 GLint attributeCoord3d;
-// GLint uniformMvp;
+GLint position;
 
 qb::Model mdlTriangle;
 qb::Camera camera(glm::vec3(0, 0, 1), glm::vec3(0, 0.001, -1), glm::vec3(0, 0, 1), 0.01f, 100.f, 60.0f);
@@ -30,23 +30,17 @@ void render() {
     // Bind vertex and index buffers
     using mv = qb::Model::ModelVertex;
     qb::GLLayer::bindAttributeAndVertices(vboVertices, attributeCoord3d,      sizeof(mv::m_pos) / sizeof(GLfloat), sizeof(mv), offsetof(mv, m_pos));
-    // qb::GLLayer::bindAttributeAndVertices(vboColours,  attributeVertexColour, sizeof(mv::m_col) / sizeof(GLfloat), sizeof(mv), offsetof(mv, m_col));
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboFaces);
-
-	// Set up transformations
-    // glm::mat4 model = glm::translate(glm::vec3(0.0, 0.0, 0.0));
-    // glm::mat4 cam = camera.getCamera();
-    // glm::mat4 mvp = cam * model;
 
     // Bind value to uniform variable
     // glUniformMatrix4fv(uniformMvp, 1, GL_FALSE, glm::value_ptr(mvp));
+    glUniform2f(position, camera.getPos().x, camera.getPos().y);
 
     int size = 0;
     glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
     glDrawElements(GL_TRIANGLES, size / sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
 	
 	glDisableVertexAttribArray(attributeCoord3d);
-    // glDisableVertexAttribArray(attributeVertexColour);
     glDisableVertexAttribArray(iboFaces);
 
     // Double-buffered screen update
@@ -113,9 +107,8 @@ int main (int argc, char ** argv) {
     if(!GLLayer::linkProgram(program)) return EXIT_FAILURE;
 
     // Bind variables
-    if (!GLLayer::bindVariable(program, attributeCoord3d,      "coord3d", false)) return EXIT_FAILURE;
-    // if (!GLLayer::bindVariable(program, attributeVertexColour, "v_color", false)) return EXIT_FAILURE;
-    // if (!GLLayer::bindVariable(program, uniformMvp,            "m_mvp",   true )) return EXIT_FAILURE;
+    if (!GLLayer::bindVariable(program, attributeCoord3d, "coord3d", false)) return EXIT_FAILURE;
+    if (!GLLayer::bindVariable(program, position,         "m_pos",   true )) return EXIT_FAILURE;
 
     // Initialize keyboard event handler
     Logger::log("Initializing keyboard event handler");
