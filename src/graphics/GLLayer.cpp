@@ -1,6 +1,6 @@
 #include "GLLayer.h"
 
-namespace qb {
+namespace ic {
 #ifdef GL_ES_VERSION_2_0
     const std::string GLLayer::OPENGL_SHADER_VERSION_HEADER = "#version 100\n"; // OpenGL ES 2.0
 #else

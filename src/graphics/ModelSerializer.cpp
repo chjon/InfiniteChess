@@ -1,7 +1,7 @@
 #include "ModelSerializer.h"
 #include "Model.h"
 
-namespace qb {
+namespace ic {
     bool ModelSerializer::serialize(const std::string& filename, const Model& model) {
         if (filename.length() == 0) {
             return false;

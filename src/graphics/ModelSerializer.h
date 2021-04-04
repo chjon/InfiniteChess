@@ -3,7 +3,7 @@
 #include "../Common.h"
 #include "Model.h"
 
-namespace qb {
+namespace ic {
     class ModelSerializer {
     public:
         static bool serialize(const std::string& filename, const Model& model);

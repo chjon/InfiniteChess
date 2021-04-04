@@ -1,6 +1,8 @@
 #include "Camera.h"
 #include "GLLayer.h"
 
+using namespace ic;
+
 Camera::Camera(glm::vec2 pos, float ang, float stepSize) :
     m_pos(pos),
     m_ang(ang),
@@ -8,8 +10,8 @@ Camera::Camera(glm::vec2 pos, float ang, float stepSize) :
 {}
 
 int Camera::init(GLint program) {
-    if (!qb::GLLayer::bindVariable(program, m_pos_handle, "m_pos", true)) return EXIT_FAILURE;
-    if (!qb::GLLayer::bindVariable(program, m_ang_handle, "m_ang", true)) return EXIT_FAILURE;
+    if (!GLLayer::bindVariable(program, m_pos_handle, "m_pos", true)) return EXIT_FAILURE;
+    if (!GLLayer::bindVariable(program, m_ang_handle, "m_ang", true)) return EXIT_FAILURE;
     return EXIT_SUCCESS;
 }
 
@@ -18,7 +20,7 @@ void Camera::onRender() {
     glUniform1f(m_ang_handle, m_ang);
 }
 
-void Camera::onRefresh(const qb::KeyEventHandler& keh) {
+void Camera::onRefresh(const KeyEventHandler& keh) {
     if (keh.isDown('w')) m_pos.y += m_stepSize;
     if (keh.isDown('s')) m_pos.y -= m_stepSize;
     if (keh.isDown('d')) m_pos.x += m_stepSize;

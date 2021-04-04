@@ -2,7 +2,7 @@
 
 #include "../Common.h"
 
-namespace qb {
+namespace ic {
     class Model {
     public:
         struct ModelVertex {

@@ -1,7 +1,7 @@
 #pragma once
 #include "../Common.h"
 
-namespace qb {
+namespace ic {
     class KeyEventHandler {
         using KeyFunction = std::function<void(int x, int y)>;
     public:

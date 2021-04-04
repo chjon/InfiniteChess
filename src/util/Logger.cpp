@@ -1,6 +1,6 @@
 #include "Logger.h"
 
-namespace qb {
+namespace ic {
     FILE* Logger::m_logFile = nullptr;
 
     void Logger::init(const std::string filename) {

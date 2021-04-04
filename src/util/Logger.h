@@ -2,7 +2,7 @@
 #include <string>
 #include "../Common.h"
 
-namespace qb {
+namespace ic {
     class Logger {
     public:
         static void init(const std::string filename);

@@ -4,13 +4,13 @@
 #include "graphics/ModelSerializer.h"
 #include "keyboard/KeyEventHandler.h"
 
-qb::KeyEventHandler keh;
+ic::KeyEventHandler keh;
 GLuint program;
 GLuint vboVertices, vboColours, iboFaces;
 GLint attributeCoord3d;
 
-qb::Model mdlTriangle;
-Camera camera(glm::vec2(0, 0), 0.f, 0.002f);
+ic::Model mdlTriangle;
+ic::Camera camera(glm::vec2(0, 0), 0.f, 0.002f);
 int screenWidth = 800, screenHeight = 600;
 
 void render() {
@@ -27,8 +27,8 @@ void render() {
 	glUseProgram(program);
 
     // Bind vertex and index buffers
-    using mv = qb::Model::ModelVertex;
-    qb::GLLayer::bindAttributeAndVertices(vboVertices, attributeCoord3d, sizeof(mv::m_pos) / sizeof(GLfloat), sizeof(mv), offsetof(mv, m_pos));
+    using mv = ic::Model::ModelVertex;
+    ic::GLLayer::bindAttributeAndVertices(vboVertices, attributeCoord3d, sizeof(mv::m_pos) / sizeof(GLfloat), sizeof(mv), offsetof(mv, m_pos));
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboFaces);
 
     // Bind value to uniform variable
@@ -46,12 +46,12 @@ void render() {
 }
 
 void exitHandler() {
-    qb::Logger::log("Cleaning up and exiting");
+    ic::Logger::log("Cleaning up and exiting");
     glDeleteProgram(program);
     glDeleteBuffers(1, &vboVertices);
     glDeleteBuffers(1, &vboColours);
     glDeleteBuffers(1, &iboFaces);
-    qb::Logger::close();
+    ic::Logger::close();
 }
 void resizeHandler(int x, int y) {
     camera.setDimensions(glm::vec2(x, y));
@@ -69,8 +69,8 @@ void onKeyDown(unsigned char key, int x, int y) { keh.handle(key, x, y, true ); 
 void onMouse  (int x, int y) {}
 
 int main (int argc, char ** argv) {
-    using namespace qb;
-	std::string title = "qb";
+    using namespace ic;
+	std::string title = "Infinite Chess";
 
     GLLayer::ErrorCode errCode = GLLayer::ErrorCode::SUCCESS;
     Logger::init("output.log");
@@ -90,7 +90,7 @@ int main (int argc, char ** argv) {
     program = glCreateProgram();
 
     // Load models
-    mdlTriangle = std::move(qb::ModelSerializer::deserialize("mdl/triangle.mdl"));
+    mdlTriangle = std::move(ModelSerializer::deserialize("mdl/triangle.mdl"));
 
     // Bind buffer objects
     GLLayer::bindBufferObject(vboVertices, GL_ARRAY_BUFFER,         mdlTriangle.verticesSize(), mdlTriangle.m_vertices, GL_STATIC_DRAW);

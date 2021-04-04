@@ -3,7 +3,7 @@
 #include "../Common.h"
 #include "Model.h"
 
-namespace qb {
+namespace ic {
     class GLLayer {
     public:
         enum class ErrorCode {

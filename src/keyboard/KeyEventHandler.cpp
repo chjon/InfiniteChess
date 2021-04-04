@@ -1,6 +1,6 @@
 #include "KeyEventHandler.h"
 
-namespace qb {
+namespace ic {
     void KeyEventHandler::init(void(*handleKeyUp)(unsigned char key, int x, int y), void(*handleKeyDown)(unsigned char key, int x, int y)) {
         glutKeyboardFunc(handleKeyDown);
         glutKeyboardUpFunc(handleKeyUp);

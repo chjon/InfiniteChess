@@ -1,6 +1,6 @@
 #include "Model.h"
 
-namespace qb {
+namespace ic {
     Model::Model(int numVertices, int numFaces) :
         m_numVertices(numVertices),
         m_numFaces(numFaces)
