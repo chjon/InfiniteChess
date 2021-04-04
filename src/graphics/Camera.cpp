@@ -3,9 +3,11 @@
 
 using namespace ic;
 
-Camera::Camera(glm::vec2 pos, float ang, float zoom, float stepSize) :
+Camera::Camera(glm::vec2 pos, float ang, float minZoom, float maxZoom, float zoom, float stepSize) :
     m_pos(pos),
     m_ang(ang),
+    m_minZoom(minZoom),
+    m_maxZoom(maxZoom),
     m_zoom(zoom),
     m_stepSize(stepSize)
 {}
@@ -32,12 +34,12 @@ void Camera::onRender() {
 }
 
 void Camera::onRefresh(const KeyEventHandler& keh) {
-    if (keh.isDown('w')) m_pos.y += m_stepSize;
-    if (keh.isDown('s')) m_pos.y -= m_stepSize;
-    if (keh.isDown('d')) m_pos.x += m_stepSize;
-    if (keh.isDown('a')) m_pos.x -= m_stepSize;
-    if (keh.isDown('q')) m_ang   += m_stepSize / 10;
-    if (keh.isDown('e')) m_ang   -= m_stepSize / 10;
-    if (keh.isDown('z')) m_zoom  += m_stepSize;
-    if (keh.isDown('x')) m_zoom  -= m_stepSize;
+    if (keh.isDown('w')) m_pos.y += m_stepSize * m_zoom;
+    if (keh.isDown('s')) m_pos.y -= m_stepSize * m_zoom;
+    if (keh.isDown('d')) m_pos.x += m_stepSize * m_zoom;
+    if (keh.isDown('a')) m_pos.x -= m_stepSize * m_zoom;
+    if (keh.isDown('q')) m_ang   += m_stepSize;
+    if (keh.isDown('e')) m_ang   -= m_stepSize;
+    if (keh.isDown('z')) m_zoom   = std::min(m_maxZoom, m_zoom * (1 + m_stepSize));
+    if (keh.isDown('x')) m_zoom   = std::max(m_minZoom, m_zoom * (1 - m_stepSize));
 }

@@ -10,7 +10,7 @@ GLuint vboVertices, vboColours, iboFaces;
 GLint attributeCoord3d;
 
 ic::Model mdlTriangle;
-ic::Camera camera(glm::vec2(0, 0), 0.f, 10.f, 0.1f);
+ic::Camera camera(glm::vec2(0, 0), 0.f, 8.f, 64.f, 9.f, 0.01f);
 int screenWidth = 1120, screenHeight = 630;
 
 void render() {

@@ -5,7 +5,7 @@
 namespace ic {
     class Camera {
     public:
-        Camera(glm::vec2 pos, float ang, float zoom, float stepSize);
+        Camera(glm::vec2 pos, float ang, float minZoom, float maxZoom, float zoom, float stepSize);
         int init(GLint program);
         void setDimensions(glm::vec2 dim);
         void onRender();
@@ -15,6 +15,8 @@ namespace ic {
         glm::vec2 m_dim;
         glm::vec2 m_screenCentre;
         float m_ang;
+        float m_minZoom;
+        float m_maxZoom;
         float m_zoom;
         float m_stepSize;
 
