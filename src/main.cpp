@@ -8,10 +8,9 @@ qb::KeyEventHandler keh;
 GLuint program;
 GLuint vboVertices, vboColours, iboFaces;
 GLint attributeCoord3d;
-GLint position;
 
 qb::Model mdlTriangle;
-qb::Camera camera(glm::vec3(0, 0, 1), glm::vec3(0, 0.001, -1), glm::vec3(0, 0, 1), 0.01f, 100.f, 60.0f);
+Camera camera(glm::vec2(0, 0), 0.f, 0.002f);
 int screenWidth = 800, screenHeight = 600;
 
 void render() {
@@ -29,12 +28,11 @@ void render() {
 
     // Bind vertex and index buffers
     using mv = qb::Model::ModelVertex;
-    qb::GLLayer::bindAttributeAndVertices(vboVertices, attributeCoord3d,      sizeof(mv::m_pos) / sizeof(GLfloat), sizeof(mv), offsetof(mv, m_pos));
+    qb::GLLayer::bindAttributeAndVertices(vboVertices, attributeCoord3d, sizeof(mv::m_pos) / sizeof(GLfloat), sizeof(mv), offsetof(mv, m_pos));
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboFaces);
 
     // Bind value to uniform variable
-    // glUniformMatrix4fv(uniformMvp, 1, GL_FALSE, glm::value_ptr(mvp));
-    glUniform2f(position, camera.getPos().x, camera.getPos().y);
+    camera.onRender();
 
     int size = 0;
     glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
@@ -61,14 +59,14 @@ void resizeHandler(int x, int y) {
 }
 
 void refreshFrame(int val) {
-    camera.update(keh);
+    camera.onRefresh(keh);
     glutTimerFunc(20, &refreshFrame, 0);
     glutPostRedisplay();
 }
 
 void onKeyUp  (unsigned char key, int x, int y) { keh.handle(key, x, y, false); }
 void onKeyDown(unsigned char key, int x, int y) { keh.handle(key, x, y, true ); }
-void onMouse  (int x, int y) { camera.setMouse(x, y); };
+void onMouse  (int x, int y) {}
 
 int main (int argc, char ** argv) {
     using namespace qb;
@@ -108,7 +106,7 @@ int main (int argc, char ** argv) {
 
     // Bind variables
     if (!GLLayer::bindVariable(program, attributeCoord3d, "coord3d", false)) return EXIT_FAILURE;
-    if (!GLLayer::bindVariable(program, position,         "m_pos",   true )) return EXIT_FAILURE;
+    if (camera.init(program)) return EXIT_FAILURE;
 
     // Initialize keyboard event handler
     Logger::log("Initializing keyboard event handler");

@@ -2,25 +2,22 @@
 #include "../Common.h"
 #include "../keyboard/KeyEventHandler.h"
 
-namespace qb {
-    class Camera {
-    public:
-        Camera(glm::vec3 pos, glm::vec3 dir, glm::vec3 up, float nearPlane, float farPlane, float fov);
-        const glm::mat4 getCamera();
-        void update(const KeyEventHandler& keh);
-        void setDimensions(glm::vec2 screenDims);
-        void setMouse(int x, int y);
-        const glm::vec4& getPos() { return m_pos; }
-    private:
-        glm::vec4 m_pos;
-        glm::vec4 m_dir;
-        glm::vec4 m_up;
-        glm::vec2 m_screenDims;
-        glm::vec2 m_screenCentre;
-        glm::vec2 m_mouseAngle;
-        float m_near;
-        float m_far;
-        float m_yFOV;
-        float m_stepSize;
-    };
-}
+class Camera {
+public:
+    Camera(glm::vec2 pos, float ang, float stepSize);
+    int init(GLint program);
+    void setDimensions(glm::vec2 dim) { m_dim = dim; }
+    void onRender();
+    void onRefresh(const qb::KeyEventHandler& keh);
+private:
+    glm::vec2 m_pos;
+    glm::vec2 m_dim;
+    glm::vec2 m_screenCentre;
+    float m_ang;
+    float m_stepSize;
+
+    // OpenGL handles
+    GLint m_pos_handle;
+    GLint m_ang_handle;
+    GLint m_dim_handle;
+};
