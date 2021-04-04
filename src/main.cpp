@@ -96,7 +96,7 @@ int main (int argc, char ** argv) {
     GLLayer::bindBufferObject(iboFaces,    GL_ELEMENT_ARRAY_BUFFER, mdlTriangle.facesSize(),    mdlTriangle.m_faces,    GL_STATIC_DRAW);
 
     // Initialize shaders
-    shader.compile("src/graphics/shaders/triangle.v.glsl", "src/graphics/shaders/triangle.f.glsl");
+    shader.compile("src/graphics/shaders/chessboard.v.glsl", "src/graphics/shaders/chessboard.f.glsl");
 
     // Bind variables
     if (!GLLayer::bindVariable(shader.getId(), attributeCoord3d, "coord3d", false)) return EXIT_FAILURE;
