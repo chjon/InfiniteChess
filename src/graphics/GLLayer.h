@@ -31,7 +31,7 @@ namespace ic {
         static void bindBufferObject(GLuint& id, GLint bufferType, size_t arraySize, Model::ModelVertex* vertices, GLint drawType);
         static void bindBufferObject(GLuint& id, GLint bufferType, size_t arraySize, Model::ModelFace* vertices, GLint drawType);
 
-        static bool compileAndLink(GLint program, const std::string& filename, GLenum shaderType);
+        static bool compile(GLint& shaderId, GLint program, const std::string& filename, GLenum shaderType);
         static bool linkProgram(GLint program);
         static bool bindVariable(GLint program, GLint& id, const std::string& name, const bool isUniform);
 
@@ -40,6 +40,7 @@ namespace ic {
         static std::string getErrorString(ErrorCode errorCode);
 
     private:
+        static bool checkCompileError(GLint program, const std::string& type);
         static std::string readFile(const std::string& filename);
         
         static const std::string OPENGL_SHADER_VERSION_HEADER;

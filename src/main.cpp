@@ -1,11 +1,12 @@
 #include "Common.h"
 #include "graphics/Camera.h"
 #include "graphics/GLLayer.h"
+#include "graphics/Shader.h"
 #include "graphics/ModelSerializer.h"
 #include "keyboard/KeyEventHandler.h"
 
 ic::KeyEventHandler keh;
-GLuint program;
+ic::Shader shader;
 GLuint vboVertices, vboColours, iboFaces;
 GLint attributeCoord3d;
 
@@ -23,8 +24,8 @@ void render() {
 	glClearColor(0.25, 0.25, 0.25, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glValidateProgram(program);
-	glUseProgram(program);
+	glValidateProgram(shader.getId());
+	shader.use();
 
     // Bind vertex and index buffers
     using mv = ic::Model::ModelVertex;
@@ -47,7 +48,7 @@ void render() {
 
 void exitHandler() {
     ic::Logger::log("Cleaning up and exiting");
-    glDeleteProgram(program);
+    glDeleteProgram(shader.getId());
     glDeleteBuffers(1, &vboVertices);
     glDeleteBuffers(1, &vboColours);
     glDeleteBuffers(1, &iboFaces);
@@ -86,9 +87,6 @@ int main (int argc, char ** argv) {
     // Initialize keyboard
     KeyEventHandler::init(&onKeyUp, &onKeyDown);
 
-    // Initialize program
-    program = glCreateProgram();
-
     // Load models
     mdlTriangle = std::move(ModelSerializer::deserialize("mdl/triangle.mdl"));
 
@@ -98,19 +96,14 @@ int main (int argc, char ** argv) {
     GLLayer::bindBufferObject(iboFaces,    GL_ELEMENT_ARRAY_BUFFER, mdlTriangle.facesSize(),    mdlTriangle.m_faces,    GL_STATIC_DRAW);
 
     // Initialize shaders
-    if (!GLLayer::compileAndLink(program, "src/graphics/shaders/triangle.v.glsl", GL_VERTEX_SHADER  )) return EXIT_FAILURE;
-    if (!GLLayer::compileAndLink(program, "src/graphics/shaders/triangle.f.glsl", GL_FRAGMENT_SHADER)) return EXIT_FAILURE;
-
-    // Link program
-    if(!GLLayer::linkProgram(program)) return EXIT_FAILURE;
+    shader.compile("src/graphics/shaders/triangle.v.glsl", "src/graphics/shaders/triangle.f.glsl");
 
     // Bind variables
-    if (!GLLayer::bindVariable(program, attributeCoord3d, "coord3d", false)) return EXIT_FAILURE;
-    if (camera.init(program)) return EXIT_FAILURE;
+    if (!GLLayer::bindVariable(shader.getId(), attributeCoord3d, "coord3d", false)) return EXIT_FAILURE;
+    if (camera.init(shader.getId())) return EXIT_FAILURE;
 
     // Initialize keyboard event handler
     Logger::log("Initializing keyboard event handler");
-    // glColor3f(1.0f, 0.0f, 0.0f);
     keh.registerListener('\x1B', [] (int x, int y) { glutLeaveMainLoop(); });
 
     // Initialize camera

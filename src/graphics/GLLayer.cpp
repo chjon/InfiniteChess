@@ -57,7 +57,7 @@ namespace ic {
         bindBufferObject<GLushort>(id, bufferType, arraySize, reinterpret_cast<GLushort*>(vertices), drawType);
     }
 
-    bool GLLayer::compileAndLink(GLint program, const std::string& filename, GLenum shaderType) {
+    bool GLLayer::compile(GLint& shaderId, GLint program, const std::string& filename, GLenum shaderType) {
         std::string source = readFile(filename);
         if (source.length() == 0) {
             Logger::log("Failed to read shader source: " + filename);
@@ -71,38 +71,20 @@ namespace ic {
             source.c_str(),
         };
 
-        GLuint shaderId = glCreateShader(shaderType);
+        shaderId = glCreateShader(shaderType);
         glShaderSource(shaderId, 3, sources, NULL);
         glCompileShader(shaderId);
-        GLint successfullyCompiled = GL_FALSE;
-        glGetShaderiv(shaderId, GL_COMPILE_STATUS, &successfullyCompiled);
-        if (successfullyCompiled == GL_FALSE) {
-			GLchar errorInfo[1024];
-			glGetShaderInfoLog(shaderId, sizeof(errorInfo), NULL, errorInfo);
-            Logger::log("Failed to compile source \'" + filename + "\': ");
-			Logger::log(errorInfo);
-            glDeleteShader(shaderId);
-            return false;
-        }
+        checkCompileError(shaderId, filename);
 
         // Link shader to program
         glAttachShader(program, shaderId);
-
-        Logger::log("Successfully compiled and linked source: " + filename);
+        Logger::log("Successfully compiled source: " + filename);
         return true;
     }
 
     bool GLLayer::linkProgram(GLint program) {
-        GLint link_ok = GL_FALSE;
         glLinkProgram(program);
-        glGetProgramiv(program, GL_LINK_STATUS, &link_ok);
-        if (link_ok == GL_FALSE) {
-            Logger::log("Failed to link program");
-            return false;
-        }
-
-        Logger::log("Successfully linked program");
-        return true;
+        return checkCompileError(program, "PROGRAM");
     }
 
     bool GLLayer::bindVariable(GLint program, GLint& id, const std::string& name, const bool isUniform) {
@@ -149,6 +131,31 @@ namespace ic {
             case ErrorCode::ERROR_BIND_VARIABLE:    return "Failed to bind variable";
             default:                                return "Unknown error";
         }
+    }
+
+    bool GLLayer::checkCompileError(GLint id, const std::string& type) {
+        int success;
+        GLchar errorInfo[1024];
+
+        if (type == "PROGRAM") {
+            glGetProgramiv(id, GL_LINK_STATUS, &success);
+            if (success == GL_FALSE) {
+                glGetProgramInfoLog(id, sizeof(errorInfo), NULL, errorInfo);
+                Logger::log("Failed to link program");
+                Logger::log(errorInfo);
+                return false;
+            }
+        } else {
+            glGetShaderiv(id, GL_COMPILE_STATUS, &success);
+            if (success == GL_FALSE) {
+                glGetShaderInfoLog(id, sizeof(errorInfo), NULL, errorInfo);
+                Logger::log("Failed to compile " + type + "\': ");
+                Logger::log(errorInfo);
+                glDeleteShader(id);
+                return false;
+            }
+        }
+        return true;
     }
 
     // Read entire file as string
