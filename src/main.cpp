@@ -10,8 +10,8 @@ GLuint vboVertices, vboColours, iboFaces;
 GLint attributeCoord3d;
 
 ic::Model mdlTriangle;
-ic::Camera camera(glm::vec2(0, 0), 0.f, 0.002f);
-int screenWidth = 800, screenHeight = 600;
+ic::Camera camera(glm::vec2(0, 0), 0.f, 10.f, 0.1f);
+int screenWidth = 1120, screenHeight = 630;
 
 void render() {
     // Enable alpha
